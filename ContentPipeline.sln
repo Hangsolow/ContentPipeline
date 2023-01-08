@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9800B1E7-C01
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5D12530C-11E9-4316-BCA8-2545DAAC0D44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPipelineSourceGeneatorTests", "tests\ContentSourceGeneratorTests\ContentPipelineSourceGeneatorTests.csproj", "{D46900D7-7D3C-4F36-9C5D-D1FCCE996123}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPipelineSourceGeneratorTests", "tests\ContentSourceGeneratorTests\ContentPipelineSourceGeneratorTests.csproj", "{D46900D7-7D3C-4F36-9C5D-D1FCCE996123}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
