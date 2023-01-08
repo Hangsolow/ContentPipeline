@@ -1,0 +1,17 @@
+<Project>
+    <!-- Global nuget settings -->
+    <PropertyGroup>
+        <!-- creates packages.lock.json -->
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <!-- enforces that an package getting restored must match the version and hash in packages.lock.json when building in github -->
+        <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+    </PropertyGroup>
+    
+    <!-- Global Nullable settings -->
+    <PropertyGroup>
+        <!-- enables the nullable feature, see https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language#nullable  -->
+        <Nullable>enable</Nullable>
+        <!-- null conditions will throw errors when compiling -->
+        <WarningsAsErrors>nullable</WarningsAsErrors>
+    </PropertyGroup>
+</Project>
