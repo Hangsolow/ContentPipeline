@@ -15,7 +15,7 @@ internal sealed partial class Emitter
             return
                 $$"""
                 #nullable enable
-                namespace {{SharedNamespace}}.Properties
+                namespace {{SharedNamespace}}.Properties;
 
                 internal sealed partial class {{name}}
                 {

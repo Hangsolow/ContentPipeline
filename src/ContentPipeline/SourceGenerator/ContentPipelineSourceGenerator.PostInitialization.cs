@@ -9,7 +9,7 @@ namespace ContentPipeline.SourceGenerator
 {
     internal sealed partial class ContentPipelineSourceGenerator
     {
-        private static void PostInitializationExcute(IncrementalGeneratorPostInitializationContext context)
+        private static void PostInitializationExecute(IncrementalGeneratorPostInitializationContext context)
         {
             Emitter emitter = new()
             {
@@ -18,6 +18,11 @@ namespace ContentPipeline.SourceGenerator
             };
 
             context.AddSource("ContentPipelineModel.g.cs", SourceText.From(emitter.GetBaseContentPipelineModel(), Encoding.UTF8));
+            var codeSources = emitter.GetPropertiesSourceFiles().Concat(emitter.GetInterfaceSources());
+            foreach (var codeSource in codeSources)
+            {
+                context.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
+            }
         }
     }
 }

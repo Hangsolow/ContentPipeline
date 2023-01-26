@@ -19,7 +19,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
 #pragma warning restore CS8619
 
         IncrementalValueProvider<(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes)> compilationAndClasses = context.CompilationProvider.Combine(classDeclarations.Collect());
-        context.RegisterPostInitializationOutput(static callback => PostInitializationExcute(callback));
+        context.RegisterPostInitializationOutput(static callback => PostInitializationExecute(callback));
         context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.compilation, source.classes, spc));
     }
 

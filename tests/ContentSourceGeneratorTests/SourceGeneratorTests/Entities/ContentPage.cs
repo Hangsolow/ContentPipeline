@@ -1,6 +1,9 @@
-﻿using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
+using EPiServer.Web;
 
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 
@@ -8,6 +11,14 @@ namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 public class ContentPage : PageData
 {
     public virtual string? Title { get; set; }
+
+    public virtual Url? Url { get; set; }
+
+    [ContentPipelineIgnore]
+    public virtual ContentReference? Link { get; set; }
     
+    [UIHint(UIHint.Image)]
+    public virtual ContentReference? MediaLink { get; set; }
+
     public virtual IList<string>? ListOfStrings { get; set; }
 }

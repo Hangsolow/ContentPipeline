@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace ContentPipeline.SourceGenerator;
 
@@ -38,6 +39,7 @@ internal sealed partial class Parser
             }
 
             var uiHint = attributes.UiHint?.ConstructorArguments[0].Value as string;
+
             var (ConverterNamespace, ConverterType) = GetConverter(namedPropertySymbol, attributes.ContentPipelinePropertyConverter, uiHint, interfaceNamespace);
 
             if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, out var propertyType))
@@ -54,7 +56,7 @@ internal sealed partial class Parser
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "mediafile" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "image" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("Link", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 //Mapping of ContentAreas
                 { Name: "ContentArea", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentAreaPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 //Mapping of richtext properties
@@ -156,7 +158,7 @@ internal sealed partial class Parser
                 case "ContentPipelineIgnoreAttribute":
                     ignore = attribute;
                     break;
-                case "UiHintAttribute":
+                case "UiHint":
                     uiHint = attribute;
                     break;
                 case "ContentPipelinePropertyConverterAttribute":

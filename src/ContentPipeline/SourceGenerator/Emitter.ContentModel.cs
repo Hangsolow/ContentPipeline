@@ -15,11 +15,12 @@ namespace ContentPipeline.SourceGenerator
                 .Line("#nullable enable")
                 .Using("System")
                 .Using("System.Collections.Generic")
+                .Using($"{SharedNamespace}.Properties")
                 .Namespace($"{SharedNamespace}.Models")
                 .Tab()
                 //.Line($"[{SharedNamespace}.Attributes.GenerateTypescriptDefinition()]")
                 .Tab(-1)
-                .Class($"internal partial class {contentClass.Name}Model : {SharedNamespace}.Models.ContentPipelineModel")
+                .Class($"internal partial class {contentClass.Name}PipelineModel : {SharedNamespace}.Models.ContentPipelineModel")
                 .Tab()
                 .Foreach(contentClass.ContentProperties, (pBuilder, prop) => pBuilder.Property(prop.Name, prop.TypeName, true))
                 .Build();
