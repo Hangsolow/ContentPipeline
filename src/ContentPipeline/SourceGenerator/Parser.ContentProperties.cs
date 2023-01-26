@@ -30,7 +30,8 @@ internal sealed partial class Parser
             {
                 return null;
             }
-
+            
+            
             var attributes = GetNamedAttributes(propertySymbol.GetAttributes());
 
             if (attributes.Ignore is not null)
@@ -158,7 +159,7 @@ internal sealed partial class Parser
                 case "ContentPipelineIgnoreAttribute":
                     ignore = attribute;
                     break;
-                case "UiHint":
+                case "UIHintAttribute":
                     uiHint = attribute;
                     break;
                 case "ContentPipelinePropertyConverterAttribute":
