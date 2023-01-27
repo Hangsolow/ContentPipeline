@@ -1,14 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace ContentPipeline.Attributes;
 
-namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
+using Microsoft.CodeAnalysis;
 
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-internal sealed class ContentPipelinePropertyConverterAttribute<TConverter, TReturn> : Attribute
+public sealed class ContentPipelinePropertyConverterAttribute<TConverter, TReturn> : Attribute
 {
     public ContentPipelinePropertyConverterAttribute(NullableAnnotation nullable = NullableAnnotation.Annotated)
     {

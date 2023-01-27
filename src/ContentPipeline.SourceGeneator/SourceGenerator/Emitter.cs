@@ -11,6 +11,6 @@ internal sealed partial class Emitter
     internal required CancellationToken CancellationToken { get; init; }
 }
 
-internal record ContentClass(string Name, string Guid, string FullyQualifiedName, IReadOnlyList<ContentProperty> ContentProperties);
+internal record ContentClass(string Name, string Guid, string Group, string FullyQualifiedName, IReadOnlyList<ContentProperty> ContentProperties);
 internal record ContentProperty(string Name, string TypeName, string ConverterType, string? ConverterNamespace);
 internal record CodeSource(string Name, string Source);

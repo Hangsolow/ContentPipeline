@@ -1,17 +1,17 @@
-﻿namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
+namespace ContentPipeline.Attributes;
 
 /// <summary>
 /// Enables the content for use in the content pipeline
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-internal sealed class ContentPipelineModelAttribute : Attribute
+public sealed class ContentPipelineModelAttribute : Attribute
 {
     /// <summary>
     /// the constructor for ContentApiModelAttribute
     /// </summary>
     /// <param name="group"></param>
     /// <exception cref="ArgumentException">if group is null or empty</exception>
-    public ContentPipelineModelAttribute(string group)
+    public ContentPipelineModelAttribute(string group = "common")
     {
         if (string.IsNullOrEmpty(group))
         {

@@ -60,8 +60,8 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             var pipelineSource = emitter.GetPipeline(contentClass);
             var uniqueId = contentClass.Guid.Substring(0, 8);
 
-            context.AddSource($"{contentClass.Name}_ContentModel_{uniqueId}.g.cs", SourceText.From(contentModelSource, Encoding.UTF8));
-            context.AddSource($"{contentClass.Name}_Pipeline_{uniqueId}.g.cs", SourceText.From(pipelineSource, Encoding.UTF8));
+            context.AddSource($"{contentClass.Group}_{contentClass.Name}_ContentModel_{uniqueId}.g.cs", SourceText.From(contentModelSource, Encoding.UTF8));
+            context.AddSource($"{contentClass.Group}_{contentClass.Name}_Pipeline_{uniqueId}.g.cs", SourceText.From(pipelineSource, Encoding.UTF8));
         }
     }
 }

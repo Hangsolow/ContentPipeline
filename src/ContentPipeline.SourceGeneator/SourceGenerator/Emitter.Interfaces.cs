@@ -75,12 +75,21 @@ internal sealed partial class Emitter
                 
                 using EPiServer.Core;
 
-                public partial interface IContentConverterPipelineStep<TContent, TContentPipelineModel>
+                public partial interface IContentConverterPipelineStep<in TContent, in TContentPipelineModel>
                     where TContent : IContentData
                     where TContentPipelineModel : {{SharedNamespace}}.Models.ContentPipelineModel
                 {
+                    /// <summary>
+                    /// The order for the pipeline step, the sort order goes from low to high
+                    /// </summary>
                     int Order { get; }
                     
+                    /// <summary>
+                    /// Runs the pipeline step
+                    /// </summary>
+                    /// <param name="content"></param>
+                    /// <param name="contentPipelineModel"></param>
+                    /// <param name="pipelineContext"></param>
                     void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentConverterPipelineContext pipelineContext);
                 }
                 """;

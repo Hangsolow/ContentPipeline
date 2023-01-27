@@ -5,6 +5,7 @@ namespace ContentPipeline.SourceGenerator;
 
 internal sealed partial class Parser
 {
+    private const string ContentPipelineModelAttribute = "ContentPipelineModel";
     private const string ContentTypeAttribute = "ContentType";
     /// <summary>
     /// The current Compilation
@@ -48,13 +49,13 @@ internal sealed partial class Parser
     /// </summary>
     /// <param name="node"></param>
     /// <returns>true if node is an class with attributes else false</returns>
-    internal static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax c && c.AttributeLists.Count > 0;
+    internal static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
 
     /// <summary>
     /// Finds ClassDeclarationSyntax that have the ContentType attribute
     /// </summary>
     /// <param name="context"></param>
-    /// <returns>the ClassDeclarationSyntax if it contains ContentType attribute else null</returns>
+    /// <returns>the ClassDeclarationSyntax if it contains ContentPipelineModel attribute else null</returns>
     internal static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
@@ -63,7 +64,7 @@ internal sealed partial class Parser
         {
             foreach (var attributeSyntax in attributeListSyntax.Attributes)
             {
-                if (attributeSyntax.Name.ToString() == ContentTypeAttribute)
+                if (attributeSyntax.Name.ToString() == ContentPipelineModelAttribute)
                 {
                     return classDeclarationSyntax;
                 }

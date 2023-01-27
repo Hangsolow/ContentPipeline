@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="EPiServer.CMS.Core" Version="12.11.0" />
+		<PackageReference Include="EPiServer.CMS.Core" Version="12.12.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.4.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
@@ -23,7 +23,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\ContentPipeline\ContentPipelineSourceGeneator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\src\ContentPipeline.SourceGeneator\ContentPipeline.SourceGeneator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\src\ContentPipeline\ContentPipeline.csproj" />
 	</ItemGroup>
 
 </Project>

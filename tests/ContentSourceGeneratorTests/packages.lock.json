@@ -10,13 +10,13 @@
       },
       "EPiServer.CMS.Core": {
         "type": "Direct",
-        "requested": "[12.11.0, )",
-        "resolved": "12.11.0",
-        "contentHash": "6Fd+DX+N6ZqNZfEycbBsKNbidDnJ7McbffP4tfHFMIuU7Dp/qNGCQHn47LEn7cYGKaeG4bdCbVKBmtY5X1StqQ==",
+        "requested": "[12.12.0, )",
+        "resolved": "12.12.0",
+        "contentHash": "0IsXTQpXVjVshl29unW+wCFv0Q/0j217TYmvvI6HMX/w9CtP7EaOxaMI+rd0dBKXDYFoWbbTGg7c2/9HERqCNw==",
         "dependencies": {
           "Castle.Core": "[4.4.1, 5.0.0)",
           "Castle.Windsor": "[5.1.1, 6.0.0)",
-          "EPiServer.Framework": "[12.11.0]",
+          "EPiServer.Framework": "[12.12.0]",
           "MailKit": "[3.0.0, 4.0.0)",
           "SixLabors.ImageSharp": "[2.0.0, 3.0.0)",
           "System.IO.Packaging": "6.0.0",
@@ -135,8 +135,8 @@
       },
       "EPiServer.Framework": {
         "type": "Transitive",
-        "resolved": "12.11.0",
-        "contentHash": "RK+9v0KpOz8YfBtUJtBLgS5mfQO6I5ZMa4LL2j9A0Ywla4blyW3W8+X+6+5hK6cW5GcSz3cNb3XerXz5hWeRkw==",
+        "resolved": "12.12.0",
+        "contentHash": "TzctlUfVvEppaDXX3zDbzwlhd+CXEDsk7B8tq46I1vcZXOfrioPzp7s3vzpRxe020tUlBR6kKLuHm12dMDcyJA==",
         "dependencies": {
           "Microsoft.Data.SqlClient": "5.0.1",
           "Newtonsoft.Json": "13.0.1",
@@ -1615,6 +1615,14 @@
         "dependencies": {
           "NETStandard.Library": "1.6.1",
           "xunit.extensibility.core": "[2.4.2]"
+        }
+      },
+      "contentpipeline": {
+        "type": "Project",
+        "dependencies": {
+          "EPiServer.CMS.Core": "[12.12.0, )",
+          "Microsoft.AspNetCore.Http.Abstractions": "[2.2.0, )",
+          "Microsoft.CodeAnalysis.Common": "[4.4.0, )"
         }
       }
     }

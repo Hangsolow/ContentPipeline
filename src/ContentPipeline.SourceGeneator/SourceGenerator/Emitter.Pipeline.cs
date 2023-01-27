@@ -16,7 +16,7 @@ namespace ContentPipeline.SourceGenerator
                 .Using("System.Collections.Generic")
                 .Using($"{SharedNamespace}.Interfaces")
                 .Using("EPiServer.Core")
-                .Namespace($"{SharedNamespace}.Pipelines.Steps")
+                .Namespace($"{SharedNamespace}.{contentClass.Group}.Pipelines.Steps")
                 .Class(
                     $"internal class {contentClass.Name}PipelineStep : IContentConverterPipelineStep<{contentClass.FullyQualifiedName}, {contentPipelineModelName}>")
                 .Tab()
