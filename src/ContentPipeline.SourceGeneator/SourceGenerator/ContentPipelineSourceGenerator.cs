@@ -18,9 +18,14 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             .Where(static c => c is not null);
 #pragma warning restore CS8619
 
-        IncrementalValueProvider<(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes)> compilationAndClasses = context.CompilationProvider.Combine(classDeclarations.Collect());
+        IncrementalValueProvider<(Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider config, (Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes) Right)> compilationAndClasses = context
+            .AnalyzerConfigOptionsProvider
+                .Combine(context
+                    .CompilationProvider
+                    .Combine(classDeclarations.Collect()));
+
         context.RegisterPostInitializationOutput(static callback => PostInitializationExecute(callback));
-        context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.compilation, source.classes, spc));
+        context.RegisterSourceOutput(compilationAndClasses, static (spc, settings) => Execute(settings.Right.compilation, settings.Right.classes, spc, settings.config));
     }
 
     
@@ -30,28 +35,32 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
     /// </summary>
     /// <param name="compilation"></param>
     /// <param name="classes"></param>
-    /// <param name="context"></param>
-    private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+    /// <param name="sourceProductionContext"></param>
+    private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext sourceProductionContext, Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider config)
     {
         if (classes.IsDefaultOrEmpty)
         {
             return;
         }
 
+        const string sharedNamespace = "ContentPipeline";
+        //var options = config.GetOptions(classes.First().SyntaxTree);
+        //options.TryGetValue("contentpipeline_namespace", out var sharedNamespace);
+
         Parser parser = new()
         {
             Compilation = compilation,
-            CancellationToken = context.CancellationToken,
-            ReportDiagnostic = context.ReportDiagnostic,
-            InterfaceNamespace = "ContentPipeline.Interfaces"
+            CancellationToken = sourceProductionContext.CancellationToken,
+            ReportDiagnostic = sourceProductionContext.ReportDiagnostic,
+            InterfaceNamespace = $"{sharedNamespace}.Interfaces"
         };
 
         var contentClasses = parser.GetContentClasses(classes);
 
         Emitter emitter = new()
         {
-            SharedNamespace = "ContentPipeline",
-            CancellationToken= context.CancellationToken,
+            SharedNamespace = sharedNamespace ,
+            CancellationToken= sourceProductionContext.CancellationToken,
         };
 
         foreach (var contentClass in contentClasses)
@@ -60,8 +69,8 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             var pipelineSource = emitter.GetPipeline(contentClass);
             var uniqueId = contentClass.Guid.Substring(0, 8);
 
-            context.AddSource($"{contentClass.Group}_{contentClass.Name}_ContentModel_{uniqueId}.g.cs", SourceText.From(contentModelSource, Encoding.UTF8));
-            context.AddSource($"{contentClass.Group}_{contentClass.Name}_Pipeline_{uniqueId}.g.cs", SourceText.From(pipelineSource, Encoding.UTF8));
+            sourceProductionContext.AddSource($"{contentClass.Group}_{contentClass.Name}_ContentModel_{uniqueId}.g.cs", SourceText.From(contentModelSource, Encoding.UTF8));
+            sourceProductionContext.AddSource($"{contentClass.Group}_{contentClass.Name}_Pipeline_{uniqueId}.g.cs", SourceText.From(pipelineSource, Encoding.UTF8));
         }
     }
 }

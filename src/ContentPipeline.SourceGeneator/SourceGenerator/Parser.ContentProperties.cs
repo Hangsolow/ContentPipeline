@@ -167,10 +167,10 @@ internal sealed partial class Parser
                 case "ContentPipelinePropertyConverterAttribute":
                     contentPipelinePropertyConverter = attribute;
                     break;
-                case ContentTypeAttribute:
+                case "ContentTypeAttribute":
                     contentType = attribute;
                     break;
-                case ContentPipelineModelAttribute:
+                case "ContentPipelineModelAttribute":
                     contentPipelineModel = attribute;
                     break;
 

@@ -25,4 +25,6 @@ public class ContentPage : PageData
     public virtual ContentReference? BlockLink { get; set; }
 
     public virtual IList<string>? ListOfStrings { get; set; }
+
+    public virtual ContentBlock? EmbeddedBlock { get; set; } 
 }

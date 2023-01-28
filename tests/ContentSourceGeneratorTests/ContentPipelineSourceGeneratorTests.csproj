@@ -27,4 +27,12 @@
 		<ProjectReference Include="..\..\src\ContentPipeline\ContentPipeline.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
+	</ItemGroup>
+
 </Project>

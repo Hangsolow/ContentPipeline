@@ -1,0 +1,13 @@
+
+# All files
+[*]
+indent_style = space
+
+# Xml files
+[*.xml]
+indent_size = 2
+
+# ContentPipeline Source Generator
+[*.cs]
+contentpipeline_namespace = ContentPipeline1
+

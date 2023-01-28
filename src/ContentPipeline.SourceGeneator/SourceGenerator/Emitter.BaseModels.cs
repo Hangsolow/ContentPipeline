@@ -20,7 +20,7 @@ namespace ContentPipeline.SourceGenerator
                 /// <summary>
                 /// The base class for all content pipeline models, it is partial in order to make it easy to add properties
                 /// </summary>
-                public abstract partial class ContentPipelineModel
+                public partial class ContentPipelineModel
                 {
                 }
             }
