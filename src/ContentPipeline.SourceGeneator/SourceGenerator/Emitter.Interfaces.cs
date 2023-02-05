@@ -55,7 +55,7 @@ internal sealed partial class Emitter
                 
                 using EPiServer.Core;
 
-                public partial interface IContentPropertyConverter<TProperty, out TValue>
+                public partial interface IContentPropertyConverter<TProperty, out TValue> : IContentPropertyConverter
                 {
                     TValue GetValue(TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext);
                 }

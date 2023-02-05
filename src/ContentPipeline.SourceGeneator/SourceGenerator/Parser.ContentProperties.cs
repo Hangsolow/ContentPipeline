@@ -75,15 +75,9 @@ internal sealed partial class Parser
             propertyType = string.Empty;
             if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: 1 })
             {
-                string postfix = contentPipelinePropertyConverter switch
-                {
-                    { ConstructorArguments: [{ Value: (byte)NullableAnnotation.Annotated } _] } => "?",
-                    _ => string.Empty
-                };
-
                 var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
                 var contentPropertyConverterInterface = converter.Interfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
-                propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() + postfix ?? string.Empty;
+                propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() ?? string.Empty;
             }
 
             return string.IsNullOrEmpty(propertyType) is false;

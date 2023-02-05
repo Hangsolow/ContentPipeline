@@ -32,7 +32,7 @@ namespace System.Runtime.CompilerServices
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
     internal sealed class CompilerFeatureRequiredAttribute : Attribute
     {
-        public CompilerFeatureRequiredAttribute(string featureName)
+        internal CompilerFeatureRequiredAttribute(string featureName)
         {
             FeatureName = featureName;
         }
