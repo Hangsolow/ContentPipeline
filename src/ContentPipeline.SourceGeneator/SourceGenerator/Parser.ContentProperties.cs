@@ -77,7 +77,7 @@ internal sealed partial class Parser
             {
                 string postfix = contentPipelinePropertyConverter switch
                 {
-                    { ConstructorArguments.Length: 1 } a when a.ConstructorArguments[0].Value is byte nullable && (byte)NullableAnnotation.Annotated == nullable => "?",
+                    { ConstructorArguments: [{ Value: (byte)NullableAnnotation.Annotated } _] } => "?",
                     _ => string.Empty
                 };
 
