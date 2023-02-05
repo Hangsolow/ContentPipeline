@@ -46,15 +46,14 @@ namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Tests.JsonCon
             };
             var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             options.Converters.Add(new ContentPipeline.JsonConverters.ContentPipelineModelJsonConverter());
-            options.WriteIndented = true;
             options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
   
             var json = JsonSerializer.Serialize(contentPageModel, options);
 
-            json.Should().Contain("\"title\": \"Title\"");
-            json.Should().Contain("\"link\": {\r\n      \"url\": \"/some/where\"\r\n    }");
-            json.Should().Contain("\"mediaLink\": {\r\n    \"url\": \"/test/image.jpg\",\r\n    \"type\": \"jpg\"\r\n  }");
-            json.Should().Contain("\"blockLink\": {\r\n    \"header\": \"Header1\",\r\n    \"text\": \"\\u003Cp\\u003ETest paragraph\\u003C/p\\u003E\",\r\n    \"link\": {\r\n      \"url\": \"/some/where\"\r\n    }\r\n  }");
+            json.Should().Contain("\"title\":\"Title\"");
+            json.Should().Contain("\"url\":{\"url\":\"/some/page\"}");
+            json.Should().Contain("\"mediaLink\":{\"url\":\"/test/image.jpg\",\"type\":\"jpg\"}");
+            json.Should().Contain("\"blockLink\":{\"header\":\"Header1\",\"text\":\"\\u003Cp\\u003ETest paragraph\\u003C/p\\u003E\",\"link\":{\"url\":\"/some/where\"}}");
         }
     }
 }
