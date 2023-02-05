@@ -7,28 +7,20 @@ internal sealed partial class Emitter
         CancellationToken.ThrowIfCancellationRequested();
 
         yield return new("IBlockConverter.g.cs", CreateInterface("IBlockConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
-        yield return new("IEmbeddedBlockConverter.g.cs",
-            CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?",
-                $"{SharedNamespace}.Models.ContentPipelineModel?"));
-        yield return new("IContentReferenceConverter.g.cs",
-            CreateInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?",
-                $"{SharedNamespace}.Properties.Link"));
-        yield return new("IContentAreaConverter.g.cs",
-            CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?",
-                $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
-        yield return new("ILinkConverter.g.cs",
-            CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Properties.Link?"));
-        yield return new("IMediaConverter.g.cs",
-            CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?",
-                $"{SharedNamespace}.Properties.Media?"));
-        yield return new("IXhtmlStringConverter.g.cs",
-            CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
+        yield return new("IEmbeddedBlockConverter.g.cs", CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
+        yield return new("IContentReferenceConverter.g.cs", CreateInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Link"));
+        yield return new("IContentAreaConverter.g.cs", CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
+        yield return new("ILinkConverter.g.cs", CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Properties.Link?"));
+        yield return new("IMediaConverter.g.cs", CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
+        yield return new("IXhtmlStringConverter.g.cs", CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
+        yield return new("IXhtmlRenderService.g.cs", CreateXhtmlRenderService());
 
-        yield return new("IContentPropertyConverter.g.cs", CreatePropertyConverterSource());
+        yield return new("IContentPropertyConverter.g.cs", CreateGenericPropertyConverterSource());
         yield return new("IContentPipelineContext.g.cs", CreatePipelineContextSource());
         yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
         yield return new("IContentPipelineService.g.cs", CreatePipelineService());
         yield return new("IContentPipeline.g.cs", CreateContentPipeline());
+        yield return new("IContentPipelineModel.g.cs", CreateContentPipelineModel());
 
         string CreateInterface(string name, string typeProperty, string typeValue)
         {
@@ -46,7 +38,7 @@ internal sealed partial class Emitter
                 """;
         }
 
-        string CreatePropertyConverterSource()
+        string CreateGenericPropertyConverterSource()
         {
             return
                 $$"""
@@ -54,6 +46,13 @@ internal sealed partial class Emitter
                 namespace {{SharedNamespace}}.Interfaces;
                 
                 using EPiServer.Core;
+
+                /// <summary>
+                /// Marker interface for the generic version
+                /// </summary>
+                public interface IContentPropertyConverter
+                {
+                }
 
                 public partial interface IContentPropertyConverter<TProperty, out TValue> : IContentPropertyConverter
                 {
@@ -70,10 +69,15 @@ internal sealed partial class Emitter
                 namespace {{SharedNamespace}}.Interfaces;
 
                 using Microsoft.AspNetCore.Http;
+                using System.Globalization;
 
                 public partial interface IContentPipelineContext
                 {
                     HttpContext HttpContext { get; }
+                    
+                    IContentPipelineService ContentPipelineService { get; }
+                    
+                    CultureInfo? Language { get; }
                 }
                 """;
         }
@@ -142,9 +146,10 @@ internal sealed partial class Emitter
 
         string CreateContentPipeline() =>
             $$"""
+            #nullable enable
             using EPiServer.Core;
 
-            namespace ContentPipeline.Interfaces;
+            namespace {{SharedNamespace}}.Interfaces;
 
             public interface IContentPipeline<TContent, TPipelineModel>
                 where TContent : IContentData
@@ -159,6 +164,42 @@ internal sealed partial class Emitter
                 TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext);
             }
             """;
-       
+
+        string CreateContentPipelineModel() =>
+            $$"""
+            #nullable enable
+            namespace {{SharedNamespace}}.Interfaces;
+
+            /// <summary>
+            /// Marker interface for content pipeline models
+            /// </summary>
+            public interface IContentPipelineModel
+            {
+
+            }
+            """;
+
+        string CreateXhtmlRenderService() =>
+            $$"""
+            #nullable enable
+            namespace {{SharedNamespace}}.Interfaces;
+
+            using EPiServer.Core;
+            using Microsoft.AspNetCore.Http;
+
+            public interface IXhtmlRenderService
+            {
+                /// <summary>
+                /// Render a XhtmlString to a string
+                /// </summary>
+                /// <param name="context"></param>
+                /// <param name="xhtmlString"></param>
+                /// <returns>An string containg the html from the xhtmlString field</returns>
+                string RenderXhtmlString(HttpContext? context, XhtmlString? xhtmlString);
+            }
+
+            """;
+
+
     }
 }

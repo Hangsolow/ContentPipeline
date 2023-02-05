@@ -18,7 +18,12 @@ namespace ContentPipeline.SourceGenerator
             };
 
             context.AddSource("ContentPipelineModel.g.cs", SourceText.From(emitter.GetBaseContentPipelineModel(), Encoding.UTF8));
-            var codeSources = emitter.GetPropertiesSourceFiles().Concat(emitter.GetInterfaceSources());
+            var codeSources = emitter
+                .GetPropertiesSourceFiles()
+                .Concat(emitter.GetInterfaceSources())
+                .Concat(emitter.GetAttributes())
+                .Concat(emitter.GetContentPropertyConverters());
+
             foreach (var codeSource in codeSources)
             {
                 context.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));

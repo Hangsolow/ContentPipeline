@@ -22,7 +22,7 @@ namespace ContentPipeline.SourceGenerator
                 .Tab()
                 .NewLine()
                 .Line(
-                    $"internal {contentClass.Name}PipelineStep({string.Join(",", converters.Select(p => $"{p.Type} {p.ShortName}"))})")
+                    $"public {contentClass.Name}PipelineStep({string.Join(",", converters.Select(p => $"{p.Type} {p.ShortName}"))})")
                 .CodeBlock(b => b
                     .Tab()
                     .Foreach(converters, (b, p) => b.Line($"this.{p.ShortName} = {p.ShortName};")))

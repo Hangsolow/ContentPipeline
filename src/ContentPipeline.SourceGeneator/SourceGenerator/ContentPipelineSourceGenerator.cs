@@ -62,12 +62,19 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             SharedNamespace = sharedNamespace ,
             CancellationToken= sourceProductionContext.CancellationToken,
         };
-        foreach (var codeSource in emitter.GetServiceCodeSources(contentClasses))
+
+        var codeSources = emitter
+            .GetServiceCodeSources(contentClasses)
+            .Concat(emitter.GetServiceRegistrations(contentClasses));
+
+        foreach (var codeSource in codeSources)
         {
             sourceProductionContext.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
         }
 
-        
+        var jsonConverter = emitter.GetJsonConverter(contentClasses);
+        sourceProductionContext.AddSource(jsonConverter.Name, SourceText.From(jsonConverter.Source, Encoding.UTF8));
+
         foreach (var contentClass in contentClasses)
         {
             var contentModelSource = emitter.GetContentModel(contentClass);

@@ -10,6 +10,7 @@ internal partial class Emitter
         yield return new CodeSource("BaseContentPipelineService.g.cs", CreateBasePipelineService());
         yield return new CodeSource("ContentPipelineService.g.cs", CreateContentPipelineService());
         yield return new CodeSource("DefaultContentPipeline.g.cs", CreateContentPipeline());
+        yield return new CodeSource("XhtmlRenderService.g.cs", CreateXhtmlRenderService());
 
         string CreatePipelineArgsSource() =>
             $$"""
@@ -68,7 +69,7 @@ internal partial class Emitter
                 .Class("public partial class ContentPipelineService : BaseContentPipelineService")
                 .Tab()
                 .NewLine()
-                .Line($"public ContentPipelineService(\n\t\t\t{string.Join(", \n\t\t\t", contentClasses.Select(c => $"IContentPipeline<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}> {GetContentPipelineName(c)}"))})")
+                .Line($"public ContentPipelineService({Environment.NewLine}\t\t\t{string.Join($", {Environment.NewLine}\t\t\t", contentClasses.Select(c => $"IContentPipeline<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}> {GetContentPipelineName(c)}"))})")
                 .CodeBlock(block => block.Tab().Foreach(contentClasses, 
                     (b, contentClass) => 
                     b.Line($"this.{GetContentPipelineName(contentClass)} = {GetContentPipelineName(contentClass)};")))
@@ -87,15 +88,17 @@ internal partial class Emitter
                         .Line($"_ => new {SharedNamespace}.Models.ContentPipelineModel()"))
                 .NewLine()
                 .Build();
-        string GetPipelineModelFullName(ContentClass contentClass) => $"{SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel";
+
         string GetContentPipelineName(ContentClass contentClass) => $"{contentClass.Group}{contentClass.Guid.Substring(0, 8)}{contentClass.Name}"; 
+        
         string CreateContentPipeline() =>
             $$"""
-            using ContentPipeline.Interfaces;
-            using ContentPipeline.Models;
-            using EPiServer.Core;
+            #nullable enable
+            namespace {{SharedNamespace}}.Services;
 
-            namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Services;
+            using {{SharedNamespace}}.Interfaces;
+            using {{SharedNamespace}}.Models;
+            using EPiServer.Core;
 
             internal class DefaultContentPipeline<TContent, TPipelineModel> : IContentPipeline<TContent, TPipelineModel> where TContent : IContentData where TPipelineModel : IContentPipelineModel, new()
             {
@@ -126,6 +129,77 @@ internal partial class Emitter
                     }
 
                     return pipelineModel;
+                }
+            }
+            """;
+
+        string CreateXhtmlRenderService() =>
+            $$"""
+            #nullable enable
+            namespace {{SharedNamespace}}.Services;
+
+            using {{SharedNamespace}}.Interfaces;
+            using EPiServer.Core;
+            using EPiServer.Web;
+            using EPiServer.Web.Mvc.Html;
+            using EPiServer.Web.Routing;
+            using Microsoft.AspNetCore.Http;
+            using Microsoft.AspNetCore.Mvc.Abstractions;
+            using Microsoft.AspNetCore.Mvc.Rendering;
+            using Microsoft.AspNetCore.Mvc.ViewFeatures;
+            using Microsoft.AspNetCore.Routing;
+            using Microsoft.Extensions.DependencyInjection;
+            using System;
+            using System.IO;
+
+            public class XhtmlRenderService : IXhtmlRenderService
+            {
+                private readonly ITempDataProvider _tempDataProvider;
+                private readonly IServiceProvider _serviceProvider;
+
+                public XhtmlRenderService(ITempDataProvider tempDataProvider, IServiceProvider serviceProvider)
+                {
+                    _tempDataProvider = tempDataProvider;
+                    _serviceProvider = serviceProvider;
+                }
+
+                public virtual string RenderXhtmlString(HttpContext? context, XhtmlString? xhtmlString)
+                {
+                    //we use the service provider here to ensure we always gets a fresh htmlhelper, eles we start getting wierd error when the sites comes under load
+                    var htmlHelper = _serviceProvider.GetService<IHtmlHelper>();
+                    if (context is null || xhtmlString is null)
+                    {
+                        return string.Empty;
+                    }
+
+                    using var stringWriter = new StringWriter();
+
+                    var viewContext = new ViewContext
+                    {
+                        HttpContext = context,
+                        Writer = stringWriter,
+                        RouteData = new RouteData(),
+                        TempData = new TempDataDictionary(context, _tempDataProvider),
+                        ActionDescriptor = new ActionDescriptor()
+                    };
+
+                    if (htmlHelper is IViewContextAware viewContextAware)
+                    {
+                        viewContextAware.Contextualize(viewContext);
+                    }
+
+                    var virtualPathArguments = new VirtualPathArguments
+                    {
+                        ContextMode = ContextMode.Default,
+                        ForceCanonical = true,
+                        ForceAbsolute = false,
+                        ValidateTemplate = false
+                    };
+
+                    htmlHelper.RenderXhtmlString(xhtmlString, virtualPathArguments);
+                    stringWriter.Flush();
+
+                    return stringWriter.ToString();
                 }
             }
             """;
