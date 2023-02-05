@@ -21,7 +21,7 @@ namespace ContentPipeline.SourceGenerator
                 .Tab()
                 //.Line($"[{SharedNamespace}.Attributes.GenerateTypescriptDefinition()]")
                 .Tab(-1)
-                .Class($"internal partial class {contentClass.Name}PipelineModel : {SharedNamespace}.Models.ContentPipelineModel")
+                .Class($"public partial class {contentClass.Name}PipelineModel : {SharedNamespace}.Models.ContentPipelineModel")
                 .Tab()
                 .Foreach(contentClass.ContentProperties, (pBuilder, prop) => pBuilder.Property(prop.Name, prop.TypeName, true))
                 .Build();

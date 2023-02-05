@@ -73,24 +73,17 @@ internal sealed partial class Parser
             Action<Diagnostic> reportDiagnostic, out string propertyType)
         {
             propertyType = string.Empty;
-            if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: >= 2 })
+            if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: 1 })
             {
-                // it is possible to get the return type from the converter
-                //var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
-                //var contentPropertyConverterInterface = converter.Interfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
-                // reportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("test", "test desc", "Interfaces: {0}", "Test", DiagnosticSeverity.Warning, true), null, contentPropertyConverterInterface?.TypeArguments[0].ToString()));
-                
                 string postfix = contentPipelinePropertyConverter switch
                 {
                     { ConstructorArguments.Length: 1 } a when a.ConstructorArguments[0].Value is byte nullable && (byte)NullableAnnotation.Annotated == nullable => "?",
                     _ => string.Empty
                 };
 
-                propertyType = contentPipelinePropertyConverter.AttributeClass switch
-                {
-                    { TypeArguments.Length: 2 } attributeClass => attributeClass.TypeArguments[1].ToString() + postfix ?? string.Empty,
-                    _ => string.Empty
-                };
+                var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
+                var contentPropertyConverterInterface = converter.Interfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
+                propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() + postfix ?? string.Empty;
             }
 
             return string.IsNullOrEmpty(propertyType) is false;
@@ -99,7 +92,7 @@ internal sealed partial class Parser
         static (string ConverterNamespace, string ConverterType) GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint, string interfaceNamespace)
         {
             //gets and returns the converter type from contentPipelinePropertyConverter attribute
-            if (contentPipelinePropertyConverter is { AttributeClass.TypeArguments.Length: >= 2 })
+            if (contentPipelinePropertyConverter is { AttributeClass.TypeArguments.Length: 1 })
             {
                 var value = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0].ToString();
 

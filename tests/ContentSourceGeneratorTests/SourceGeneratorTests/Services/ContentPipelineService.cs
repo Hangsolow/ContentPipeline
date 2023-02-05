@@ -1,23 +1,20 @@
-using System.Globalization;
 using ContentPipeline.Entities;
 using ContentPipeline.Interfaces;
 using EPiServer.Core;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
+using ContentPipeline.Models.Awesome;
 
 namespace ContentPipeline.Services;
 
 public partial class ContentPipelineService
 {
-    public ContentPipelineService(IServiceProvider serviceProvider)
-    {
-        ServiceProvider = serviceProvider;
-    }
-
-    private IServiceProvider ServiceProvider { get; }
     protected override TContentPipelineModel RunPipeline<TContent, TContentPipelineModel>(TContent content, IContentPipelineContext context)
     {
         
-        throw new NotImplementedException();
+        return new TContentPipelineModel();
     }
 
     public override IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext pipelineContext)

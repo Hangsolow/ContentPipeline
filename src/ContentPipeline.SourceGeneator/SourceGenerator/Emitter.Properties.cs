@@ -17,7 +17,7 @@ internal sealed partial class Emitter
                 #nullable enable
                 namespace {{SharedNamespace}}.Properties;
 
-                internal sealed partial class {{name}}
+                public sealed partial class {{name}}
                 {
 
                 }

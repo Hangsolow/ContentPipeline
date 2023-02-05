@@ -6,9 +6,7 @@ internal sealed partial class Emitter
     {
         CancellationToken.ThrowIfCancellationRequested();
 
-        yield return new("IBlockConverter.g.cs",
-            CreateInterface("IBlockConverter", "EPiServer.Core.ContentReference?",
-                $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
+        yield return new("IBlockConverter.g.cs", CreateInterface("IBlockConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
         yield return new("IEmbeddedBlockConverter.g.cs",
             CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?",
                 $"{SharedNamespace}.Models.ContentPipelineModel?"));
@@ -30,6 +28,7 @@ internal sealed partial class Emitter
         yield return new("IContentPipelineContext.g.cs", CreatePipelineContextSource());
         yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
         yield return new("IContentPipelineService.g.cs", CreatePipelineService());
+        yield return new("IContentPipeline.g.cs", CreateContentPipeline());
 
         string CreateInterface(string name, string typeProperty, string typeValue)
         {
@@ -140,5 +139,26 @@ internal sealed partial class Emitter
                 }
                 """;
         }
+
+        string CreateContentPipeline() =>
+            $$"""
+            using EPiServer.Core;
+
+            namespace ContentPipeline.Interfaces;
+
+            public interface IContentPipeline<TContent, TPipelineModel>
+                where TContent : IContentData
+                where TPipelineModel : IContentPipelineModel, new()
+            {
+                /// <summary>
+                /// Runs the pipeline for the content
+                /// </summary>
+                /// <param name="content"></param>
+                /// <param name="pipelineContext"></param>
+                /// <returns>The Content Pipeline Model</returns>
+                TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext);
+            }
+            """;
+       
     }
 }

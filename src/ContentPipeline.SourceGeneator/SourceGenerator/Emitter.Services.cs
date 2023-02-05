@@ -9,6 +9,7 @@ internal partial class Emitter
         yield return new CodeSource("PipelineArgs.g.cs", CreatePipelineArgsSource());
         yield return new CodeSource("BaseContentPipelineService.g.cs", CreateBasePipelineService());
         yield return new CodeSource("ContentPipelineService.g.cs", CreateContentPipelineService());
+        yield return new CodeSource("DefaultContentPipeline.g.cs", CreateContentPipeline());
 
         string CreatePipelineArgsSource() =>
             $$"""
@@ -67,6 +68,12 @@ internal partial class Emitter
                 .Class("public partial class ContentPipelineService : BaseContentPipelineService")
                 .Tab()
                 .NewLine()
+                .Line($"public ContentPipelineService(\n\t\t\t{string.Join(", \n\t\t\t", contentClasses.Select(c => $"IContentPipeline<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}> {GetContentPipelineName(c)}"))})")
+                .CodeBlock(block => block.Tab().Foreach(contentClasses, 
+                    (b, contentClass) => 
+                    b.Line($"this.{GetContentPipelineName(contentClass)} = {GetContentPipelineName(contentClass)};")))
+
+                .Foreach(contentClasses, (pBuilder, contentClass) => pBuilder.Property(GetContentPipelineName(contentClass), $"IContentPipeline<{contentClass.FullyQualifiedName}, {GetPipelineModelFullName(contentClass)}>", isPublic: false))
                 .Method(
                     $"protected override IContentPipelineModel RunPipelineForContent(IContentData content, IContentPipelineContext context)",
                     methodBuilder => methodBuilder
@@ -76,9 +83,51 @@ internal partial class Emitter
                         .Foreach(contentClasses,
                             (b, contentClass) =>
                                 b.Line(
-                                    $"{contentClass.FullyQualifiedName} castContent => RunPipeline<{contentClass.FullyQualifiedName}, {SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel>(castContent, context),"))
+                                    $"{contentClass.FullyQualifiedName} castContent => {GetContentPipelineName(contentClass)}.Run(castContent, context),"))
                         .Line($"_ => new {SharedNamespace}.Models.ContentPipelineModel()"))
                 .NewLine()
                 .Build();
+        string GetPipelineModelFullName(ContentClass contentClass) => $"{SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel";
+        string GetContentPipelineName(ContentClass contentClass) => $"{contentClass.Group}{contentClass.Guid.Substring(0, 8)}{contentClass.Name}"; 
+        string CreateContentPipeline() =>
+            $$"""
+            using ContentPipeline.Interfaces;
+            using ContentPipeline.Models;
+            using EPiServer.Core;
+
+            namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Services;
+
+            internal class DefaultContentPipeline<TContent, TPipelineModel> : IContentPipeline<TContent, TPipelineModel> where TContent : IContentData where TPipelineModel : IContentPipelineModel, new()
+            {
+                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContent, ContentPipelineModel>> sharedPipelineSteps)
+                {
+                    ContentPipelineSteps = contentPipelineSteps.OrderBy(ps => ps.Order);
+                    SharedPipelineSteps = sharedPipelineSteps.OrderBy(ps => ps.Order);
+                }
+
+                private IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> ContentPipelineSteps { get; }
+
+                private IEnumerable<IContentPipelineStep<IContent, ContentPipelineModel>> SharedPipelineSteps { get; }
+
+                public TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext)
+                {
+                    TPipelineModel pipelineModel = new();
+                    if (content is IContent contentModel && pipelineModel is ContentPipelineModel sharedPipelineModel)
+                    {
+                        foreach (var sharedPipelineStep in SharedPipelineSteps)
+                        {
+                            sharedPipelineStep.Execute(contentModel, sharedPipelineModel, pipelineContext);
+                        }
+                    }
+
+                    foreach (var step in ContentPipelineSteps)
+                    {
+                        step.Execute(content, pipelineModel, pipelineContext);
+                    }
+
+                    return pipelineModel;
+                }
+            }
+            """;
     }
 }

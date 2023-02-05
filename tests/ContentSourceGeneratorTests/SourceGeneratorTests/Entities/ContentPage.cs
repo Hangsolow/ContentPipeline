@@ -29,6 +29,6 @@ public class ContentPage : PageData
 
     public virtual ContentBlock? EmbeddedBlock { get; set; }
     
-    [ContentPipelinePropertyConverter<CustomConverter, bool>()]
+    [ContentPipelinePropertyConverter<CustomConverter>()]
     public virtual XhtmlString? CustomMapping { get; set; }
 }
