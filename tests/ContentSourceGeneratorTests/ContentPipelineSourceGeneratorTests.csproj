@@ -4,6 +4,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>ContentPipelineSourceGeneratorTests</RootNamespace>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -33,6 +34,10 @@
 
 	<ItemGroup>
 	  <None Include="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="SourceGeneratorTests\Tests" />
 	</ItemGroup>
 
 </Project>

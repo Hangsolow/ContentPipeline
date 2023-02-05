@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ContentPipeline.Attributes;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyConverters;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
@@ -26,5 +27,8 @@ public class ContentPage : PageData
 
     public virtual IList<string>? ListOfStrings { get; set; }
 
-    public virtual ContentBlock? EmbeddedBlock { get; set; } 
+    public virtual ContentBlock? EmbeddedBlock { get; set; }
+    
+    [ContentPipelinePropertyConverter<CustomConverter, bool>()]
+    public virtual XhtmlString? CustomMapping { get; set; }
 }

@@ -6,17 +6,30 @@ internal sealed partial class Emitter
     {
         CancellationToken.ThrowIfCancellationRequested();
 
-        yield return new("IBlockConverter.g.cs", CreateInterface("IBlockConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Models.ContentPipelineModel?"));
-        yield return new("IEmbeddedBlockConverter.g.cs", CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?", $"{SharedNamespace}.Models.ContentPipelineModel?"));
-        yield return new("IContentReferenceConverter.g.cs", CreateInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Link"));
-        yield return new("IContentAreaConverter.g.cs", CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
-        yield return new("ILinkConverter.g.cs", CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Properties.Link?"));
-        yield return new("IMediaConverter.g.cs", CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
-        yield return new("IXhtmlStringConverter.g.cs", CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
+        yield return new("IBlockConverter.g.cs",
+            CreateInterface("IBlockConverter", "EPiServer.Core.ContentReference?",
+                $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
+        yield return new("IEmbeddedBlockConverter.g.cs",
+            CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?",
+                $"{SharedNamespace}.Models.ContentPipelineModel?"));
+        yield return new("IContentReferenceConverter.g.cs",
+            CreateInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?",
+                $"{SharedNamespace}.Properties.Link"));
+        yield return new("IContentAreaConverter.g.cs",
+            CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?",
+                $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
+        yield return new("ILinkConverter.g.cs",
+            CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Properties.Link?"));
+        yield return new("IMediaConverter.g.cs",
+            CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?",
+                $"{SharedNamespace}.Properties.Media?"));
+        yield return new("IXhtmlStringConverter.g.cs",
+            CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
 
         yield return new("IContentPropertyConverter.g.cs", CreatePropertyConverterSource());
-        yield return new("IContentConverterPipelineContext.g.cs", CreateConverterPipelineContextSource());
-        yield return new("IContentConverterPipelineStep.g.cs", CreateConverterPipelineStep());
+        yield return new("IContentPipelineContext.g.cs", CreatePipelineContextSource());
+        yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
+        yield return new("IContentPipelineService.g.cs", CreatePipelineService());
 
         string CreateInterface(string name, string typeProperty, string typeValue)
         {
@@ -45,12 +58,12 @@ internal sealed partial class Emitter
 
                 public partial interface IContentPropertyConverter<TProperty, out TValue>
                 {
-                    TValue GetValue(TProperty property, IContentData content, string propertyName, IContentConverterPipelineContext pipelineContext);
+                    TValue GetValue(TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext);
                 }
                 """;
         }
 
-        string CreateConverterPipelineContextSource()
+        string CreatePipelineContextSource()
         {
             return
                 $$"""
@@ -59,14 +72,14 @@ internal sealed partial class Emitter
 
                 using Microsoft.AspNetCore.Http;
 
-                public partial interface IContentConverterPipelineContext
+                public partial interface IContentPipelineContext
                 {
                     HttpContext HttpContext { get; }
                 }
                 """;
         }
 
-        string CreateConverterPipelineStep()
+        string CreatePipelineStep()
         {
             return
                 $$"""
@@ -75,9 +88,9 @@ internal sealed partial class Emitter
                 
                 using EPiServer.Core;
 
-                public partial interface IContentConverterPipelineStep<in TContent, in TContentPipelineModel>
+                public partial interface IContentPipelineStep<in TContent, in TContentPipelineModel>
                     where TContent : IContentData
-                    where TContentPipelineModel : {{SharedNamespace}}.Models.ContentPipelineModel
+                    where TContentPipelineModel : {{SharedNamespace}}.Interfaces.IContentPipelineModel
                 {
                     /// <summary>
                     /// The order for the pipeline step, the sort order goes from low to high
@@ -90,11 +103,42 @@ internal sealed partial class Emitter
                     /// <param name="content"></param>
                     /// <param name="contentPipelineModel"></param>
                     /// <param name="pipelineContext"></param>
-                    void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentConverterPipelineContext pipelineContext);
+                    void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentPipelineContext pipelineContext);
+                }
+                """;
+        }
+
+        string CreatePipelineService()
+        {
+            return
+                $$"""
+                #nullable enable
+                namespace {{SharedNamespace}}.Interfaces;
+
+                using EPiServer.Core;
+                using {{SharedNamespace}}.Entities;
+
+                /// <summary>
+                /// service for running a pipeline for a given content
+                /// </summary>
+                public interface IContentPipelineService
+                {
+                    /// <summary>
+                    /// runs the pipeline for the given content
+                    /// </summary>
+                    /// <param name="content"></param>
+                    /// <param name="pipelineContext"></param>
+                    /// <returns></returns>
+                    IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext pipelineContext);
+    
+                    /// <summary>
+                    /// runs the pipeline for the given pipeline args
+                    /// </summary>
+                    /// <param name="pipelineArgs"></param>
+                    /// <returns></returns>
+                    IContentPipelineModel ExecutePipeline(PipelineArgs pipelineArgs);
                 }
                 """;
         }
     }
 }
-
-

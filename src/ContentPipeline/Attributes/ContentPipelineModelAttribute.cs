@@ -7,11 +7,11 @@ namespace ContentPipeline.Attributes;
 public sealed class ContentPipelineModelAttribute : Attribute
 {
     /// <summary>
-    /// the constructor for ContentApiModelAttribute
+    /// the constructor for ContentPipelineModelAttribute
     /// </summary>
     /// <param name="group"></param>
     /// <exception cref="ArgumentException">if group is null or empty</exception>
-    public ContentPipelineModelAttribute(string group = "common")
+    public ContentPipelineModelAttribute(string group = "Common")
     {
         if (string.IsNullOrEmpty(group))
         {

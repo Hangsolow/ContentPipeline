@@ -7,7 +7,6 @@ internal sealed partial class Parser
     private ContentClass GetContentClass(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel)
     {
         var (_, _, contentApiPropertyConverter, contentType, contentPipelineModel) = GetNamedAttributes(contentClassSymbol.GetAttributes());
-        var attribute = contentClassSymbol.GetAttributes().FirstOrDefault(ad => ad.AttributeClass?.Name == nameof(ContentPipelineModelAttribute));
         string guid = contentType?.NamedArguments.FirstOrDefault(a => a.Key == "GUID").Value.Value as string ?? Guid.NewGuid().ToString();
         string group = contentPipelineModel?.ConstructorArguments.FirstOrDefault().Value as string ?? "Common";
         

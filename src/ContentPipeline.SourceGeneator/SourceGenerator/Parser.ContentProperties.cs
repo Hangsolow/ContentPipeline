@@ -14,23 +14,22 @@ internal sealed partial class Parser
         var propertySymbols = contentClassSymbol.GetMembers()
             .Where(s => s.Kind == SymbolKind.Property && !s.ContainingNamespace.ToString().StartsWith("episerver", StringComparison.OrdinalIgnoreCase))
             .OfType<IPropertySymbol>();
-
+        
         foreach (var propertySymbol in propertySymbols)
         {
-            var contentProperty = GetContentProperty(propertySymbol, semanticModel, InterfaceNamespace);
+            var contentProperty = GetContentProperty(propertySymbol, ReportDiagnostic, InterfaceNamespace);
             if (contentProperty is not null)
             {
                 yield return contentProperty;
             }
         }
 
-        static ContentProperty? GetContentProperty(IPropertySymbol propertySymbol, SemanticModel semanticModel, string interfaceNamespace)
+        static ContentProperty? GetContentProperty(IPropertySymbol propertySymbol, Action<Diagnostic> reportDiagnostic, string interfaceNamespace)
         {
             if (propertySymbol.Type is not INamedTypeSymbol namedPropertySymbol)
             {
                 return null;
             }
-            
             
             var attributes = GetNamedAttributes(propertySymbol.GetAttributes());
 
@@ -43,20 +42,17 @@ internal sealed partial class Parser
 
             var (ConverterNamespace, ConverterType) = GetConverter(namedPropertySymbol, attributes.ContentPipelinePropertyConverter, uiHint, interfaceNamespace);
 
-            if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, out var propertyType))
+            if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var propertyType))
             {
                 return new(Name: propertySymbol.Name, TypeName: propertyType, ConverterType: ConverterType, ConverterNamespace: ConverterNamespace);
             }
-
-            var isEnumerable = namedPropertySymbol.SpecialType is not SpecialType.System_String && namedPropertySymbol.AllInterfaces.Any(s => s.Name == nameof(IEnumerable)) == true;
-
 
             return namedPropertySymbol switch
             {
                 //Mapping of ContentReference
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "mediafile" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "image" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 //Mapping of ContentAreas
                 { Name: "ContentArea", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentAreaPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
@@ -65,7 +61,7 @@ internal sealed partial class Parser
                 //mapping of urls
                 { Name: "Url", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("Link", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 //Mapping of inline blocks on a page
-                { Name: var typeName, BaseType: var baseType, NullableAnnotation: var nullableAnnotation } when string.IsNullOrEmpty(typeName) is false && IsContentBaseType(baseType) => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: var typeName, BaseType: var baseType, NullableAnnotation: var nullableAnnotation } when string.IsNullOrEmpty(typeName) is false && IsContentBaseType(baseType) => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 //Mapping of builtin types like string
                 { Name: var typeName } when string.IsNullOrEmpty(typeName) is false => new(Name: propertySymbol.Name, TypeName: namedPropertySymbol.ToString(), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
                 //fallback, should never be hit but compiler gonna compile 
@@ -73,18 +69,24 @@ internal sealed partial class Parser
             };
         }
 
-        static bool TryGetTypeFromAttribute(AttributeData? ContentPipelinePropertyConverter, out string propertyType)
+        static bool TryGetTypeFromAttribute(AttributeData? contentPipelinePropertyConverter,
+            Action<Diagnostic> reportDiagnostic, out string propertyType)
         {
             propertyType = string.Empty;
-            if (ContentPipelinePropertyConverter?.AttributeClass?.TypeParameters is not null)
+            if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: >= 2 })
             {
-                string postfix = ContentPipelinePropertyConverter switch
+                // it is possible to get the return type from the converter
+                //var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
+                //var contentPropertyConverterInterface = converter.Interfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
+                // reportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("test", "test desc", "Interfaces: {0}", "Test", DiagnosticSeverity.Warning, true), null, contentPropertyConverterInterface?.TypeArguments[0].ToString()));
+                
+                string postfix = contentPipelinePropertyConverter switch
                 {
                     { ConstructorArguments.Length: 1 } a when a.ConstructorArguments[0].Value is byte nullable && (byte)NullableAnnotation.Annotated == nullable => "?",
                     _ => string.Empty
                 };
 
-                propertyType = ContentPipelinePropertyConverter.AttributeClass switch
+                propertyType = contentPipelinePropertyConverter.AttributeClass switch
                 {
                     { TypeArguments.Length: 2 } attributeClass => attributeClass.TypeArguments[1].ToString() + postfix ?? string.Empty,
                     _ => string.Empty
@@ -94,12 +96,12 @@ internal sealed partial class Parser
             return string.IsNullOrEmpty(propertyType) is false;
         }
 
-        static (string ConverterNamespace, string ConverterType) GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? ContentPipelinePropertyConverter, string? uiHint, string interfaceNamespace)
+        static (string ConverterNamespace, string ConverterType) GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint, string interfaceNamespace)
         {
-            //gets and returns the convertertype from ContentPropertyConverter attribute
-            if (ContentPipelinePropertyConverter?.ConstructorArguments.Length >= 2)
+            //gets and returns the converter type from contentPipelinePropertyConverter attribute
+            if (contentPipelinePropertyConverter is { AttributeClass.TypeArguments.Length: >= 2 })
             {
-                var value = ContentPipelinePropertyConverter.ConstructorArguments[0].Value?.ToString();
+                var value = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0].ToString();
 
                 if (value is not null)
                 {

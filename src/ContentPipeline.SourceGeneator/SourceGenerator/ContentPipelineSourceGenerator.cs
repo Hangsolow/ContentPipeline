@@ -46,7 +46,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
         const string sharedNamespace = "ContentPipeline";
         //var options = config.GetOptions(classes.First().SyntaxTree);
         //options.TryGetValue("contentpipeline_namespace", out var sharedNamespace);
-
+        
         Parser parser = new()
         {
             Compilation = compilation,
@@ -62,7 +62,12 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             SharedNamespace = sharedNamespace ,
             CancellationToken= sourceProductionContext.CancellationToken,
         };
+        foreach (var codeSource in emitter.GetServiceCodeSources(contentClasses))
+        {
+            sourceProductionContext.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
+        }
 
+        
         foreach (var contentClass in contentClasses)
         {
             var contentModelSource = emitter.GetContentModel(contentClass);

@@ -7,7 +7,7 @@ namespace ContentPipeline.SourceGenerator
         internal string GetPipeline(ContentClass contentClass)
         {
             CancellationToken.ThrowIfCancellationRequested();
-            var contentPipelineModelName = $"{SharedNamespace}.Models.{contentClass.Name}PipelineModel";
+            var contentPipelineModelName = $"{SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel";
             var converters = GetConverters(contentClass.ContentProperties).Distinct().ToArray();
             
             return CSharpCodeBuilder.Create()
@@ -16,9 +16,9 @@ namespace ContentPipeline.SourceGenerator
                 .Using("System.Collections.Generic")
                 .Using($"{SharedNamespace}.Interfaces")
                 .Using("EPiServer.Core")
-                .Namespace($"{SharedNamespace}.{contentClass.Group}.Pipelines.Steps")
+                .Namespace($"{SharedNamespace}.Pipelines.{contentClass.Group}.Steps")
                 .Class(
-                    $"internal class {contentClass.Name}PipelineStep : IContentConverterPipelineStep<{contentClass.FullyQualifiedName}, {contentPipelineModelName}>")
+                    $"internal class {contentClass.Name}PipelineStep : IContentPipelineStep<{contentClass.FullyQualifiedName}, {contentPipelineModelName}>")
                 .Tab()
                 .NewLine()
                 .Line(
@@ -30,7 +30,7 @@ namespace ContentPipeline.SourceGenerator
                 .Line("public int Order => 1000;")
                 .NewLine()
                 .Method(
-                    $"public void Execute({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentConverterPipelineContext pipelineContext)",
+                    $"public void Execute({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentPipelineContext pipelineContext)",
                     methodBuilder => methodBuilder
                         .Tab()
                         .Foreach(contentClass.ContentProperties,
@@ -39,21 +39,12 @@ namespace ContentPipeline.SourceGenerator
                 .Build();
 
             static IEnumerable<(string Type, string ShortName)> GetConverters(
-                IReadOnlyList<ContentProperty> contentProperties)
+                IEnumerable<ContentProperty> contentProperties)
             {
                 foreach (var property in contentProperties.Where(p =>
                              !p.ConverterType.Equals("none", StringComparison.OrdinalIgnoreCase)))
                 {
-                    var type = property switch
-                    {
-                        //translate converter and interface namespace placeholders
-                        // { ConverterNamespace: ConverterNamespacePlaceholder } => $"{sharedNamespace}" + ".Converters." + property.ConverterType,
-                        // { ConverterNamespace: InterfaceNamespacePlaceholder } => $"{sharedNamespace}" + ".Interfaces." + property.ConverterType,
-                        //default fallback, just return the converter type (for converter types coming from attributes)
-                        var p => p.ConverterType
-                    };
-
-
+                    var type = property.ConverterType;
                     var shortName = GetShortName(type);
 
                     yield return (type, shortName);
