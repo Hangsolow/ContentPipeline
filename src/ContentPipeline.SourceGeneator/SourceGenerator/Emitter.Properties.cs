@@ -10,7 +10,7 @@ internal sealed partial class Emitter
 
         yield return new("Link.g.cs", CreateLink());
         yield return new("Media.g.cs", CreateMedia());
-        yield return new("CreateContentAreaItemPipelineModel.g.cs", CreateContentAreaItemPipelineModel());
+        yield return new("ContentAreaItemPipelineModel.g.cs", CreateContentAreaItemPipelineModel());
         yield return new("ContentAreaPipelineModel.g.cs", CreateContentAreaPipelineModel());
 
         string CreateLink() =>

@@ -26,7 +26,7 @@ namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Tests.Service
             var tempDataProvider = Substitute.For<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>();
 
             services
-                .AddGeneratedServices()
+                .AddContentPipelineServices()
                 .AddTransient<CustomConverter>()
                 .AddTransient(sl => contentLoader)
                 .AddTransient(sl => urlResolver)

@@ -41,8 +41,4 @@
 	  <None Include="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="SourceGeneratorTests\Interfaces\" />
-	</ItemGroup>
-
 </Project>

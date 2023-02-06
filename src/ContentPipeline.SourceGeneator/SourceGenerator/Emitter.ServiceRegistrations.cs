@@ -11,7 +11,7 @@ namespace ContentPipeline.SourceGenerator
         internal IEnumerable<CodeSource> GetServiceRegistrations(IEnumerable<ContentClass> contentClasses)
         {
             yield return new("PipelineStepServiceRegistrations.g.cs", CreatePipelineRegistrations(contentClasses));
-            yield return new(" ContentPipelineServiceRegistrations.g.cs", CreateServiceRegistrations());
+            yield return new("ContentPipelineServiceRegistrations.g.cs", CreateServiceRegistrations());
             
             string CreatePipelineRegistrations(IEnumerable<ContentClass> contentClasses) =>
                 CSharpCodeBuilder.Create()
@@ -21,7 +21,7 @@ namespace ContentPipeline.SourceGenerator
                 .Class("public static class PipelineStepsServiceCollectionExtensions")
                 .Tab()
                 .NewLine()
-                .Method("public static IServiceCollection AddGeneratedPipelineSteps(this IServiceCollection services)", methodBuilder => methodBuilder
+                .Method("public static IServiceCollection AddContentPipelineGeneratedSteps(this IServiceCollection services)", methodBuilder => methodBuilder
                     .Tab()
                     .Line("return services")
                     .Tab()
@@ -44,10 +44,10 @@ namespace ContentPipeline.SourceGenerator
 
                 public static class ContentPipelineServiceCollectionExtensions
                 {
-                    public static IServiceCollection AddGeneratedServices(this IServiceCollection services)
+                    public static IServiceCollection AddContentPipelineServices(this IServiceCollection services)
                     {
                         return services
-                            .AddGeneratedPipelineSteps()
+                            .AddContentPipelineGeneratedSteps()
                             .AddTransient<IXhtmlRenderService, XhtmlRenderService>()
                             .AddSingleton<IContentPipelineService, ContentPipelineService>()
                             .AddSingleton<IBlockConverter, BlockConverter>()

@@ -7,6 +7,7 @@ internal partial class Emitter
     internal IEnumerable<CodeSource> GetServiceCodeSources(IEnumerable<ContentClass> contentClasses)
     {
         yield return new CodeSource("PipelineArgs.g.cs", CreatePipelineArgsSource());
+        yield return new CodeSource("ContentPipelineContext.g.cs", CreateContentPipelineContext());
         yield return new CodeSource("BaseContentPipelineService.g.cs", CreateBasePipelineService());
         yield return new CodeSource("ContentPipelineService.g.cs", CreateContentPipelineService());
         yield return new CodeSource("DefaultContentPipeline.g.cs", CreateContentPipeline());
@@ -42,16 +43,11 @@ internal partial class Emitter
  
             public abstract partial class BaseContentPipelineService : IContentPipelineService
             {
-                protected abstract TContentPipelineModel RunPipeline<TContent, TContentPipelineModel>(TContent content, IContentPipelineContext context)
-                    where TContent : IContentData
-                    where TContentPipelineModel : IContentPipelineModel, new();
+                protected abstract IContentPipelineModel RunPipelineForContent(IContentData contentData, IContentPipelineContext pipelineContext);
 
-                protected abstract IContentPipelineModel RunPipelineForContent(IContentData contentData,
-                    IContentPipelineContext pipelineContext);
-
-                public abstract IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext pipelineContext);
+                public virtual IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext pipelineContext) => RunPipelineForContent(content, pipelineContext);
                 
-                public abstract IContentPipelineModel ExecutePipeline(PipelineArgs pipelineArgs);
+                public virtual IContentPipelineModel ExecutePipeline(PipelineArgs pipelineArgs) => RunPipelineForContent(pipelineArgs.Content, new ContentPipelineContext(pipelineArgs.HttpContext, pipelineArgs.Language, this));
             }
             """;
 
@@ -202,6 +198,19 @@ internal partial class Emitter
                     return stringWriter.ToString();
                 }
             }
+            """;
+
+        string CreateContentPipelineContext() =>
+            $$"""
+            #nullable enable
+            namespace {{SharedNamespace}}.Entities;
+
+            using System.Globalization;
+            using Microsoft.AspNetCore.Http;
+            using EPiServer.Core;
+            using {{SharedNamespace}}.Interfaces;
+
+            internal record ContentPipelineContext(HttpContext HttpContext, CultureInfo? Language, IContentPipelineService ContentPipelineService) : IContentPipelineContext;
             """;
     }
 }
