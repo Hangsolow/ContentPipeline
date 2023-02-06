@@ -38,11 +38,6 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
     /// <param name="sourceProductionContext"></param>
     private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext sourceProductionContext, Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider config)
     {
-        if (classes.IsDefaultOrEmpty)
-        {
-            return;
-        }
-
         const string sharedNamespace = "ContentPipeline";
         //var options = config.GetOptions(classes.First().SyntaxTree);
         //options.TryGetValue("contentpipeline_namespace", out var sharedNamespace);

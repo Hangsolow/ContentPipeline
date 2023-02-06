@@ -9,6 +9,7 @@
 		<LangVersion>11</LangVersion>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<RootNamespace>ContentPipeline</RootNamespace>
+		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 	
 	<!-- NuGet properties -->
