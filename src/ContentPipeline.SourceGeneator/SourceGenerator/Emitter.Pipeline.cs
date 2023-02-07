@@ -9,7 +9,7 @@ namespace ContentPipeline.SourceGenerator
             CancellationToken.ThrowIfCancellationRequested();
             var contentPipelineModelName = $"{SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel";
             var converters = GetConverters(contentClass.ContentProperties).Distinct().ToArray();
-            
+
             return CSharpCodeBuilder.Create()
                 .Line("#nullable enable")
                 .Using("System")
@@ -54,7 +54,13 @@ namespace ContentPipeline.SourceGenerator
             static string GetShortName(string type)
             {
                 var shortName = type;
-                var index = type.LastIndexOf('.');
+                if (shortName.Contains('<'))
+                {
+                    shortName = type
+                                    .Replace("<", "")
+                                    .Replace(">", "");
+                }
+                var index = shortName.LastIndexOf('.');
 
                 if (index > -1)
                 {
@@ -63,7 +69,7 @@ namespace ContentPipeline.SourceGenerator
 
                 return shortName;
             }
-            
+
             string GetConverter(ContentProperty property)
             {
                 if (property.ConverterType.Equals("none", StringComparison.OrdinalIgnoreCase))

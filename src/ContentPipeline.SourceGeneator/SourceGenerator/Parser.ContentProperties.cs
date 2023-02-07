@@ -40,32 +40,34 @@ internal sealed partial class Parser
 
             var uiHint = attributes.UiHint?.ConstructorArguments[0].Value as string;
 
-            var (ConverterNamespace, ConverterType) = GetConverter(namedPropertySymbol, attributes.ContentPipelinePropertyConverter, uiHint, interfaceNamespace);
+            var converterType = GetConverter(namedPropertySymbol, attributes.ContentPipelinePropertyConverter, uiHint);
 
             if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var propertyType))
             {
-                return new(Name: propertySymbol.Name, TypeName: propertyType, ConverterType: ConverterType, ConverterNamespace: ConverterNamespace);
+                return new(Name: propertySymbol.Name, TypeName: propertyType, ConverterType: converterType);
             }
 
             return namedPropertySymbol switch
             {
                 //Mapping of ContentReference
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "mediafile" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "image" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "mediafile" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: converterType),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "image" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: converterType),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: converterType),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: converterType),
                 //Mapping of ContentAreas
-                { Name: "ContentArea", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentAreaPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: "ContentArea", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentAreaPipelineModel", nullableAnnotation), ConverterType: converterType),
                 //Mapping of richtext properties
-                { Name: "XhtmlString", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName(nameof(String), nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: "XhtmlString", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName(nameof(String), nullableAnnotation), ConverterType: converterType),
                 //mapping of urls
-                { Name: "Url", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("Link", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: "Url", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("Link", nullableAnnotation), ConverterType: converterType),
+                //mapping of enums
+                { TypeKind: TypeKind.Enum } => new(Name: propertySymbol.Name, TypeName: "string?", ConverterType: converterType),
                 //Mapping of inline blocks on a page
-                { Name: var typeName, BaseType: var baseType, NullableAnnotation: var nullableAnnotation } when string.IsNullOrEmpty(typeName) is false && IsContentBaseType(baseType) => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: var typeName, BaseType: var baseType, NullableAnnotation: var nullableAnnotation } when string.IsNullOrEmpty(typeName) is false && IsContentBaseType(baseType) => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: converterType),
                 //Mapping of builtin types like string
-                { Name: var typeName } when string.IsNullOrEmpty(typeName) is false => new(Name: propertySymbol.Name, TypeName: namedPropertySymbol.ToString(), ConverterType: ConverterType, ConverterNamespace: ConverterNamespace),
+                { Name: var typeName } when string.IsNullOrEmpty(typeName) is false => new(Name: propertySymbol.Name, TypeName: namedPropertySymbol.ToString(), ConverterType: converterType),
                 //fallback, should never be hit but compiler gonna compile 
-                _ => new(Name: propertySymbol.Name, TypeName: nameof(Object) + "?", ConverterType: ConverterType, ConverterNamespace: ConverterNamespace)
+                _ => new(Name: propertySymbol.Name, TypeName: nameof(Object) + "?", ConverterType: converterType)
             };
         }
 
@@ -83,7 +85,7 @@ internal sealed partial class Parser
             return string.IsNullOrEmpty(propertyType) is false;
         }
 
-        static (string ConverterNamespace, string ConverterType) GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint, string interfaceNamespace)
+        static string GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint)
         {
             //gets and returns the converter type from contentPipelinePropertyConverter attribute
             if (contentPipelinePropertyConverter is { AttributeClass.TypeArguments.Length: 1 })
@@ -93,7 +95,7 @@ internal sealed partial class Parser
                 if (value is not null)
                 {
                     //converters from attributes does sets ConverterNamespace to empty. 
-                    return (string.Empty, value);
+                    return value;
                 }
             }
 
@@ -101,22 +103,23 @@ internal sealed partial class Parser
             return namedPropertySymbol switch
             {
                 //ContentReference gets special treatment as the ContentReference in itself is almost never what we want in the frontend as a consumer
-                { Name: "ContentReference" } when uiHint is "mediafile" => (interfaceNamespace, "IMediaConverter"),
-                { Name: "ContentReference" } when uiHint is "image" => (interfaceNamespace, "IMediaConverter"),
-                { Name: "ContentReference" } when uiHint is "block" => (interfaceNamespace, "IBlockConverter"),
-                { Name: "ContentReference" } => (interfaceNamespace, "IContentReferenceConverter"),
+                { Name: "ContentReference" } when uiHint is "mediafile" => "IMediaConverter",
+                { Name: "ContentReference" } when uiHint is "image" => "IMediaConverter",
+                { Name: "ContentReference" } when uiHint is "block" => "IBlockConverter",
+                { Name: "ContentReference" } => "IContentReferenceConverter",
 
-                { Name: "XhtmlString" } => (interfaceNamespace, "IXhtmlStringConverter"),
+                { Name: "XhtmlString" } => "IXhtmlStringConverter",
                 //ContentArea needs to be converted to a list of content area items
-                { Name: "ContentArea" } => (interfaceNamespace, "IContentAreaConverter"),
+                { Name: "ContentArea" } => "IContentAreaConverter",
                 //Url needs to be converted to a link object
-                { Name: "Url" } => (interfaceNamespace, "ILinkConverter"),
-
+                { Name: "Url" } => "ILinkConverter",
+                //mapping of enums
+                { TypeKind: TypeKind.Enum } => $"IEnumConverter<{namedPropertySymbol.ToString()}>",
                 //Mapping of inline blocks on a page
-                { BaseType: var baseType } when IsContentBaseType(baseType) => (interfaceNamespace, "IEmbeddedBlockConverter"),
+                { BaseType: var baseType } when IsContentBaseType(baseType) => "IEmbeddedBlockConverter",
 
                 //none in this context means just assign the value from the IContent to the ContentApiModel without a converter for types like string and bool
-                _ => (string.Empty, "None")
+                _ => "None"
             };
         }
 

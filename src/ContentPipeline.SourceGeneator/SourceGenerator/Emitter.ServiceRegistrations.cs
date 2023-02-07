@@ -57,6 +57,7 @@ namespace ContentPipeline.SourceGenerator
                             .AddSingleton<IXhtmlStringConverter, XhtmlStringConverter>()
                             .AddSingleton<IContentReferenceConverter, ContentReferenceConverter>()
                             .AddSingleton<IMediaConverter, MediaConverter>()
+                            .AddSingleton(typeof(IEnumConverter<>), typeof(EnumConverter<>))
                             .AddSingleton(typeof(IContentPipeline<,>), typeof(DefaultContentPipeline<,>))
                             ;
                     }

@@ -8,6 +8,7 @@ namespace ContentPipeline.SourceGenerator
     {
         internal IEnumerable<CodeSource> GetContentPropertyConverters()
         {
+            yield return new("EnumConverter.g.cs", CreateEnumConverter());
             yield return new("BlockPropertyConverter.g.cs", CreateBlockConverter());
             yield return new("ContentReferenceConverter.g.cs", CreateContentReferenceConverter());
             yield return new("InlineBlockConverter.g.cs", CreateInlineBlockConverter());
@@ -15,6 +16,24 @@ namespace ContentPipeline.SourceGenerator
             yield return new("MediaConverter.g.cs", CreateMediaConverter());
             yield return new("XhtmlStringConverter.g.cs", CreateXhtmlStringConverter());
             yield return new("ContentAreaConverter.g.cs", CreateContentAreaConverter());
+
+            string CreateEnumConverter() =>
+                $$"""
+                #nullable enable
+                namespace {{SharedNamespace}}.Converters;
+                
+                using {{SharedNamespace}}.Interfaces;
+                using EPiServer.Core;
+
+                public class EnumConverter<TEnum> : IEnumConverter<TEnum>
+                    where TEnum : Enum
+                {
+                    public string? GetValue(TEnum property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    {
+                        return property.ToString();
+                    }
+                }
+                """;
 
             string CreateBlockConverter() =>
                 $$"""

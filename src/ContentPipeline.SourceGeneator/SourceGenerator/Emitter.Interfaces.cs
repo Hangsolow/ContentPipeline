@@ -12,6 +12,7 @@ internal sealed partial class Emitter
         yield return new("IContentAreaConverter.g.cs", CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
         yield return new("ILinkConverter.g.cs", CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Properties.Link?"));
         yield return new("IMediaConverter.g.cs", CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
+        yield return new("IEnumConverter.g.cs", CreateEnumConverter());
         yield return new("IXhtmlStringConverter.g.cs", CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
         yield return new("IXhtmlRenderService.g.cs", CreateXhtmlRenderService());
 
@@ -37,6 +38,20 @@ internal sealed partial class Emitter
                 }
                 """;
         }
+
+        string CreateEnumConverter() =>
+                $$"""
+                #nullable enable
+                namespace {{SharedNamespace}}.Interfaces;
+
+                using EPiServer.Core;
+                
+                internal partial interface IEnumConverter<TEnum> : IContentPropertyConverter<TEnum, string?>
+                    where TEnum : Enum
+                {
+                
+                }
+                """;
 
         string CreateGenericPropertyConverterSource()
         {

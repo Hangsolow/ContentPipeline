@@ -1,4 +1,5 @@
 ﻿using ContentPipeline.Attributes;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Enums;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using System;
@@ -18,5 +19,7 @@ namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities
         public virtual XhtmlString? Text { get; set;}
 
         public virtual ContentReference? Link { get; set; }
+
+        public virtual ColorEnum Color { get; set; } 
     }
 }

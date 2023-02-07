@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using System.Globalization;
+using ContentPipeline.Converters;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Enums;
 
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Tests.ServiceCollectionTests
 {
@@ -36,7 +38,6 @@ namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Tests.Service
             var contentPipelineService = serviceProvider.GetRequiredService<IContentPipelineService>();
             
             contentPipelineService.Should().NotBeNull();
-
         }
     }
 }
