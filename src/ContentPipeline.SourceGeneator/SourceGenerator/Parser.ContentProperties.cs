@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -9,9 +10,9 @@ internal sealed partial class Parser
 {
     internal required string InterfaceNamespace { get; init; }
 
-    private IEnumerable<ContentProperty> GetContentProperties(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel)
+    private IEnumerable<ContentProperty> GetContentProperties(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration)
     {
-        var propertySymbols = contentClassSymbol.GetMembers()
+        var propertySymbols = semanticModel.LookupSymbols(classDeclaration.SpanStart, contentClassSymbol)
             .Where(s => s.Kind == SymbolKind.Property && !s.ContainingNamespace.ToString().StartsWith("episerver", StringComparison.OrdinalIgnoreCase))
             .OfType<IPropertySymbol>();
         

@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ContentPipeline.SourceGenerator;
@@ -36,7 +37,7 @@ internal sealed partial class Parser
 
                 if (contentClassSymbol is INamedTypeSymbol namedTypeSymbol)
                 {
-                    results.Add(GetContentClass(namedTypeSymbol, semanticModel));
+                    results.Add(GetContentClass(namedTypeSymbol, semanticModel, classDeclaration));
                 }
             }
         }
@@ -59,12 +60,11 @@ internal sealed partial class Parser
     internal static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
-
         foreach (var attributeListSyntax in classDeclarationSyntax.AttributeLists)
         {
             foreach (var attributeSyntax in attributeListSyntax.Attributes)
             {
-                if (attributeSyntax.Name.ToString() == ContentPipelineModelAttribute)
+                if (attributeSyntax.Name.ToString() == ContentTypeAttribute && HasContentPipelineAttribute(context, classDeclarationSyntax))
                 {
                     return classDeclarationSyntax;
                 }
@@ -73,5 +73,38 @@ internal sealed partial class Parser
         }
 
         return null;
+
+        static bool HasContentPipelineAttribute(GeneratorSyntaxContext context, ClassDeclarationSyntax classDeclarationSyntax)
+        {
+            foreach (var attributeListSyntax in classDeclarationSyntax.AttributeLists)
+            {
+                foreach (var attributeSyntax in attributeListSyntax.Attributes)
+                {
+                    if (attributeSyntax.Name.ToString() == ContentPipelineModelAttribute)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            //search for the Attribute in base classes
+            var type = context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax)?.BaseType;
+
+            while (type != null)
+            {
+                var attributes = type.GetAttributes();
+                foreach (var attribute in attributes)
+                {
+                    if (attribute.AttributeClass?.Name == "ContentPipelineModelAttribute")
+                    {
+                        return true;
+                    }
+                }
+
+                type = type.BaseType;
+            }
+
+            return false;
+        }
     }
 }
