@@ -55,7 +55,7 @@ namespace ContentPipeline.SourceGenerator
 
                     public IContentPipelineModel? GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
                     {
-                        if (ContentLoader.TryGet(property, pipelineContext.Language, out IContent blockContent))
+                        if (ContentLoader.TryGet(property, pipelineContext.Language, out IContentData blockContent))
                         {
                             return pipelineContext.ContentPipelineService.ExecutePipeline(blockContent, pipelineContext);
                         }

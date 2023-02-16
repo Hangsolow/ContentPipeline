@@ -8,6 +8,6 @@ public class CustomConverter : IContentPropertyConverter<XhtmlString?, bool>
     public bool GetValue(XhtmlString? property, IContentData content, string propertyName,
         IContentPipelineContext pipelineContext)
     {
-        return property?.IsEmpty ?? false;
+        return property?.IsEmpty is false;
     }
 }
