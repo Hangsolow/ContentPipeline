@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.JsonConverterTests;
 
+[Trait("JsonConverter", "")]
 public class JsonConverter_Given_Vaild_PipelineModel_Should
 {
     [AutoMock, Theory]

@@ -12,6 +12,7 @@ using ContentPipeline.Models.Common;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Models;
 
+[Trait("Models", "")]
 public class ContentPipelineModel_Given_ContentModel
 {
     [Theory]

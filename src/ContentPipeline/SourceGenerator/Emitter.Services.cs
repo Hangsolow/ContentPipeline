@@ -66,8 +66,8 @@ internal partial class Emitter
                 .Tab()
                 .NewLine()
                 .Line($"public ContentPipelineService({Environment.NewLine}\t\t\t{string.Join($", {Environment.NewLine}\t\t\t", contentClasses.Select(c => $"IContentPipeline<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}> {GetContentPipelineName(c)}"))})")
-                .CodeBlock(block => block.Tab().Foreach(contentClasses, 
-                    (b, contentClass) => 
+                .CodeBlock(block => block.Tab().Foreach(contentClasses,
+                    (b, contentClass) =>
                     b.Line($"this.{GetContentPipelineName(contentClass)} = {GetContentPipelineName(contentClass)};")))
 
                 .Foreach(contentClasses, (pBuilder, contentClass) => pBuilder.Property(GetContentPipelineName(contentClass), $"IContentPipeline<{contentClass.FullyQualifiedName}, {GetPipelineModelFullName(contentClass)}>", isPublic: false))
@@ -85,8 +85,8 @@ internal partial class Emitter
                 .NewLine()
                 .Build();
 
-        string GetContentPipelineName(ContentClass contentClass) => $"{contentClass.Group}{contentClass.Guid.Substring(0, 8)}{contentClass.Name}"; 
-        
+        string GetContentPipelineName(ContentClass contentClass) => $"{contentClass.Group}{contentClass.Guid.Substring(0, 8)}{contentClass.Name}";
+
         string CreateContentPipeline() =>
             $$"""
             #nullable enable

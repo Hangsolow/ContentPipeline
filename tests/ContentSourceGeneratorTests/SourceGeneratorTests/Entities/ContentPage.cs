@@ -18,17 +18,17 @@ public class ContentPage : PageData
 
     [ContentPipelineIgnore]
     public virtual ContentReference? Link { get; set; }
-    
+
     [UIHint(UIHint.Image)]
     public virtual ContentReference? MediaLink { get; set; }
-    
+
     [UIHint(UIHint.Block)]
     public virtual ContentReference? BlockLink { get; set; }
 
     public virtual IList<string>? ListOfStrings { get; set; }
 
     public virtual ContentBlock? EmbeddedBlock { get; set; }
-    
+
     [ContentPipelinePropertyConverter<CustomConverter>]
     public virtual XhtmlString? CustomMapping { get; set; }
 }

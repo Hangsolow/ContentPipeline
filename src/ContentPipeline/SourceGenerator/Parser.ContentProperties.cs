@@ -15,7 +15,7 @@ internal sealed partial class Parser
         var propertySymbols = semanticModel.LookupSymbols(classDeclaration.SpanStart, contentClassSymbol)
             .Where(s => s.Kind == SymbolKind.Property && !s.ContainingNamespace.ToString().StartsWith("episerver", StringComparison.OrdinalIgnoreCase))
             .OfType<IPropertySymbol>();
-        
+
         foreach (var propertySymbol in propertySymbols)
         {
             var contentProperty = GetContentProperty(propertySymbol, ReportDiagnostic, InterfaceNamespace);
@@ -31,7 +31,7 @@ internal sealed partial class Parser
             {
                 return null;
             }
-            
+
             var attributes = GetNamedAttributes(propertySymbol.GetAttributes());
 
             if (attributes.Ignore is not null)
@@ -124,7 +124,7 @@ internal sealed partial class Parser
             };
         }
 
-        
+
 
         static bool IsContentBaseType(INamedTypeSymbol? type) => type?.AllInterfaces.Any(i => i.Name.Equals("IContentData")) ?? false;
 
@@ -145,7 +145,7 @@ internal sealed partial class Parser
         AttributeData? contentPipelinePropertyConverter = null;
         AttributeData? contentType = null;
         AttributeData? contentPipelineModel = null;
-        
+
 
         foreach (var attribute in attributes)
         {

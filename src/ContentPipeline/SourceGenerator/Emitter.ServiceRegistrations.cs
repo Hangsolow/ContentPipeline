@@ -4,36 +4,36 @@ using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace ContentPipeline.SourceGenerator
+namespace ContentPipeline.SourceGenerator;
+
+internal partial class Emitter
 {
-    internal partial class Emitter
+    internal IEnumerable<CodeSource> GetServiceRegistrations(IEnumerable<ContentClass> contentClasses)
     {
-        internal IEnumerable<CodeSource> GetServiceRegistrations(IEnumerable<ContentClass> contentClasses)
-        {
-            yield return new("PipelineStepServiceRegistrations.g.cs", CreatePipelineRegistrations(contentClasses));
-            yield return new("ContentPipelineServiceRegistrations.g.cs", CreateServiceRegistrations());
-            
-            string CreatePipelineRegistrations(IEnumerable<ContentClass> contentClasses) =>
-                CSharpCodeBuilder.Create()
-                .Line("#nullable enable")
-                .Using("Microsoft.Extensions.DependencyInjection")
-                .Namespace($"{SharedNamespace}.ServiceCollectionExtensions")
-                .Class("public static class PipelineStepsServiceCollectionExtensions")
+        yield return new("PipelineStepServiceRegistrations.g.cs", CreatePipelineRegistrations(contentClasses));
+        yield return new("ContentPipelineServiceRegistrations.g.cs", CreateServiceRegistrations());
+
+        string CreatePipelineRegistrations(IEnumerable<ContentClass> contentClasses) =>
+            CSharpCodeBuilder.Create()
+            .Line("#nullable enable")
+            .Using("Microsoft.Extensions.DependencyInjection")
+            .Namespace($"{SharedNamespace}.ServiceCollectionExtensions")
+            .Class("public static class PipelineStepsServiceCollectionExtensions")
+            .Tab()
+            .NewLine()
+            .Method("public static IServiceCollection AddContentPipelineGeneratedSteps(this IServiceCollection services)", methodBuilder => methodBuilder
                 .Tab()
-                .NewLine()
-                .Method("public static IServiceCollection AddContentPipelineGeneratedSteps(this IServiceCollection services)", methodBuilder => methodBuilder
-                    .Tab()
-                    .Line("return services")
-                    .Tab()
-                    .Foreach(contentClasses, (b, c) => b.Line($".AddSingleton<{SharedNamespace}.Interfaces.IContentPipelineStep<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}>, {GetPipelineStepFullName(c)}>()"))
-                    .Line(";"))
-                .Build();
+                .Line("return services")
+                .Tab()
+                .Foreach(contentClasses, (b, c) => b.Line($".AddSingleton<{SharedNamespace}.Interfaces.IContentPipelineStep<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}>, {GetPipelineStepFullName(c)}>()"))
+                .Line(";"))
+            .Build();
 
 
-            string GetPipelineStepFullName(ContentClass contentClass) => $"{SharedNamespace}.Pipelines.{contentClass.Group}.Steps.{contentClass.Name}PipelineStep";
+        string GetPipelineStepFullName(ContentClass contentClass) => $"{SharedNamespace}.Pipelines.{contentClass.Group}.Steps.{contentClass.Name}PipelineStep";
 
-            string CreateServiceRegistrations() =>
-                $$"""
+        string CreateServiceRegistrations() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.ServiceCollectionExtensions;
 
@@ -63,6 +63,5 @@ namespace ContentPipeline.SourceGenerator
                     }
                 }
                 """;
-        }
     }
 }

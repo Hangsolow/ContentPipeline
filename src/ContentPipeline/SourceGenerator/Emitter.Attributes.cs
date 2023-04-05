@@ -3,18 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ContentPipeline.SourceGenerator
-{
-    internal sealed partial class Emitter
-    {
-        internal IEnumerable<CodeSource> GetAttributes()
-        {
-            yield return new("ContentPipelineIgnoreAttribute.g.cs", CreateContentPipelineIgnoreAttribute());
-            yield return new("ContentPipelineModelAttribute.g.cs", CreateContentPipelineModelAttribute());
-            yield return new("ContentPipelinePropertyConverterAttribute.g.cs", CreateContentPipelinePropertyConverterAttribute());
+namespace ContentPipeline.SourceGenerator;
 
-            string CreateContentPipelineIgnoreAttribute() =>
-                $$"""
+internal sealed partial class Emitter
+{
+    internal IEnumerable<CodeSource> GetAttributes()
+    {
+        yield return new("ContentPipelineIgnoreAttribute.g.cs", CreateContentPipelineIgnoreAttribute());
+        yield return new("ContentPipelineModelAttribute.g.cs", CreateContentPipelineModelAttribute());
+        yield return new("ContentPipelinePropertyConverterAttribute.g.cs", CreateContentPipelinePropertyConverterAttribute());
+
+        string CreateContentPipelineIgnoreAttribute() =>
+            $$"""
                 namespace {{SharedNamespace}}.Attributes;
 
                 [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
@@ -24,8 +24,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateContentPipelineModelAttribute() =>
-                $$"""
+        string CreateContentPipelineModelAttribute() =>
+            $$"""
                 namespace {{SharedNamespace}}.Attributes;
 
                 /// <summary>
@@ -53,8 +53,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateContentPipelinePropertyConverterAttribute() =>
-                $$"""
+        string CreateContentPipelinePropertyConverterAttribute() =>
+            $$"""
                 namespace {{SharedNamespace}}.Attributes;
 
                 using {{SharedNamespace}}.Interfaces;
@@ -70,7 +70,5 @@ namespace ContentPipeline.SourceGenerator
                     public Type ConverterType { get; }
                 }
                 """;
-        }
     }
-        
 }

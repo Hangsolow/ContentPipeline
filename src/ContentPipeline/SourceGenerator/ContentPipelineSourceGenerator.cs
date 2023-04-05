@@ -5,18 +5,17 @@ using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace ContentPipeline.SourceGenerator;
+namespace ContentPipeline;
 
 [Generator]
 internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-#pragma warning disable CS8619 // the where statement ensures ClassDeclarationSyntax is not null but the compiler can't see that.
+
         IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(static (s, _) => Parser.IsSyntaxTargetForGeneration(s), static (ctx, _) => Parser.GetSemanticTargetForGeneration(ctx))
-            .Where(static c => c is not null);
-#pragma warning restore CS8619
+            .Where(static c => c is not null)!;
 
         IncrementalValueProvider<(Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider config, (Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes) Right)> compilationAndClasses = context
             .AnalyzerConfigOptionsProvider
@@ -28,7 +27,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
         context.RegisterSourceOutput(compilationAndClasses, static (spc, settings) => Execute(settings.Right.compilation, settings.Right.classes, spc, settings.config));
     }
 
-    
+
 
     /// <summary>
     /// This is where the heavy work should be
@@ -41,7 +40,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
         const string sharedNamespace = "ContentPipeline";
         //var options = config.GetOptions(classes.First().SyntaxTree);
         //options.TryGetValue("contentpipeline_namespace", out var sharedNamespace);
-        
+
         Parser parser = new()
         {
             Compilation = compilation,
@@ -54,8 +53,8 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
 
         Emitter emitter = new()
         {
-            SharedNamespace = sharedNamespace ,
-            CancellationToken= sourceProductionContext.CancellationToken,
+            SharedNamespace = sharedNamespace,
+            CancellationToken = sourceProductionContext.CancellationToken,
         };
 
         var codeSources = emitter

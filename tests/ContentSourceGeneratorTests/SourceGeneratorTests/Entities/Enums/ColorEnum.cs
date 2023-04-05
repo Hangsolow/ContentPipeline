@@ -1,5 +1,5 @@
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Enums;
-public enum ColorEnum 
+public enum ColorEnum
 {
     None = 0,
     Red = 1,

@@ -19,6 +19,7 @@ using ContentPipelineSourceGeneratorTests.Utils;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.ServiceCollectionTests;
 
+[Trait("Pipelines", "")]
 public class ContentPipelineServiceCollectionExtensionsTests
 {
     [AutoMock, Theory]

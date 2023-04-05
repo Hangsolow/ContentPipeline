@@ -3,17 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ContentPipeline.SourceGenerator
-{
+namespace ContentPipeline.SourceGenerator;
 
-    /// <summary>
-    /// The base class for all content pipeline models, it is partial in order to make it easy to add properties
-    /// </summary>
-    internal sealed partial class Emitter
+
+/// <summary>
+/// The base class for all content pipeline models, it is partial in order to make it easy to add properties
+/// </summary>
+internal sealed partial class Emitter
+{
+    internal string GetBaseContentPipelineModel()
     {
-        internal string GetBaseContentPipelineModel()
-        {
-            return $$"""
+        return $$"""
             #nullable enable
             using {{SharedNamespace}}.Interfaces;  
             namespace {{SharedNamespace}}.Models;
@@ -26,6 +26,5 @@ namespace ContentPipeline.SourceGenerator
             }
             
             """;
-        }
     }
 }

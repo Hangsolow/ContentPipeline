@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ContentPipeline.SourceGenerator
-{
-    internal partial class Emitter
-    {
-        internal IEnumerable<CodeSource> GetContentPropertyConverters()
-        {
-            yield return new("EnumConverter.g.cs", CreateEnumConverter());
-            yield return new("BlockPropertyConverter.g.cs", CreateBlockConverter());
-            yield return new("ContentReferenceConverter.g.cs", CreateContentReferenceConverter());
-            yield return new("InlineBlockConverter.g.cs", CreateInlineBlockConverter());
-            yield return new("LinkConverter.g.cs", CreateLinkConverter());
-            yield return new("MediaConverter.g.cs", CreateMediaConverter());
-            yield return new("XhtmlStringConverter.g.cs", CreateXhtmlStringConverter());
-            yield return new("ContentAreaConverter.g.cs", CreateContentAreaConverter());
+namespace ContentPipeline.SourceGenerator;
 
-            string CreateEnumConverter() =>
-                $$"""
+internal partial class Emitter
+{
+    internal IEnumerable<CodeSource> GetContentPropertyConverters()
+    {
+        yield return new("EnumConverter.g.cs", CreateEnumConverter());
+        yield return new("BlockPropertyConverter.g.cs", CreateBlockConverter());
+        yield return new("ContentReferenceConverter.g.cs", CreateContentReferenceConverter());
+        yield return new("InlineBlockConverter.g.cs", CreateInlineBlockConverter());
+        yield return new("LinkConverter.g.cs", CreateLinkConverter());
+        yield return new("MediaConverter.g.cs", CreateMediaConverter());
+        yield return new("XhtmlStringConverter.g.cs", CreateXhtmlStringConverter());
+        yield return new("ContentAreaConverter.g.cs", CreateContentAreaConverter());
+
+        string CreateEnumConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -35,8 +35,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateBlockConverter() =>
-                $$"""
+        string CreateBlockConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -65,8 +65,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateContentReferenceConverter() =>
-                $$"""
+        string CreateContentReferenceConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -97,8 +97,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateInlineBlockConverter() =>
-                $$"""
+        string CreateInlineBlockConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -121,8 +121,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateLinkConverter() =>
-                $$"""
+        string CreateLinkConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -175,8 +175,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateMediaConverter() =>
-                $$"""
+        string CreateMediaConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -218,8 +218,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateXhtmlStringConverter() =>
-                $$"""
+        string CreateXhtmlStringConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
                 
@@ -243,8 +243,8 @@ namespace ContentPipeline.SourceGenerator
                 }
                 """;
 
-            string CreateContentAreaConverter() =>
-                $$"""
+        string CreateContentAreaConverter() =>
+            $$"""
                 #nullable enable
                 namespace {{SharedNamespace}}.Converters;
 
@@ -295,6 +295,5 @@ namespace ContentPipeline.SourceGenerator
                     }
                 }
                 """;
-        }
     }
 }
