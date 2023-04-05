@@ -355,5 +355,8 @@ MigrationBackup/
 #Rider
 .idea/
 
+#VS Code
+.vscode/
+
 # CMS
 modules/
