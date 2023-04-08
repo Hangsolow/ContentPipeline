@@ -35,9 +35,11 @@ public class ContentPipeline_Given_Vaild_Content
         {
             Title = contentPageTestData.Title,
             Url = new Url($"/{contentPageTestData.Url}"),
+            IgnoreLink = new EPiServer.Core.ContentReference(contentPageTestData.IgnoreLinkId),
             Link = new EPiServer.Core.ContentReference(contentPageTestData.LinkId),
             MediaLink = new EPiServer.Core.ContentReference(contentPageTestData.MediaLinkId),
             BlockLink = new EPiServer.Core.ContentReference(contentPageTestData.BlockLinkId),
+            LinkToPage = new PageReference(contentPageTestData.PageLinkId),
             ListOfStrings = contentPageTestData.List,
             CustomMapping = new EPiServer.Core.XhtmlString("Text String")
         };
@@ -53,8 +55,8 @@ public class ContentPipeline_Given_Vaild_Content
             .AddTransient(sl => htmlHelper)
             ;
 
-
-
+        urlResolver.GetUrl(contentPage.Link, null, null).Returns($"/link/{contentPageTestData.LinkId}");
+        urlResolver.GetUrl(contentPage.LinkToPage, null, null).Returns($"/link/{contentPageTestData.PageLinkId}");
         urlResolver.GetUrl(contentPage.MediaLink, null, null).Returns($"/link/{contentPageTestData.MediaLinkId}");
         var imageContent = new Jpg
         {
@@ -101,6 +103,8 @@ public class ContentPipeline_Given_Vaild_Content
         contentModel.Title.Should().Be(contentPageTestData.Title);
         contentModel.ListOfStrings.Should().BeEquivalentTo(contentModel.ListOfStrings);
         contentModel.Url?.Url.Should().Be($"/{contentPageTestData.Url}");
+        contentModel.Link?.Url.Should().Be($"/link/{contentPageTestData.LinkId}");
+        contentModel.LinkToPage?.Url.Should().Be($"/link/{contentPageTestData.PageLinkId}");
         contentModel.CustomMapping.Should().BeTrue();
         contentModel.MediaLink?.Type.Should().Be(nameof(Jpg));
         contentModel.MediaLink?.Url.Should().Be($"/link/{contentPageTestData.MediaLinkId}");
@@ -117,5 +121,5 @@ public class ContentPipeline_Given_Vaild_Content
     }
 
     protected record TestData(IContentLoader ContentLoader, IUrlResolver UrlResolver, ITempDataProvider TempDataProvider, IHtmlHelper HtmlHelper);
-    protected record ContentPageTestData(string Title, string Url, int LinkId, int MediaLinkId, int BlockLinkId, List<string> List);
+    protected record ContentPageTestData(string Title, string Url, int IgnoreLinkId, int LinkId, int PageLinkId, int MediaLinkId, int BlockLinkId, List<string> List);
 }

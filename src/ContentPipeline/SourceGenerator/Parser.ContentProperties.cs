@@ -55,6 +55,7 @@ internal sealed partial class Parser
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "image" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: converterType),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: converterType),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: converterType),
+                { Name: "PageReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: converterType),
                 //Mapping of ContentAreas
                 { Name: "ContentArea", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentAreaPipelineModel", nullableAnnotation), ConverterType: converterType),
                 //Mapping of richtext properties
@@ -108,6 +109,7 @@ internal sealed partial class Parser
                 { Name: "ContentReference" } when uiHint is "image" => "IMediaConverter",
                 { Name: "ContentReference" } when uiHint is "block" => "IBlockConverter",
                 { Name: "ContentReference" } => "IContentReferenceConverter",
+                { Name: "PageReference" } => "IContentReferenceConverter",
 
                 { Name: "XhtmlString" } => "IXhtmlStringConverter",
                 //ContentArea needs to be converted to a list of content area items

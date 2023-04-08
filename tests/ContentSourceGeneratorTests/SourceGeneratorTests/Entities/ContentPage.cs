@@ -17,7 +17,7 @@ public class ContentPage : PageData
     public virtual Url? Url { get; set; }
 
     [ContentPipelineIgnore]
-    public virtual ContentReference? Link { get; set; }
+    public virtual ContentReference? IgnoreLink { get; set; }
 
     [UIHint(UIHint.Image)]
     public virtual ContentReference? MediaLink { get; set; }
@@ -26,6 +26,10 @@ public class ContentPage : PageData
     public virtual ContentReference? BlockLink { get; set; }
 
     public virtual IList<string>? ListOfStrings { get; set; }
+
+    public virtual PageReference? LinkToPage { get; set; }
+
+    public virtual ContentReference? Link { get; set; }
 
     public virtual ContentBlock? EmbeddedBlock { get; set; }
 

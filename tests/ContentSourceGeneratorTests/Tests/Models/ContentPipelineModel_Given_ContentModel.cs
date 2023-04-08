@@ -18,6 +18,7 @@ public class ContentPipelineModel_Given_ContentModel
     [Theory]
     [InlineData(typeof(ContentPagePipelineModel), typeof(string), "Title")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(Link), "Url")]
+    [InlineData(typeof(ContentPagePipelineModel), typeof(Link), "LinkToPage")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(Media), "MediaLink")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(IContentPipelineModel), "BlockLink")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(IList<string>), "ListOfStrings")]
