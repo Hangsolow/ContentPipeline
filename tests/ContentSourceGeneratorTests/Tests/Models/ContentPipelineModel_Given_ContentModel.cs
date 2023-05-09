@@ -1,14 +1,8 @@
-﻿using ContentPipeline.Models;
+﻿using ContentPipeline.Interfaces;
 using ContentPipeline.Models.Awesome;
-using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ContentPipeline.Interfaces;
-using ContentPipeline.Properties;
 using ContentPipeline.Models.Common;
+using ContentPipeline.Properties;
+using FluentAssertions;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Models;
 
@@ -17,8 +11,8 @@ public class ContentPipelineModel_Given_ContentModel
 {
     [Theory]
     [InlineData(typeof(ContentPagePipelineModel), typeof(string), "Title")]
-    [InlineData(typeof(ContentPagePipelineModel), typeof(Link), "Url")]
-    [InlineData(typeof(ContentPagePipelineModel), typeof(Link), "LinkToPage")]
+    [InlineData(typeof(ContentPagePipelineModel), typeof(ILinkPipelineModel), "Url")]
+    [InlineData(typeof(ContentPagePipelineModel), typeof(ILinkPipelineModel), "LinkToPage")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(Media), "MediaLink")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(IContentPipelineModel), "BlockLink")]
     [InlineData(typeof(ContentPagePipelineModel), typeof(IList<string>), "ListOfStrings")]
@@ -26,7 +20,7 @@ public class ContentPipelineModel_Given_ContentModel
     [InlineData(typeof(ContentPagePipelineModel), typeof(bool), "CustomMapping")]
     [InlineData(typeof(ContentBlockPipelineModel), typeof(string), "Header")]
     [InlineData(typeof(ContentBlockPipelineModel), typeof(string), "Text")]
-    [InlineData(typeof(ContentBlockPipelineModel), typeof(Link), "Link")]
+    [InlineData(typeof(ContentBlockPipelineModel), typeof(ILinkPipelineModel), "Link")]
     [InlineData(typeof(ContentBlockPipelineModel), typeof(string), "Color")]
     [InlineData(typeof(JpgPipelineModel), typeof(string), "Title")]
     [InlineData(typeof(JpgPipelineModel), typeof(string), "Copyright")]

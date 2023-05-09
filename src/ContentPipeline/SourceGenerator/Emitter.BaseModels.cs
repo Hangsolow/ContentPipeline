@@ -1,9 +1,4 @@
-﻿using ContentPipeline.CodeBuilders;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ContentPipeline.SourceGenerator;
+﻿namespace ContentPipeline.SourceGenerator;
 
 
 /// <summary>

@@ -10,7 +10,7 @@ internal sealed partial class Emitter
         yield return new("IEmbeddedBlockConverter.g.cs", CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
         yield return new("IContentReferenceConverter.g.cs", CreateInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Link"));
         yield return new("IContentAreaConverter.g.cs", CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
-        yield return new("ILinkConverter.g.cs", CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Properties.Link?"));
+        yield return new("ILinkConverter.g.cs", CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Interfaces.ILinkPipelineModel?"));
         yield return new("IMediaConverter.g.cs", CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
         yield return new("IEnumConverter.g.cs", CreateEnumConverter());
         yield return new("IXhtmlStringConverter.g.cs", CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
@@ -22,6 +22,7 @@ internal sealed partial class Emitter
         yield return new("IContentPipelineService.g.cs", CreatePipelineService());
         yield return new("IContentPipeline.g.cs", CreateContentPipeline());
         yield return new("IContentPipelineModel.g.cs", CreateContentPipelineModel());
+        yield return new("ILinkPipelineModel.g.cs", CreateLinkPipelineModel());
 
         string CreateInterface(string name, string typeProperty, string typeValue)
         {
@@ -189,6 +190,20 @@ internal sealed partial class Emitter
             /// Marker interface for content pipeline models
             /// </summary>
             public interface IContentPipelineModel
+            {
+
+            }
+            """;
+
+        string CreateLinkPipelineModel() =>
+            $$"""
+            #nullable enable
+            namespace {{SharedNamespace}}.Interfaces;
+
+            /// <summary>
+            /// Marker interface for Link pipeline models
+            /// </summary>
+            public interface ILinkPipelineModel
             {
 
             }

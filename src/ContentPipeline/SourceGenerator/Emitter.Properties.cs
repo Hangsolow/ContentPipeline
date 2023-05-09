@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace ContentPipeline.SourceGenerator;
+﻿namespace ContentPipeline.SourceGenerator;
 
 internal sealed partial class Emitter
 {
@@ -18,7 +16,7 @@ internal sealed partial class Emitter
             #nullable enable
             namespace {{SharedNamespace}}.Properties;
             
-            public sealed partial class Link
+            public sealed partial class Link : {{SharedNamespace}}.Interfaces.ILinkPipelineModel
             {
                 public string? Url { get; set; }
             }

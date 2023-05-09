@@ -1,8 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections;
 using System.Collections.Immutable;
-using System.Diagnostics;
 
 namespace ContentPipeline.SourceGenerator;
 
@@ -54,14 +52,14 @@ internal sealed partial class Parser
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "mediafile" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: converterType),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "image" => new(Name: propertySymbol.Name, TypeName: GetTypeName("Media", nullableAnnotation), ConverterType: converterType),
                 { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } when uiHint is "block" => new(Name: propertySymbol.Name, TypeName: GetTypeName("IContentPipelineModel", nullableAnnotation), ConverterType: converterType),
-                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: converterType),
-                { Name: "PageReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"Link", nullableAnnotation), ConverterType: converterType),
+                { Name: "ContentReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"ILinkPipelineModel", nullableAnnotation), ConverterType: converterType),
+                { Name: "PageReference", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName($"ILinkPipelineModel", nullableAnnotation), ConverterType: converterType),
                 //Mapping of ContentAreas
                 { Name: "ContentArea", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ContentAreaPipelineModel", nullableAnnotation), ConverterType: converterType),
                 //Mapping of richtext properties
                 { Name: "XhtmlString", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName(nameof(String), nullableAnnotation), ConverterType: converterType),
                 //mapping of urls
-                { Name: "Url", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("Link", nullableAnnotation), ConverterType: converterType),
+                { Name: "Url", NullableAnnotation: var nullableAnnotation } => new(Name: propertySymbol.Name, TypeName: GetTypeName("ILinkPipelineModel", nullableAnnotation), ConverterType: converterType),
                 //mapping of enums
                 { TypeKind: TypeKind.Enum } => new(Name: propertySymbol.Name, TypeName: "string?", ConverterType: converterType),
                 //Mapping of inline blocks on a page
