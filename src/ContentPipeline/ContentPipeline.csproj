@@ -10,6 +10,7 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<RootNamespace>ContentPipeline</RootNamespace>
 		<IsPackable>true</IsPackable>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	</PropertyGroup>
 	
 	<!-- NuGet properties -->
