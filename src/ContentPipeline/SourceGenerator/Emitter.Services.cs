@@ -65,7 +65,7 @@ internal partial class Emitter
                 .Class("public partial class ContentPipelineService : BaseContentPipelineService")
                 .Tab()
                 .NewLine()
-                .Line($"public ContentPipelineService({Environment.NewLine}\t\t\t{string.Join($", {Environment.NewLine}\t\t\t", contentClasses.Select(c => $"IContentPipeline<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}> {GetContentPipelineName(c)}"))})")
+                .Line($"public ContentPipelineService({CodeConsts.NewLine}\t\t\t{string.Join($", {CodeConsts.NewLine}\t\t\t", contentClasses.Select(c => $"IContentPipeline<{c.FullyQualifiedName}, {GetPipelineModelFullName(c)}> {GetContentPipelineName(c)}"))})")
                 .CodeBlock(block => block.Tab().Foreach(contentClasses,
                     (b, contentClass) =>
                     b.Line($"this.{GetContentPipelineName(contentClass)} = {GetContentPipelineName(contentClass)};")))
@@ -98,7 +98,7 @@ internal partial class Emitter
 
             internal class DefaultContentPipeline<TContent, TPipelineModel> : IContentPipeline<TContent, TPipelineModel> where TContent : IContentData where TPipelineModel : IContentPipelineModel, new()
             {
-                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContent, ContentPipelineModel>> sharedPipelineSteps)
+                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> sharedPipelineSteps)
                 {
                     ContentPipelineSteps = contentPipelineSteps.OrderBy(ps => ps.Order);
                     SharedPipelineSteps = sharedPipelineSteps.OrderBy(ps => ps.Order);
@@ -106,16 +106,16 @@ internal partial class Emitter
 
                 private IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> ContentPipelineSteps { get; }
 
-                private IEnumerable<IContentPipelineStep<IContent, ContentPipelineModel>> SharedPipelineSteps { get; }
+                private IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> SharedPipelineSteps { get; }
 
                 public TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext)
                 {
                     TPipelineModel pipelineModel = new();
-                    if (content is IContent contentModel && pipelineModel is ContentPipelineModel sharedPipelineModel)
+                    if (pipelineModel is ContentPipelineModel sharedPipelineModel)
                     {
                         foreach (var sharedPipelineStep in SharedPipelineSteps)
                         {
-                            sharedPipelineStep.Execute(contentModel, sharedPipelineModel, pipelineContext);
+                            sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext);
                         }
                     }
 
