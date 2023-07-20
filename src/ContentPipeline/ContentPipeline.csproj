@@ -15,7 +15,7 @@
 	<!-- NuGet properties -->
 	<PropertyGroup>
 		<Authors>Alex Boesen</Authors>
-		<Version>1.1.0</Version>
+		<Version>0.0.2</Version>
 		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
 		<PackageId>ContentPipeline</PackageId>
 		<PackRelease>true</PackRelease>

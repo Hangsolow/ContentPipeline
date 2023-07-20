@@ -66,8 +66,11 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             sourceProductionContext.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
         }
 
-        var jsonConverter = emitter.GetJsonConverter(contentClasses);
-        sourceProductionContext.AddSource(jsonConverter.Name, SourceText.From(jsonConverter.Source, Encoding.UTF8));
+        var jsonConverters = emitter.GetJsonConverter(contentClasses);
+        foreach (var jsonConverter in jsonConverters)
+        {
+            sourceProductionContext.AddSource(jsonConverter.Name, SourceText.From(jsonConverter.Source, Encoding.UTF8));
+        }
 
         foreach (var contentClass in contentClasses)
         {

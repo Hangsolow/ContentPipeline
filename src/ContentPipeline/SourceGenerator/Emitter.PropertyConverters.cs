@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ContentPipeline.SourceGenerator;
+﻿namespace ContentPipeline.SourceGenerator;
 
 internal partial class Emitter
 {
@@ -143,7 +139,7 @@ internal partial class Emitter
                     private IUrlResolver UrlResolver { get; }
                 
                     
-                    public Link GetValue(Url? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public ILinkPipelineModel GetValue(Url? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
                     {
 
                         if (property is null)
