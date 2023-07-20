@@ -14,7 +14,7 @@ public class CSharpCodeBuilder : IDisposable
 
         if (string.IsNullOrEmpty(start) is not true)
         {
-            if (start.Equals(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
+            if (start.Equals(CodeConsts.NewLine, StringComparison.OrdinalIgnoreCase))
             {
                 CodeBuilder.AppendLine(Spaces);
             }
@@ -22,7 +22,6 @@ public class CSharpCodeBuilder : IDisposable
             {
                 CodeBuilder.AppendLine(Spaces + start);
             }
-
         }
 
     }
@@ -130,7 +129,7 @@ public static class CSharpCodeBuilderExtentions
 
     public static CSharpCodeBuilder<T> NewLine<T>(this CSharpCodeBuilder<T> builder)
     {
-        return new CSharpCodeBuilder<T>(builder.CodeBuilder, Environment.NewLine, indentation: builder.Indentation, parent: builder);
+        return new CSharpCodeBuilder<T>(builder.CodeBuilder, CodeConsts.NewLine, indentation: builder.Indentation, parent: builder);
     }
 
     public static CSharpCodeBuilder<T> Line<T>(this CSharpCodeBuilder<T> builder, string line = "", int indentation = 0)
