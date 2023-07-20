@@ -6,7 +6,7 @@ namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentProper
 public class CustomConverter : IContentPropertyConverter<XhtmlString?, bool>
 {
     public bool GetValue(XhtmlString? property, IContentData content, string propertyName,
-        IContentPipelineContext pipelineContext)
+        IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
     {
         return property?.IsEmpty is false;
     }

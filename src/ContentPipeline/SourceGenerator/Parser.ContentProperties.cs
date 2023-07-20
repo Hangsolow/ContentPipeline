@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Immutable;
 
 namespace ContentPipeline.SourceGenerator;
@@ -41,9 +42,9 @@ internal sealed partial class Parser
 
             var converterType = GetConverter(namedPropertySymbol, attributes.ContentPipelinePropertyConverter, uiHint);
 
-            if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var propertyType))
+            if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var typeInfo))
             {
-                return new(Name: propertySymbol.Name, TypeName: propertyType, ConverterType: converterType);
+                return new(Name: propertySymbol.Name, TypeName: typeInfo.propertyType, ConverterType: converterType, ConterterConfig: typeInfo.converterConfig);
             }
 
             return namedPropertySymbol switch
@@ -72,17 +73,38 @@ internal sealed partial class Parser
         }
 
         static bool TryGetTypeFromAttribute(AttributeData? contentPipelinePropertyConverter,
-            Action<Diagnostic> reportDiagnostic, out string propertyType)
+            Action<Diagnostic> reportDiagnostic, out (string propertyType, Dictionary<string, string>? converterConfig) typeInfo)
         {
-            propertyType = string.Empty;
+            typeInfo = (string.Empty, null);
             if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: 1 })
             {
                 var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
-                var contentPropertyConverterInterface = converter.Interfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
-                propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() ?? string.Empty;
+                var contentPropertyConverterInterface = converter.AllInterfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
+                var propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() ?? string.Empty;
+                typeInfo = (propertyType, GetConverterConfig(contentPipelinePropertyConverter));
             }
 
-            return string.IsNullOrEmpty(propertyType) is false;
+            return string.IsNullOrEmpty(typeInfo.propertyType) is false;
+        }
+
+        static Dictionary<string,string>? GetConverterConfig(AttributeData contentPipelinePropertyConverter)
+        {
+            if (contentPipelinePropertyConverter.NamedArguments.Length == 0)
+            {
+                return null;
+            }
+
+            var configDict = new Dictionary<string, string>();
+
+            foreach (var namedArg in contentPipelinePropertyConverter.NamedArguments)
+            {
+                var key = namedArg.Key;
+                var value = namedArg.Value.Value?.ToString() ?? string.Empty;
+
+                configDict.Add(key, value);
+            }
+
+            return configDict;
         }
 
         static string GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint)
@@ -146,25 +168,27 @@ internal sealed partial class Parser
         AttributeData? contentType = null;
         AttributeData? contentPipelineModel = null;
 
-
         foreach (var attribute in attributes)
         {
-            switch (attribute.AttributeClass?.Name)
+            switch (attribute)
             {
-                case "ContentPipelineIgnoreAttribute":
+                case { AttributeClass.Name: "ContentPipelineIgnoreAttribute" }:
                     ignore = attribute;
                     break;
-                case "UIHintAttribute":
+                case { AttributeClass.Name: "UIHintAttribute" }:
                     uiHint = attribute;
                     break;
-                case "ContentPipelinePropertyConverterAttribute":
+                case { AttributeClass.Name: "ContentPipelinePropertyConverterAttribute" }:
                     contentPipelinePropertyConverter = attribute;
                     break;
-                case "ContentTypeAttribute":
+                case { AttributeClass.Name: "ContentTypeAttribute" }:
                     contentType = attribute;
                     break;
-                case "ContentPipelineModelAttribute":
+                case { AttributeClass.Name: "ContentPipelineModelAttribute" }:
                     contentPipelineModel = attribute;
+                    break;
+                case { AttributeClass.Interfaces.Length: 1  } when attribute.AttributeClass.Interfaces[0].Name == "IContentPipelinePropertyConverterAttribute":
+                    contentPipelinePropertyConverter = attribute;
                     break;
 
             }

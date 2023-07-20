@@ -1,4 +1,5 @@
 ﻿using ContentPipeline.CodeBuilders;
+using System.Linq;
 
 namespace ContentPipeline.SourceGenerator;
 
@@ -70,11 +71,16 @@ internal sealed partial class Emitter
             return shortName;
         }
 
-        string GetConverter(ContentProperty property)
+        static string GetConverter(ContentProperty property)
         {
             if (property.ConverterType.Equals("none", StringComparison.OrdinalIgnoreCase))
             {
                 return $"content.{property.Name}";
+            }
+
+            if (property.ConterterConfig is not null)
+            {
+                return $"{GetShortName(property.ConverterType)}.GetValue(content.{property.Name}, content, nameof(content.{property.Name}), pipelineContext, new() {{ { string.Join(", ", property.ConterterConfig.Select(config => $"{{ \"{config.Key}\", \"{config.Value}\" }}"))} }})";
             }
 
             return $"{GetShortName(property.ConverterType)}.GetValue(content.{property.Name}, content, nameof(content.{property.Name}), pipelineContext)";

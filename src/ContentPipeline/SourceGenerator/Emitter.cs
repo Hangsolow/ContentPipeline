@@ -14,5 +14,5 @@ internal sealed partial class Emitter
 }
 
 internal record ContentClass(string Name, string Guid, string Group, string FullyQualifiedName, IReadOnlyList<ContentProperty> ContentProperties);
-internal record ContentProperty(string Name, string TypeName, string ConverterType);
+internal record ContentProperty(string Name, string TypeName, string ConverterType, Dictionary<string, string>? ConterterConfig = null);
 internal record CodeSource(string Name, string Source);

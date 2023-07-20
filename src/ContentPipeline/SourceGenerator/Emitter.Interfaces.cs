@@ -6,17 +6,18 @@ internal sealed partial class Emitter
     {
         CancellationToken.ThrowIfCancellationRequested();
 
-        yield return new("IBlockConverter.g.cs", CreateInterface("IBlockConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
-        yield return new("IEmbeddedBlockConverter.g.cs", CreateInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
-        yield return new("IContentReferenceConverter.g.cs", CreateInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Link"));
-        yield return new("IContentAreaConverter.g.cs", CreateInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
-        yield return new("ILinkConverter.g.cs", CreateInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Interfaces.ILinkPipelineModel?"));
-        yield return new("IMediaConverter.g.cs", CreateInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
+        yield return new("IBlockConverter.g.cs", CreatePropertyConverterInterface("IBlockConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
+        yield return new("IEmbeddedBlockConverter.g.cs", CreatePropertyConverterInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
+        yield return new("IContentReferenceConverter.g.cs", CreatePropertyConverterInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Link"));
+        yield return new("IContentAreaConverter.g.cs", CreatePropertyConverterInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
+        yield return new("ILinkConverter.g.cs", CreatePropertyConverterInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Interfaces.ILinkPipelineModel?"));
+        yield return new("IMediaConverter.g.cs", CreatePropertyConverterInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
         yield return new("IEnumConverter.g.cs", CreateEnumConverter());
-        yield return new("IXhtmlStringConverter.g.cs", CreateInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
+        yield return new("IXhtmlStringConverter.g.cs", CreatePropertyConverterInterface("IXhtmlStringConverter", "EPiServer.Core.XhtmlString?", "string"));
         yield return new("IXhtmlRenderService.g.cs", CreateXhtmlRenderService());
 
         yield return new("IContentPropertyConverter.g.cs", CreateGenericPropertyConverterSource());
+        yield return new("IContentPipelinePropertyConverterAttribute.g.cs", CreateContentPipelinePropertyConverterAttributeInterface());
         yield return new("IContentPipelineContext.g.cs", CreatePipelineContextSource());
         yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
         yield return new("IContentPipelineService.g.cs", CreatePipelineService());
@@ -24,7 +25,7 @@ internal sealed partial class Emitter
         yield return new("IContentPipelineModel.g.cs", CreateContentPipelineModel());
         yield return new("ILinkPipelineModel.g.cs", CreateLinkPipelineModel());
 
-        string CreateInterface(string name, string typeProperty, string typeValue)
+        string CreatePropertyConverterInterface(string name, string typeProperty, string typeValue)
         {
             return
                 $$"""
@@ -72,7 +73,7 @@ internal sealed partial class Emitter
 
                 public partial interface IContentPropertyConverter<TProperty, out TValue> : IContentPropertyConverter
                 {
-                    TValue GetValue(TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext);
+                    TValue GetValue(TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null);
                 }
                 """;
         }
@@ -230,6 +231,18 @@ internal sealed partial class Emitter
 
             """;
 
+        string CreateContentPipelinePropertyConverterAttributeInterface() =>
+            $$"""
+            #nullable enable
+            namespace {{SharedNamespace}}.Interfaces;
 
+            /// <summary>
+            /// Marker interface for custom ContentPropertyConverter attributes
+            /// </summary>
+            public interface IContentPipelinePropertyConverterAttribute<TConverter>
+                where TConverter : IContentPropertyConverter
+            { }
+
+            """;
     }
 }

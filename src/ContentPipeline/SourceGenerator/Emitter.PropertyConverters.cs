@@ -24,7 +24,7 @@ internal partial class Emitter
                 public class EnumConverter<TEnum> : IEnumConverter<TEnum>
                     where TEnum : Enum
                 {
-                    public string? GetValue(TEnum property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public string? GetValue(TEnum property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         return property.ToString();
                     }
@@ -49,7 +49,7 @@ internal partial class Emitter
 
                     private IContentLoader ContentLoader { get; }
 
-                    public IContentPipelineModel? GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public IContentPipelineModel? GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         if (ContentLoader.TryGet(property, pipelineContext.Language, out IContentData blockContent))
                         {
@@ -83,7 +83,7 @@ internal partial class Emitter
                     private IUrlResolver UrlResolver { get; }
 
 
-                    public Link GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public Link GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         return new Link
                         {
@@ -105,7 +105,7 @@ internal partial class Emitter
                 internal sealed class InlineBlockConverter : IEmbeddedBlockConverter
                 {
                              
-                    public IContentPipelineModel? GetValue(BlockData? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public IContentPipelineModel? GetValue(BlockData? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         if (property is not null)
                         {
@@ -139,7 +139,7 @@ internal partial class Emitter
                     private IUrlResolver UrlResolver { get; }
                 
                     
-                    public ILinkPipelineModel GetValue(Url? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public ILinkPipelineModel GetValue(Url? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
 
                         if (property is null)
@@ -193,7 +193,7 @@ internal partial class Emitter
                     private IUrlResolver UrlResolver { get; }
                     private IContentLoader ContentLoader { get; }
 
-                    public Media GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public Media GetValue(ContentReference? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         if (ContentLoader.TryGet(property, out IContent media))
                         {
@@ -232,7 +232,7 @@ internal partial class Emitter
 
                     private IXhtmlRenderService XhtmlRenderService { get; }
 
-                    public string GetValue(XhtmlString? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public string GetValue(XhtmlString? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         return XhtmlRenderService.RenderXhtmlString(pipelineContext.HttpContext, property);
                     }
@@ -262,7 +262,7 @@ internal partial class Emitter
 
                     private IContentLoader ContentLoader { get; }
 
-                    public ContentAreaPipelineModel? GetValue(ContentArea? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext)
+                    public ContentAreaPipelineModel? GetValue(ContentArea? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         return new ContentAreaPipelineModel
                         {
