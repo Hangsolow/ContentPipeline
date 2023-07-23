@@ -4,7 +4,7 @@
         <!-- creates packages.lock.json -->
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <!-- enforces that an package getting restored must match the version and hash in packages.lock.json when building in github -->
-        <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+        <RestoreLockedMode Condition="'$(GITHUB_ACTIONS)' == 'true'">true</RestoreLockedMode>
     </PropertyGroup>
     
     <!-- Global Nullable settings -->
