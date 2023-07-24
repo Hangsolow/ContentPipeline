@@ -37,6 +37,6 @@ public class ContentPage : PageData
     [ContentPipelinePropertyConverter<CustomConverter>]
     public virtual XhtmlString? CustomMapping { get; set; }
 
-    [Datasource<CustomConverter>(DatasourceName = "TestDatasource", DatasourceConfig = "Config", Order = 40)]
+    [Datasource(DatasourceName = "TestDatasource", DatasourceConfig = "Config", Order = 40)]
     public virtual XhtmlString? CustomMappingWithCustomAttribute { get; set; }
 }
