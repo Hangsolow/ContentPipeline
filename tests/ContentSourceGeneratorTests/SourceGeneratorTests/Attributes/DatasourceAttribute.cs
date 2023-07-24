@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ContentPipeline.Interfaces;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyConverters;
 
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
 
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-internal class DatasourceAttribute<TConverter> : Attribute, IContentPipelinePropertyConverterAttribute<TConverter> where TConverter : IContentPropertyConverter
+internal class DatasourceAttribute : Attribute, IContentPipelinePropertyConverterAttribute<CustomConverter>
 {
     public required string DatasourceName { get; init; }
 
