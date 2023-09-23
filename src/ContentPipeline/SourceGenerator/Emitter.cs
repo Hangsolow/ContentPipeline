@@ -13,6 +13,6 @@ internal sealed partial class Emitter
     private string GetPipelineModelFullName(ContentClass contentClass) => $"{SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel";
 }
 
-internal record ContentClass(string Name, string Guid, string Group, string FullyQualifiedName, IReadOnlyList<ContentProperty> ContentProperties);
-internal record ContentProperty(string Name, string TypeName, string ConverterType, Dictionary<string, string>? ConterterConfig = null);
+internal record ContentClass(string Name, string Guid, string Group, string FullyQualifiedName, int Order, IReadOnlyList<ContentProperty> ContentProperties);
+internal record ContentProperty(string Name, string TypeName, string ConverterType, Dictionary<string, string>? ConverterConfig = null);
 internal record CodeSource(string Name, string Source);

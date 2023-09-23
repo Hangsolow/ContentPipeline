@@ -44,7 +44,7 @@ internal sealed partial class Parser
 
             if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var typeInfo))
             {
-                return new(Name: propertySymbol.Name, TypeName: typeInfo.propertyType, ConverterType: converterType, ConterterConfig: typeInfo.converterConfig);
+                return new(Name: propertySymbol.Name, TypeName: typeInfo.propertyType, ConverterType: converterType, ConverterConfig: typeInfo.converterConfig);
             }
 
             return namedPropertySymbol switch

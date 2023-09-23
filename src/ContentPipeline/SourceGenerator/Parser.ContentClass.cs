@@ -10,9 +10,12 @@ internal sealed partial class Parser
         var (_, _, contentApiPropertyConverter, contentType, contentPipelineModel) = GetNamedAttributes(contentClassSymbol.GetAttributes());
         string guid = contentType?.NamedArguments.FirstOrDefault(a => a.Key == "GUID").Value.Value as string ?? Guid.NewGuid().ToString();
         string group = contentPipelineModel?.ConstructorArguments.FirstOrDefault().Value as string ?? "Common";
-
+        if (contentPipelineModel?.ConstructorArguments[1].Value is not int order)
+        {
+            order = 0;
+        }
         var contentProperties = GetContentProperties(contentClassSymbol, semanticModel, classDeclaration).ToArray();
 
-        return new(Name: contentClassSymbol.Name, Guid: guid, Group: group, FullyQualifiedName: contentClassSymbol.ToString(), ContentProperties: contentProperties);
+        return new(Name: contentClassSymbol.Name, Guid: guid, Group: group, FullyQualifiedName: contentClassSymbol.ToString(), order, ContentProperties: contentProperties);
     }
 }

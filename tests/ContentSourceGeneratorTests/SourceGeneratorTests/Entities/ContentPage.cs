@@ -10,7 +10,7 @@ using EPiServer.Web;
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 
 [ContentType(GUID = "308068d7-e9b1-4958-b13b-bc612707cb85")]
-[ContentPipelineModel("Awesome")]
+[ContentPipelineModel("Awesome", 100)]
 public class ContentPage : PageData
 {
     public virtual string? Title { get; set; }

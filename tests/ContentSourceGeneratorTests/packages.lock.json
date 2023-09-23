@@ -4,49 +4,51 @@
     "net7.0": {
       "AutoFixture.AutoNSubstitute": {
         "type": "Direct",
-        "requested": "[4.17.0, )",
-        "resolved": "4.17.0",
-        "contentHash": "iWsRiDQ7T8s6F4mvYbSvPTq0GDtxJD6D+E1Fu9gVbHUvJiNikC1yIDNTH+3tQF7RK864HH/3R8ETj9m2X8UXvg==",
+        "requested": "[4.18.0, )",
+        "resolved": "4.18.0",
+        "contentHash": "auhC21DicFL4RQPXaEHSaU+oMNwIKFOJGIC/81dfZ4+OB4VSJ6TnyLlHSZzDGoboO8u0P3ZGqWEVsv5Pgr2CTg==",
         "dependencies": {
-          "AutoFixture": "4.17.0",
-          "NSubstitute": "[2.0.3, 5.0.0)"
+          "AutoFixture": "4.18.0",
+          "NSubstitute": "[2.0.3, 6.0.0)"
         }
       },
       "AutoFixture.Xunit2": {
         "type": "Direct",
-        "requested": "[4.17.0, )",
-        "resolved": "4.17.0",
-        "contentHash": "lrURL/LhJLPkn2tSPUEW8Wscr5LoV2Mr8A+ikn5gwkofex3o7qWUsBswlLw+KCA7EOpeqwZOldp3k91zDF+48Q==",
+        "requested": "[4.18.0, )",
+        "resolved": "4.18.0",
+        "contentHash": "m44VA9qYpqqO6zvSflMOxNNTukMuz+pcY4DrAldFh6f3LpRNTK1dquWI+96jlS9fa4Mli+RnXApveWGnl5w9zw==",
         "dependencies": {
-          "AutoFixture": "4.17.0",
+          "AutoFixture": "4.18.0",
           "xunit.extensibility.core": "[2.2.0, 3.0.0)"
         }
       },
       "coverlet.collector": {
         "type": "Direct",
-        "requested": "[3.2.0, )",
-        "resolved": "3.2.0",
-        "contentHash": "xjY8xBigSeWIYs4I7DgUHqSNoGqnHi7Fv7/7RZD02rvZyG3hlsjnQKiVKVWKgr9kRKgmV+dEfu8KScvysiC0Wg=="
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "tW3lsNS+dAEII6YGUX/VMoJjBS1QvsxqJeqLaJXub08y1FSjasFPtQ4UBUsudE9PNrzLjooClMsPtY2cZLdXpQ=="
       },
       "EPiServer.CMS": {
         "type": "Direct",
-        "requested": "[12.17.0, )",
-        "resolved": "12.17.0",
-        "contentHash": "Xuugjitun8TyAJs5Gic3nVaNun57atdiudJMoiRxooRKMcHG8JWt+j4BF9wYeiUfON2VVtpDg5V4etFtnMdkXg==",
+        "requested": "[12.22.7, )",
+        "resolved": "12.22.7",
+        "contentHash": "jDL8/fmeZ+/ppAODQHYjzNhEGHnRh7V8SxYrTvB2lniyERoKu8i4Bf3yfpY1ONjcIBCEW/Xd0Q6BW3YFXSltJA==",
         "dependencies": {
-          "EPiServer.CMS.AspNetCore.HtmlHelpers": "[12.12.1, 13.0.0)",
-          "EPiServer.CMS.TinyMce": "[4.0.2, 5.0.0)",
-          "EPiServer.CMS.UI": "[12.17.0, 13.0.0)",
-          "EPiServer.CMS.UI.VisitorGroups": "[12.17.0, 13.0.0)",
-          "EPiServer.Cms.UI.AspNetIdentity": "[12.17.0, 13.0.0)",
-          "EPiServer.Hosting": "[12.12.1, 13.0.0)"
+          "EPiServer.CMS.AspNetCore.HtmlHelpers": "[12.17.1, 13.0.0)",
+          "EPiServer.CMS.AspNetCore.TagHelpers": "[12.17.1, 13.0.0)",
+          "EPiServer.CMS.TinyMce": "[4.4.2, 5.0.0)",
+          "EPiServer.CMS.UI": "[12.22.7, 13.0.0)",
+          "EPiServer.CMS.UI.VisitorGroups": "[12.22.7, 13.0.0)",
+          "EPiServer.Cms.UI.AspNetIdentity": "[12.22.7, 13.0.0)",
+          "EPiServer.Hosting": "[12.17.1, 13.0.0)",
+          "EPiServer.ImageLibrary.ImageSharp": "[1.0.0, 3.0.0)"
         }
       },
       "FluentAssertions": {
         "type": "Direct",
-        "requested": "[6.10.0, )",
-        "resolved": "6.10.0",
-        "contentHash": "Da3YsiRDnOHKBfxutjnupL1rOX0K/jnG6crn5AgwukeqZ/yi+HNCOFshic01ke0ztZFWzpfQMXH8fO9aAbG0Gw==",
+        "requested": "[6.12.0, )",
+        "resolved": "6.12.0",
+        "contentHash": "ZXhHT2YwP9lajrwSKbLlFqsmCCvFJMoRSK9t7sImfnCyd0OB3MhgxdoMcVqxbq1iyxD6mD2fiackWmBb7ayiXQ==",
         "dependencies": {
           "System.Configuration.ConfigurationManager": "4.4.0"
         }
@@ -73,11 +75,11 @@
       },
       "Microsoft.AspNetCore.Mvc.Testing": {
         "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "uK3h+RhJHRDt+HEOty3LMDVJAWKucjpAdm2RKQR7QYQVAtRB9b3+Jl+9wGxlrqW5Den7Ut9RJlA+aO4nPceieQ==",
+        "requested": "[7.0.11, )",
+        "resolved": "7.0.11",
+        "contentHash": "EAyliL6vpb1ZUOSY3rsONROFcd++UHn3BbTAZ8NF4eDrqkkvktztpHPWXMJvM1jypQYhNVgrQxfFke0UQ8t92A==",
         "dependencies": {
-          "Microsoft.AspNetCore.TestHost": "7.0.3",
+          "Microsoft.AspNetCore.TestHost": "7.0.11",
           "Microsoft.Extensions.DependencyModel": "7.0.0",
           "Microsoft.Extensions.Hosting": "7.0.1"
         }
@@ -93,12 +95,12 @@
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
-        "requested": "[17.4.1, )",
-        "resolved": "17.4.1",
-        "contentHash": "kJ5/v2ad+VEg1fL8UH18nD71Eu+Fq6dM4RKBVqlV2MLSEK/AW4LUkqlk7m7G+BrxEDJVwPjxHam17nldxV80Ow==",
+        "requested": "[17.7.2, )",
+        "resolved": "17.7.2",
+        "contentHash": "WOSF/GUYcnrLGkdvCbXDRig2rShtBwfQc5l7IxQE6PZI3CeXAqF1SpyzwlGA5vw+MdEAXs3niy+ZkGBBWna6tw==",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.4.1",
-          "Microsoft.TestPlatform.TestHost": "17.4.1"
+          "Microsoft.CodeCoverage": "17.7.2",
+          "Microsoft.TestPlatform.TestHost": "17.7.2"
         }
       },
       "NSubstitute": {
@@ -118,25 +120,25 @@
       },
       "xunit": {
         "type": "Direct",
-        "requested": "[2.4.2, )",
-        "resolved": "2.4.2",
-        "contentHash": "6Mj73Ont3zj2CJuoykVJfE0ZmRwn7C+pTuRP8c4bnaaTFjwNG6tGe0prJ1yIbMe9AHrpDys63ctWacSsFJWK/w==",
+        "requested": "[2.5.1, )",
+        "resolved": "2.5.1",
+        "contentHash": "WJJ7Ruxv1INF4ySosVZ0fN1dGhzNBEdLLZoIVn4TPU8CbYgaxUebAL/VPaBneXGT3EDE2llsJ2cKzGkGeZSY4Q==",
         "dependencies": {
-          "xunit.analyzers": "1.0.0",
-          "xunit.assert": "2.4.2",
-          "xunit.core": "[2.4.2]"
+          "xunit.analyzers": "1.3.0",
+          "xunit.assert": "2.5.1",
+          "xunit.core": "[2.5.1]"
         }
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[2.4.5, )",
-        "resolved": "2.4.5",
-        "contentHash": "OwHamvBdUKgqsXfBzWiCW/O98BTx81UKzx2bieIOQI7CZFE5NEQZGi8PBQGIKawDW96xeRffiNf20SjfC0x9hw=="
+        "requested": "[2.5.1, )",
+        "resolved": "2.5.1",
+        "contentHash": "W5dQj2tysIY6MHaidZyqyiR7MGFEk+FrvHRapFyhe11HuR4A6aFGSVi8txi+kkXdY9FDjXffU/1PkNzRX52Caw=="
       },
       "AutoFixture": {
         "type": "Transitive",
-        "resolved": "4.17.0",
-        "contentHash": "efMRCG3Epc4QDELwdmQGf6/caQUleRXPRCnLAq5gLMpTuOTcOQWV12vEJ8qo678Rj97/TjjxHYu/34rGkXdVAA==",
+        "resolved": "4.18.0",
+        "contentHash": "xITUSenQsEW3RxXzcDPvxA33PGEQHxfvYjEbiai8URCcmq+osECGdLqGfHmMmcttndWgLxYCV7bRIm089fu7HA==",
         "dependencies": {
           "Fare": "[2.1.1, 3.0.0)",
           "System.ComponentModel.Annotations": "4.3.0"
@@ -202,102 +204,109 @@
       },
       "EPiServer.CMS.AspNetCore": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "R0rITCeFfim+QVp56ifdnHAJTEeKCmjVTOTazq/CAmGfJfIJF6QY8w57KYEiwIzocYvnjX6RnROCLLPjpNSgCw==",
+        "resolved": "12.17.1",
+        "contentHash": "o8bRZBpfV/kInafTF/Nb2sRB8Ce+uz1Cc1C31gBq1UxWQaciPRkz4aMLnu5UGOXLFZ0esicEcLWqOFYRug8+Hw==",
         "dependencies": {
-          "EPiServer.CMS.Core": "[12.12.1]",
-          "EPiServer.Framework.AspNetCore": "[12.12.1]",
+          "EPiServer.CMS.Core": "[12.17.1]",
+          "EPiServer.Framework.AspNetCore": "[12.17.1]",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.1"
         }
       },
       "EPiServer.CMS.AspNetCore.HtmlHelpers": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "ofhrMDSKIdAZMJbk00lLEE+3Pxh7VcyJiRydACiU8aEWHXfeHT7JPI/ZlIYYQS6t0RtvTp8ExzaZkuzEz4gySg==",
+        "resolved": "12.17.1",
+        "contentHash": "D0AEsMDuwBzOH1vxVV8b+vAMeOYlHVRC3i1Z8X8hLGo/WGCb+Tbeg7n9d9f+tMl7ZZSQzE03rRVn+HAiPXKZ5Q==",
         "dependencies": {
-          "EPiServer.CMS.AspNetCore.Mvc": "[12.12.1]"
+          "EPiServer.CMS.AspNetCore.Mvc": "[12.17.1]"
         }
       },
       "EPiServer.CMS.AspNetCore.Mvc": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "zijI9DtcRje1SHPDHbA0LnQxOM2BESm94OgoMYtfw6LPIHdtq3G6k2gwCzD/NdFnpBvLsg699hHmVI0M7OLbrA==",
+        "resolved": "12.17.1",
+        "contentHash": "ADZcd2D5+t8wGJAzWbaDQlcmZkBVje2FzihG7/0QSfhVIOW1NenpllmH41I6wx2tGYFqLCpWH7nDajJmS74UcA==",
         "dependencies": {
-          "EPiServer.CMS.AspNetCore.Routing": "[12.12.1]"
+          "EPiServer.CMS.AspNetCore.Routing": "[12.17.1]"
         }
       },
       "EPiServer.CMS.AspNetCore.Routing": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "T1qfyoDiwWMILFL9RVDcv6aSN8HblusqUudGbfkRSC+bZdy+Su0bNvJw5b09cNpozGuhcfJJl2K3cjXpEIYvRg==",
+        "resolved": "12.17.1",
+        "contentHash": "r9C7pkYhY6oHMU/kOrW4BZzW0dgn3ng+hrAtA/Ie4PpGW9A1EFUboOzREDjJhTSAbLBxmmWiiw/VxefdlpZvzA==",
         "dependencies": {
-          "EPiServer.CMS.AspNetCore.Templating": "[12.12.1]"
+          "EPiServer.CMS.AspNetCore.Templating": "[12.17.1]"
+        }
+      },
+      "EPiServer.CMS.AspNetCore.TagHelpers": {
+        "type": "Transitive",
+        "resolved": "12.17.1",
+        "contentHash": "Tj97/8AfWe6gf07YckD199VpE+wtaLpklG4SG9Z7zTIKBsH5DZE7uC6DWEU93/dpDPoOGxGWC8s3dIFnPHX8yg==",
+        "dependencies": {
+          "EPiServer.CMS.AspNetCore.Routing": "[12.17.1]"
         }
       },
       "EPiServer.CMS.AspNetCore.Templating": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "aT1Myg7+JDcBaPxfk9LbBCti16XD114Rlz2DOT1lO7GDnit+Lu5s1Zx3PKFM9MibIemwknQTTPYJaRU6E66jKg==",
+        "resolved": "12.17.1",
+        "contentHash": "8c9CeylRE0dlvA5DP+ojyas9Ik5uPOBzjAu0OFOcgfLlVz+dr05f8P7ouyD4FWxfmlRyuyD1/xvNXYMPEnv9aQ==",
         "dependencies": {
-          "EPiServer.CMS.AspNetCore": "[12.12.1]"
+          "EPiServer.CMS.AspNetCore": "[12.17.1]"
         }
       },
       "EPiServer.CMS.Core": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "iRQtF1kGHLWgiFvDc7mRrmkEJVM2Guhe9L5nxnYfZQMUSG0y5hHxXc3qQf0oEVnPw7FiOQOLL0SjhQH5ooGNxA==",
+        "resolved": "12.17.1",
+        "contentHash": "1hhAX8rISvq6E+Zq7Btqczy++xuT8kH8JW5mSqlVY1lI6eZu2FtJ4EcZ19k5R81MxgdSVF8WKdjBM0DbN+W5bQ==",
         "dependencies": {
           "Castle.Core": "[4.4.1, 5.0.0)",
           "Castle.Windsor": "[5.1.1, 6.0.0)",
-          "EPiServer.Framework": "[12.12.1]",
+          "EPiServer.Framework": "[12.17.1]",
           "MailKit": "[3.0.0, 4.0.0)",
-          "SixLabors.ImageSharp": "[2.0.0, 3.0.0)",
           "System.IO.Packaging": "6.0.0",
           "System.Threading.Tasks.Dataflow": "6.0.0"
         }
       },
       "EPiServer.CMS.TinyMce": {
         "type": "Transitive",
-        "resolved": "4.0.2",
-        "contentHash": "WLQRjgTEmXrd25AJT+ZjafmY0GzdaFQa4OnUYz2di3QnQx/gDA0UlmQupDsVkBeRS52W020iXfIdJzJ6xXGW7Q==",
+        "resolved": "4.4.2",
+        "contentHash": "xEs5ByIXaP1+PcxTBrvwIiq7z+ZTKqr3iyNCcrJMJbPcwjJLnsyensYDlRpTjz4BPISWc8G/vB23hffwsVBgEg==",
         "dependencies": {
-          "EPiServer.CMS.UI": "[12.16.1, 13.0.0)"
+          "EPiServer.CMS.UI": "[12.22.4, 13.0.0)"
         }
       },
       "EPiServer.CMS.UI": {
         "type": "Transitive",
-        "resolved": "12.17.0",
-        "contentHash": "04l7NeDnaN5IQxLDJzg5SJq548VLRV49SpiRDR1cvZjQN6dKxAQwlaptuOeU8xikLSLXFDrMOUn5ZamAQdT8ag==",
+        "resolved": "12.22.7",
+        "contentHash": "pd456zXHna2TdmGC7WJ+YolfM28D6WKxtMulCYvMwCf+rBE2NAm1CMYOwCcYzq+38rN0Olmbze07iOU95NNHPA==",
         "dependencies": {
-          "EPiServer.CMS.UI.Admin": "[12.17.0]",
-          "EPiServer.CMS.UI.Core": "[12.17.0]",
-          "EPiServer.CMS.UI.Settings": "[12.17.0]"
+          "EPiServer.CMS.UI.Admin": "[12.22.7]",
+          "EPiServer.CMS.UI.Core": "[12.22.7]",
+          "EPiServer.CMS.UI.Settings": "[12.22.7]"
         }
       },
       "EPiServer.CMS.UI.Admin": {
         "type": "Transitive",
-        "resolved": "12.17.0",
-        "contentHash": "V3UCl8t/Jl4q2lmXsS0hgsiTe6/oNdsla/y41djJYpHkn+dHQ0mfBtWCa45pJQzxL+U1SKhLMz+lJod94Q0+WQ==",
+        "resolved": "12.22.7",
+        "contentHash": "7VOgVHd5m2fKGS/ByWLCFYAEzS9vWsrYHhwVihA8Z9MYi1eTJG4Ttp7r2V+vXw/3cjwSabH5jw/pSu7ttCopwg==",
         "dependencies": {
-          "EPiServer.CMS.UI.Core": "[12.17.0]"
+          "EPiServer.CMS.UI.Core": "[12.22.7]"
         }
       },
       "EPiServer.CMS.UI.AspNetIdentity": {
         "type": "Transitive",
-        "resolved": "12.17.0",
-        "contentHash": "6OK9WgB95iPo+eQqPM3giAchwHYX35+VkdtDsK4M4IdeLVcVhnDjki4pnaOXdDEXGbjhWB39ubMYe/xbLZui1w==",
+        "resolved": "12.22.7",
+        "contentHash": "PZAhaMGcTCG+n/JI+dswkYLuz1gwqHZQPCOjWkdTcxOmTqRxl4EAHF3BvyzfA93gtAwps+y4ro3DtFjpacDpdA==",
         "dependencies": {
-          "EPiServer.CMS.UI.Core": "[12.17.0]",
+          "EPiServer.CMS.UI.Core": "[12.22.7]",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.0"
         }
       },
       "EPiServer.CMS.UI.Core": {
         "type": "Transitive",
-        "resolved": "12.17.0",
-        "contentHash": "a+ETx/J7l7b8ne1NKFFO22rBqazmV+4WYTMchF5oymHazmGgx9EoyST6LxeJAX6mY0Eq3LE+PQwR89931Ur2HA==",
+        "resolved": "12.22.7",
+        "contentHash": "b1bByw3CdUVji5HjkzrbQHidJ4rHTns7SIR2emRDzrwQ445F6ME+EPhiLh/Z567MFOhwmtViE/sAs7iVEos8BA==",
         "dependencies": {
-          "EPiServer.CMS.AspNetCore.Templating": "[12.12.1, 13.0.0)",
+          "EPiServer.CMS.AspNetCore.Templating": "[12.17.1, 13.0.0)",
           "Microsoft.AspNetCore.Mvc.Razor.Extensions": "6.0.0",
           "System.Linq.Async": "6.0.1",
           "System.ServiceModel.Syndication": "6.0.0"
@@ -305,24 +314,24 @@
       },
       "EPiServer.CMS.UI.Settings": {
         "type": "Transitive",
-        "resolved": "12.17.0",
-        "contentHash": "9KYhDHvEVxa7EMUO8r7l9CPqS+mLy42h6EFPZVHJwaXVT9k3vThETfVzffqX3BPtnlsfShX5mEo5J4P3Sye42A==",
+        "resolved": "12.22.7",
+        "contentHash": "R9Ld2srr4ixo6Ip46O7gLsbqSnDQqYsqCR1wvnIqEgM/scXaCnT2hhqrkWvygbbPubOtyt3z150CubrT8xyMwg==",
         "dependencies": {
-          "EPiServer.CMS.UI.Core": "[12.17.0]"
+          "EPiServer.CMS.UI.Core": "[12.22.7]"
         }
       },
       "EPiServer.CMS.UI.VisitorGroups": {
         "type": "Transitive",
-        "resolved": "12.17.0",
-        "contentHash": "65oloi6mEu6/V703JFuCZxthY1THcqmK7FstBjGUAD1phrsVhFHh2HZCgwvADzgVTnbu2Qz7tw7aWOaKu6q19w==",
+        "resolved": "12.22.7",
+        "contentHash": "kJU4jMjrRYMVcvfc456Z3/2bpPAsFu6hpPY80Hr5Dvml2HD7cB8JGp/pdNAhUaD1aOcdHVoajGz+SwXyjzDE6A==",
         "dependencies": {
-          "EPiServer.CMS.UI.Core": "[12.17.0]"
+          "EPiServer.CMS.UI.Core": "[12.22.7]"
         }
       },
       "EPiServer.Framework": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "2yREoRhaIi88cF8TfBiPkyknepVzjOvGZL33bcI4dGR02mPIZECFTi+TQVA+k3n8bDGvhvYzvhj/VJ0rVVgM/g==",
+        "resolved": "12.17.1",
+        "contentHash": "gSQq1q5gtx11OmNPOLppjApRqJvF0XyESWOsH5w4AUeKtxzCDOhjzQkcx0dNUlEXRArLJgrBExk/FCcgcxieig==",
         "dependencies": {
           "Microsoft.Data.SqlClient": "5.0.1",
           "Newtonsoft.Json": "13.0.1",
@@ -333,10 +342,10 @@
       },
       "EPiServer.Framework.AspNetCore": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "tbK6PfrlVGGG81iweAZfCJr2xKohSZTsU9KCQj7jB5bOldr81wcYKMgpOvvu2YoTFbjHA7taV9ViHwqCjBx4yg==",
+        "resolved": "12.17.1",
+        "contentHash": "w90i62z5hITQ9hZGmlFLho6q+euTnRZuRtfUSxc4ap9qpfvs6Dew8vHyiTh/Ehya2JzcUxD9kNG7sd+s+fHGtw==",
         "dependencies": {
-          "EPiServer.Framework": "[12.12.1]",
+          "EPiServer.Framework": "[12.17.1]",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.DependencyModel": "6.0.0",
           "Microsoft.Extensions.FileProviders.Abstractions": "6.0.0"
@@ -344,16 +353,25 @@
       },
       "EPiServer.Hosting": {
         "type": "Transitive",
-        "resolved": "12.12.1",
-        "contentHash": "SExivfzYD8Phwx/14s0ciU4F7KzSBQi+z7BRJ7uuYaVVJkjJEmuq6ri2djeH6ZRxihXes6oNp+x7ygC8+RAf4Q==",
+        "resolved": "12.17.1",
+        "contentHash": "9qYWudkJZC5WBrJ+/I0qQZsaYKdlITJfGrAcrjRXyc/Wex4QPhasSbI1GTj+jARt80IRXet2NY/6v3mWcGhkYQ==",
         "dependencies": {
-          "EPiServer.Framework": "[12.12.1]",
+          "EPiServer.Framework": "[12.17.1]",
           "Microsoft.Extensions.Caching.Abstractions": "6.0.0",
           "Microsoft.Extensions.Caching.Memory": "6.0.0",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.DependencyModel": "6.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "6.0.0"
+        }
+      },
+      "EPiServer.ImageLibrary.ImageSharp": {
+        "type": "Transitive",
+        "resolved": "1.0.0",
+        "contentHash": "P3JwZLLVDplPVhxvpsz+wvmsKh8+2sMzbumLPLEu3e9IJxmIoZ8CxR0o2vBg9SUWvX1U+/ifzA/vIPI19vLfmA==",
+        "dependencies": {
+          "EPiServer.CMS.Core": "[12.4.2, 13.0.0)",
+          "SixLabors.ImageSharp": "[2.0.0, 3.0.0)"
         }
       },
       "Fare": {
@@ -445,8 +463,8 @@
       },
       "Microsoft.AspNetCore.TestHost": {
         "type": "Transitive",
-        "resolved": "7.0.3",
-        "contentHash": "wS+gBqK8O6ASpGjEoRdxKR4qb/Hqt+RumM1bMfKxkjYpsBl4UMh8ClmXzU42omn3sWCpPqxZIBSIO3F4zEYPzQ==",
+        "resolved": "7.0.11",
+        "contentHash": "RtVGtkupMfjvf3qDqvdtCyL9P/Zt9wSiOuNofEPGDVzjPWOt3zaCbxLhbHOhtVS6p/cEsA0HWpzchAmPmSzIyw==",
         "dependencies": {
           "System.IO.Pipelines": "7.0.0"
         }
@@ -495,8 +513,8 @@
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "T21KxaiFawbrrjm0uXjxAStXaBm5P9H6Nnf8BUtBTvIpd8q57lrChVBCY2dnazmSu9/kuX4z5+kAOT78Dod7vA=="
+        "resolved": "17.7.2",
+        "contentHash": "ntbkwIqwszkfCRjxVZOyEQiHauiYsY9NtYjw9ASsoxDSiG8YtV6AGcOAwrAk3TZv2UOq4MrpX+3MYEeMHSb03w=="
       },
       "Microsoft.CSharp": {
         "type": "Transitive",
@@ -965,19 +983,19 @@
       },
       "Microsoft.TestPlatform.ObjectModel": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "v2CwoejusooZa/DZYt7UXo+CJOvwAmqg6ZyFJeIBu+DCRDqpEtf7WYhZ/AWii0EKzANPPLU9+m148aipYQkTuA==",
+        "resolved": "17.7.2",
+        "contentHash": "aHzQWgDMVBnk39HhQVmn06w+YxzF1h2V5/M4WgrNQAn7q97GR4Si3vLRTDlmJo9nK/Nknce+H4tXx4gqOKyLeg==",
         "dependencies": {
-          "NuGet.Frameworks": "5.11.0",
+          "NuGet.Frameworks": "6.5.0",
           "System.Reflection.Metadata": "1.6.0"
         }
       },
       "Microsoft.TestPlatform.TestHost": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "K7QXM4P4qrDKdPs/VSEKXR08QEru7daAK8vlIbhwENM3peXJwb9QgrAbtbYyyfVnX+F1m+1hntTH6aRX+h/f8g==",
+        "resolved": "17.7.2",
+        "contentHash": "pv9yVD7IKPLJV28zYjLsWFiM3j506I2ye+6NquG8vsbm/gR7lgyig8IgY6Vo57VMvGaAKwtUECzcj+C5tH271Q==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.4.1",
+          "Microsoft.TestPlatform.ObjectModel": "17.7.2",
           "Newtonsoft.Json": "13.0.1"
         }
       },
@@ -1080,8 +1098,8 @@
       },
       "NuGet.Frameworks": {
         "type": "Transitive",
-        "resolved": "5.11.0",
-        "contentHash": "eaiXkUjC4NPcquGWzAGMXjuxvLwc6XGKMptSyOGQeT0X70BUZObuybJFZLA0OfTdueLd3US23NBPTBb6iF3V1Q=="
+        "resolved": "6.5.0",
+        "contentHash": "QWINE2x3MbTODsWT1Gh71GaGb5icBz4chS8VYvTgsBnsi8esgN6wtHhydd7fvToWECYGq7T4cgBBDiKD/363fg=="
       },
       "Portable.BouncyCastle": {
         "type": "Transitive",
@@ -2267,30 +2285,30 @@
       },
       "xunit.analyzers": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "BeO8hEgs/c8Ls2647fPfieMngncvf0D0xYNDfIO59MolxtCtVjFRd6SRc+7tj8VMqkVOuJcnc9eh4ngI2cAmLQ=="
+        "resolved": "1.3.0",
+        "contentHash": "gSk+8RC6UZ6Fzx1OHoB2bPyENeg3WHIeJhB/hb4oZNN0pW0dwOuplJay6OnqFIvW8T37re/RB4PWpEvayWIO1Q=="
       },
       "xunit.assert": {
         "type": "Transitive",
-        "resolved": "2.4.2",
-        "contentHash": "pxJISOFjn2XTTi1mcDCkRZrTFb9OtRRCtx2kZFNF51GdReLr1ls2rnyxvAS4JO247K3aNtflvh5Q0346K5BROA==",
+        "resolved": "2.5.1",
+        "contentHash": "eMvuz6PFdD3DDeaXkFVwMzNZ40zcRoM9Zz3siAyWgfiAucSNOWZnVgqC8hSHbdMd98Gy6o0yIYG6mq4Tg37rrQ==",
         "dependencies": {
           "NETStandard.Library": "1.6.1"
         }
       },
       "xunit.core": {
         "type": "Transitive",
-        "resolved": "2.4.2",
-        "contentHash": "KB4yGCxNqIVyekhJLXtKSEq6BaXVp/JO3mbGVE1hxypZTLEe7h+sTbAhpA+yZW2dPtXTuiW+C1B2oxxHEkrmOw==",
+        "resolved": "2.5.1",
+        "contentHash": "Tzuz//XwPJYAmC9FBIwgBgo5gb2kSoppDwkisyYhq0wtwxhv+gOJwtqUgkgk8Hr19B616Zol03LkD18r2e4AxA==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.4.2]",
-          "xunit.extensibility.execution": "[2.4.2]"
+          "xunit.extensibility.core": "[2.5.1]",
+          "xunit.extensibility.execution": "[2.5.1]"
         }
       },
       "xunit.extensibility.core": {
         "type": "Transitive",
-        "resolved": "2.4.2",
-        "contentHash": "W1BoXTIN1C6kpVSMw25huSet25ky6IAQUNovu3zGOGN/jWnbgSoTyCrlIhmXSg0tH5nEf8q7h3OjNHOjyu5PfA==",
+        "resolved": "2.5.1",
+        "contentHash": "XGPiWP7D/KIY/fzdmU9gx7eDt0QD0IAWOy54LI+ckLZCqFMupIFochC3dHRxykuAz+L0nYvz6PxDdR2UcgNmDw==",
         "dependencies": {
           "NETStandard.Library": "1.6.1",
           "xunit.abstractions": "2.0.3"
@@ -2298,11 +2316,11 @@
       },
       "xunit.extensibility.execution": {
         "type": "Transitive",
-        "resolved": "2.4.2",
-        "contentHash": "CZmgcKkwpyo8FlupZdWpJCryrAOWLh1FBPG6gmVZuPQkGQsim/oL4PcP4nfrC2hHgXUFtluvaJ0Sp9PQKUMNpg==",
+        "resolved": "2.5.1",
+        "contentHash": "I5IUervdZoKLD66TUcqsJDXcB3ui9RxzKe0MQGzEi4Hsxkaoz0YylmvwqW2nd3nilyqqIAs0OUaZf/faKPxY6w==",
         "dependencies": {
           "NETStandard.Library": "1.6.1",
-          "xunit.extensibility.core": "[2.4.2]"
+          "xunit.extensibility.core": "[2.5.1]"
         }
       }
     }
