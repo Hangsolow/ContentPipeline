@@ -160,7 +160,7 @@ internal sealed partial class Parser
         }
     }
 
-    private static (AttributeData? Ignore, AttributeData? UiHint, AttributeData? ContentPipelinePropertyConverter, AttributeData? ContentType, AttributeData? ContentPipelineModel) GetNamedAttributes(ImmutableArray<AttributeData> attributes)
+    private static ContentPipelineAttributes GetNamedAttributes(ImmutableArray<AttributeData> attributes)
     {
         AttributeData? ignore = null;
         AttributeData? uiHint = null;
@@ -193,6 +193,6 @@ internal sealed partial class Parser
 
             }
         }
-        return (ignore, uiHint, contentPipelinePropertyConverter, contentType, contentPipelineModel);
+        return new ContentPipelineAttributes(ignore, uiHint, contentPipelinePropertyConverter, contentType, contentPipelineModel);
     }
 }

@@ -109,3 +109,6 @@ internal sealed partial class Parser
         }
     }
 }
+
+internal record ContentPipelineAttributes(AttributeData? Ignore, AttributeData? UiHint,
+    AttributeData? ContentPipelinePropertyConverter, AttributeData? ContentType, AttributeData? ContentPipelineModel);

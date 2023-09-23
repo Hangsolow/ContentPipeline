@@ -1,6 +1,7 @@
 ﻿using ContentPipeline.Interfaces;
 using ContentPipeline.Models.Awesome;
 using ContentPipeline.Models.Common;
+using ContentPipeline.Models.Media;
 using ContentPipeline.Properties;
 using FluentAssertions;
 
