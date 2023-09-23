@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 
-[ContentPipelineModel("Media")]
+[ContentPipelineModel("MediaContent")]
 public class ImageBase : ImageData
 {
     [CultureSpecific]

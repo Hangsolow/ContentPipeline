@@ -1,7 +1,7 @@
 ﻿using ContentPipeline.Entities;
 using ContentPipeline.Interfaces;
 using ContentPipeline.Models.Common;
-using ContentPipeline.Models.Media;
+using ContentPipeline.Models.MediaContent;
 using ContentPipeline.Properties;
 using ContentPipeline.ServiceCollectionExtensions;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyConverters;

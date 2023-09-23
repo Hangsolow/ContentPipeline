@@ -7,7 +7,7 @@ internal sealed partial class Parser
 {
     private ContentClass GetContentClass(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration)
     {
-        var (_, _, contentApiPropertyConverter, contentType, contentPipelineModel) = ParseAttributes(contentClassSymbol);
+        var (_, _, _, contentType, contentPipelineModel) = ParseAttributes(contentClassSymbol);
         string guid = contentType?.NamedArguments.FirstOrDefault(a => a.Key == "GUID").Value.Value as string ?? Guid.NewGuid().ToString();
         string group = contentPipelineModel?.ConstructorArguments.FirstOrDefault().Value as string ?? "Common";
         if (contentPipelineModel?.ConstructorArguments[1].Value is not int order)
