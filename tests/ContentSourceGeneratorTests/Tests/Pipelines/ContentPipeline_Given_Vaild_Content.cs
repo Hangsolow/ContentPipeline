@@ -44,6 +44,7 @@ public class ContentPipeline_Given_Vaild_Content
         services
             .AddContentPipelineServices()
             .AddTransient<CustomConverter>()
+            .AddTransient<DatasourceConverter>()
             .AddTransient(sl => contentLoader)
             .AddTransient(sl => urlResolver)
             .AddTransient(sl => tempDataProvider)
@@ -108,6 +109,8 @@ public class ContentPipeline_Given_Vaild_Content
         contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.AltText.Should().Be(imageContent.AltText);
         contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Copyright.Should().Be(imageContent.Copyright);
         contentModel.BlockLink?.Should().BeOfType<ContentBlockPipelineModel>();
+        contentModel.CustomMappingWithCustomAttribute?.Url.Should().Be("Config", "it should come from the datasource attribute");
+        contentModel.CustomMappingWithCustomAttribute?.Id.Should().Be("TestDatasource", "it should come from the datasource attribute");
         var contentBlock = contentModel.BlockLink as ContentBlockPipelineModel;
         contentBlock?.Color.Should().Be(blockContent.Color.ToString());
         contentBlock?.Header.Should().Be(blockContent.Header);

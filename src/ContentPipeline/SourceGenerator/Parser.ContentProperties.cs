@@ -76,9 +76,9 @@ internal sealed partial class Parser
             Action<Diagnostic> reportDiagnostic, out (string propertyType, Dictionary<string, string>? converterConfig) typeInfo)
         {
             typeInfo = (string.Empty, null);
-            if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: 1 })
+            if (contentPipelinePropertyConverter?.AttributeClass?.Interfaces[0] is { TypeArguments.Length: 1 })
             {
-                var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
+                var converter = contentPipelinePropertyConverter.AttributeClass.Interfaces[0].TypeArguments[0];
                 var contentPropertyConverterInterface = converter.AllInterfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
                 var propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() ?? string.Empty;
                 typeInfo = (propertyType, GetConverterConfig(contentPipelinePropertyConverter));
@@ -110,9 +110,9 @@ internal sealed partial class Parser
         static string GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint)
         {
             //gets and returns the converter type from contentPipelinePropertyConverter attribute
-            if (contentPipelinePropertyConverter is { AttributeClass.TypeArguments.Length: 1 })
+            if (contentPipelinePropertyConverter?.AttributeClass?.Interfaces[0] is { TypeArguments.Length: 1 })
             {
-                var value = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0].ToString();
+                var value = contentPipelinePropertyConverter.AttributeClass.Interfaces[0].TypeArguments[0].ToString();
 
                 if (value is not null)
                 {

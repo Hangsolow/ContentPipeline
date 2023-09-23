@@ -2,6 +2,7 @@
 using ContentPipeline.Attributes;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyConverters;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Datasources;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
@@ -38,5 +39,6 @@ public class ContentPage : PageData
     public virtual XhtmlString? CustomMapping { get; set; }
 
     [Datasource(DatasourceName = "TestDatasource", DatasourceConfig = "Config", Order = 40)]
-    public virtual XhtmlString? CustomMappingWithCustomAttribute { get; set; }
+    [Ignore]
+    public virtual Datasource? CustomMappingWithCustomAttribute { get; set; }
 }
