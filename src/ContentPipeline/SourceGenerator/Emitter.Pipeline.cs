@@ -30,8 +30,8 @@ internal sealed partial class Emitter
             .Foreach(converters, (b, p) => b.Property(p.ShortName, p.Type, isPublic: false))
             .Line("public int Order => 1000;")
             .NewLine()
-            .Foreach(contentClass.ContentProperties.Where(p => p.ConterterConfig is not null),
-                (b, p) => b.Line($"private static readonly Dictionary<string,string> {p.Name + ConverterConfigPropertyPostFix} = {ConverterConfigToNewDict(p.ConterterConfig!)};"))
+            .Foreach(contentClass.ContentProperties.Where(p => p.ConverterConfig is not null),
+                (b, p) => b.Line($"private static readonly Dictionary<string,string> {p.Name + ConverterConfigPropertyPostFix} = {ConverterConfigToNewDict(p.ConverterConfig!)};"))
             .NewLine()
             .Method(
                 $"public void Execute({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentPipelineContext pipelineContext)",
@@ -81,7 +81,7 @@ internal sealed partial class Emitter
                 return $"content.{property.Name}";
             }
 
-            if (property.ConterterConfig is not null)
+            if (property.ConverterConfig is not null)
             {
                 return $"{GetShortName(property.ConverterType)}.GetValue(content.{property.Name}, content, nameof(content.{property.Name}), pipelineContext, {property.Name + ConverterConfigPropertyPostFix})";
             }

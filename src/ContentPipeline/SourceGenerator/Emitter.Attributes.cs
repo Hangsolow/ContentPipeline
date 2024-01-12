@@ -38,8 +38,9 @@ internal sealed partial class Emitter
                     /// the constructor for ContentPipelineModelAttribute
                     /// </summary>
                     /// <param name="group"></param>
+                    /// <param name="order"></param>
                     /// <exception cref="ArgumentException">if group is null or empty</exception>
-                    public ContentPipelineModelAttribute(string group = "Common")
+                    public ContentPipelineModelAttribute(string group = "Common", int order = 0)
                     {
                         if (string.IsNullOrEmpty(group))
                         {
@@ -47,9 +48,12 @@ internal sealed partial class Emitter
                         }
 
                         Group = group;
+                        Order = order;
                     }
 
                     public string Group { get; }
+                    
+                    public int Order { get; }
                 }
                 """;
 

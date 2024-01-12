@@ -9,7 +9,7 @@ using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyCo
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
 
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-internal class DatasourceAttribute : Attribute, IContentPipelinePropertyConverterAttribute<CustomConverter>
+internal class DatasourceAttribute : Attribute, IContentPipelinePropertyConverterAttribute<DatasourceConverter>
 {
     public required string DatasourceName { get; init; }
 

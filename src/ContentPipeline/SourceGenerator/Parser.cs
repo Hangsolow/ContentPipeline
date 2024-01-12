@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -22,10 +23,10 @@ internal sealed partial class Parser
     /// Report Diagnostic action for the parser
     /// </summary>
     internal required Action<Diagnostic> ReportDiagnostic { get; init; }
-
-    internal IReadOnlyList<ContentClass> GetContentClasses(IEnumerable<ClassDeclarationSyntax> classes)
+    
+    internal IReadOnlyList<ContentClass> GetContentClasses(ImmutableArray<ClassDeclarationSyntax> classes)
     {
-        var results = new List<ContentClass>(classes.Count());
+        var results = new List<ContentClass>(classes.Length);
         foreach (var group in classes.GroupBy(x => x.SyntaxTree))
         {
             SemanticModel? semanticModel = null;
@@ -42,7 +43,7 @@ internal sealed partial class Parser
             }
         }
 
-        return results;
+        return results.OrderByDescending(cc => cc.Order).ToList();
     }
 
     /// <summary>
@@ -108,3 +109,6 @@ internal sealed partial class Parser
         }
     }
 }
+
+internal record ContentPipelineAttributes(AttributeData? Ignore, AttributeData? UiHint,
+    AttributeData? ContentPipelinePropertyConverter, AttributeData? ContentType, AttributeData? ContentPipelineModel);

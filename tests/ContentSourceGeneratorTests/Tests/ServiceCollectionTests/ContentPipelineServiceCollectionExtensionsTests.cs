@@ -31,6 +31,7 @@ public class ContentPipelineServiceCollectionExtensionsTests
         services
             .AddContentPipelineServices()
             .AddTransient<CustomConverter>()
+            .AddTransient<DatasourceConverter>()
             .AddTransient(sl => contentLoader)
             .AddTransient(sl => urlResolver)
             .AddTransient(sl => tempDataProvider)

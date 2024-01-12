@@ -44,7 +44,7 @@ internal sealed partial class Parser
 
             if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var typeInfo))
             {
-                return new(Name: propertySymbol.Name, TypeName: typeInfo.propertyType, ConverterType: converterType, ConterterConfig: typeInfo.converterConfig);
+                return new(Name: propertySymbol.Name, TypeName: typeInfo.propertyType, ConverterType: converterType, ConverterConfig: typeInfo.converterConfig);
             }
 
             return namedPropertySymbol switch
@@ -76,9 +76,9 @@ internal sealed partial class Parser
             Action<Diagnostic> reportDiagnostic, out (string propertyType, Dictionary<string, string>? converterConfig) typeInfo)
         {
             typeInfo = (string.Empty, null);
-            if (contentPipelinePropertyConverter?.AttributeClass is { TypeArguments.Length: 1 })
+            if (contentPipelinePropertyConverter?.AttributeClass?.Interfaces[0] is { TypeArguments.Length: 1 })
             {
-                var converter = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0];
+                var converter = contentPipelinePropertyConverter.AttributeClass.Interfaces[0].TypeArguments[0];
                 var contentPropertyConverterInterface = converter.AllInterfaces.FirstOrDefault(i => i.Name == "IContentPropertyConverter");
                 var propertyType = contentPropertyConverterInterface?.TypeArguments[1].ToString() ?? string.Empty;
                 typeInfo = (propertyType, GetConverterConfig(contentPipelinePropertyConverter));
@@ -110,9 +110,9 @@ internal sealed partial class Parser
         static string GetConverter(INamedTypeSymbol namedPropertySymbol, AttributeData? contentPipelinePropertyConverter, string? uiHint)
         {
             //gets and returns the converter type from contentPipelinePropertyConverter attribute
-            if (contentPipelinePropertyConverter is { AttributeClass.TypeArguments.Length: 1 })
+            if (contentPipelinePropertyConverter?.AttributeClass?.Interfaces[0] is { TypeArguments.Length: 1 })
             {
-                var value = contentPipelinePropertyConverter.AttributeClass.TypeArguments[0].ToString();
+                var value = contentPipelinePropertyConverter.AttributeClass.Interfaces[0].TypeArguments[0].ToString();
 
                 if (value is not null)
                 {
@@ -160,7 +160,7 @@ internal sealed partial class Parser
         }
     }
 
-    private static (AttributeData? Ignore, AttributeData? UiHint, AttributeData? ContentPipelinePropertyConverter, AttributeData? ContentType, AttributeData? ContentPipelineModel) GetNamedAttributes(ImmutableArray<AttributeData> attributes)
+    private static ContentPipelineAttributes GetNamedAttributes(ImmutableArray<AttributeData> attributes)
     {
         AttributeData? ignore = null;
         AttributeData? uiHint = null;
@@ -193,6 +193,6 @@ internal sealed partial class Parser
 
             }
         }
-        return (ignore, uiHint, contentPipelinePropertyConverter, contentType, contentPipelineModel);
+        return new ContentPipelineAttributes(ignore, uiHint, contentPipelinePropertyConverter, contentType, contentPipelineModel);
     }
 }

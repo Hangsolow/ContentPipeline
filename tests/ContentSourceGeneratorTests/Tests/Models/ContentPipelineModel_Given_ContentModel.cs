@@ -1,7 +1,9 @@
 ﻿using ContentPipeline.Interfaces;
 using ContentPipeline.Models.Awesome;
 using ContentPipeline.Models.Common;
+using ContentPipeline.Models.MediaContent;
 using ContentPipeline.Properties;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Datasources;
 using FluentAssertions;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Models;
@@ -22,6 +24,7 @@ public class ContentPipelineModel_Given_ContentModel
     [InlineData(typeof(ContentBlockPipelineModel), typeof(string), "Text")]
     [InlineData(typeof(ContentBlockPipelineModel), typeof(ILinkPipelineModel), "Link")]
     [InlineData(typeof(ContentBlockPipelineModel), typeof(string), "Color")]
+    [InlineData(typeof(ContentPagePipelineModel), typeof(Datasource), "CustomMappingWithCustomAttribute")]
     [InlineData(typeof(JpgPipelineModel), typeof(string), "Title")]
     [InlineData(typeof(JpgPipelineModel), typeof(string), "Copyright")]
     [InlineData(typeof(JpgPipelineModel), typeof(string), "AltText")]

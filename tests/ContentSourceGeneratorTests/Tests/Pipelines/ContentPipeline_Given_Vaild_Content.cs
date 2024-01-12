@@ -1,6 +1,7 @@
 ﻿using ContentPipeline.Entities;
 using ContentPipeline.Interfaces;
 using ContentPipeline.Models.Common;
+using ContentPipeline.Models.MediaContent;
 using ContentPipeline.Properties;
 using ContentPipeline.ServiceCollectionExtensions;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyConverters;
@@ -16,6 +17,8 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using System.Globalization;
+using System.Reflection;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Pipelines;
 
@@ -37,12 +40,16 @@ public class ContentPipeline_Given_Vaild_Content
             ListOfStrings = contentPageTestData.List,
             CustomMapping = new EPiServer.Core.XhtmlString("Text String")
         };
-
+        var datasourceAttribute = contentPage.GetType()
+            .GetProperty(nameof(ContentPage.CustomMappingWithCustomAttribute))
+            ?.GetCustomAttribute<DatasourceAttribute>()!;
+        
         IServiceCollection services = new ServiceCollection();
         (var contentLoader, var urlResolver, var tempDataProvider, var htmlHelper) = testData;
         services
             .AddContentPipelineServices()
             .AddTransient<CustomConverter>()
+            .AddTransient<DatasourceConverter>()
             .AddTransient(sl => contentLoader)
             .AddTransient(sl => urlResolver)
             .AddTransient(sl => tempDataProvider)
@@ -107,6 +114,8 @@ public class ContentPipeline_Given_Vaild_Content
         contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.AltText.Should().Be(imageContent.AltText);
         contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Copyright.Should().Be(imageContent.Copyright);
         contentModel.BlockLink?.Should().BeOfType<ContentBlockPipelineModel>();
+        contentModel.CustomMappingWithCustomAttribute?.Url.Should().Be(datasourceAttribute.DatasourceConfig, "it should come from the datasource attribute");
+        contentModel.CustomMappingWithCustomAttribute?.Id.Should().Be(datasourceAttribute.DatasourceName, "it should come from the datasource attribute");
         var contentBlock = contentModel.BlockLink as ContentBlockPipelineModel;
         contentBlock?.Color.Should().Be(blockContent.Color.ToString());
         contentBlock?.Header.Should().Be(blockContent.Header);
