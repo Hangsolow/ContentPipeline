@@ -2,4 +2,4 @@ The Content Pipeline is intended to be used with [Optimizely CMS](https://www.op
 
 You should always check if the content delivery api can be used for your usecase before starting using this library.
 
-see info more at https://github.com/Hangsolow/ContentPipeline 
+For more info see https://github.com/Hangsolow/ContentPipeline 

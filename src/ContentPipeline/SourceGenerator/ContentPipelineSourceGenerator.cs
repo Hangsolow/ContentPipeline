@@ -72,6 +72,12 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             sourceProductionContext.AddSource(jsonConverter.Name, SourceText.From(jsonConverter.Source, Encoding.UTF8));
         }
 
+        var distantGroups = contentClasses.Select(c => c.Group).Distinct();
+        foreach (var codeSource in emitter.GetGroupInterfaceSources(distantGroups))
+        {
+            sourceProductionContext.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
+        }
+
         foreach (var contentClass in contentClasses)
         {
             var contentModelSource = emitter.GetContentModel(contentClass);

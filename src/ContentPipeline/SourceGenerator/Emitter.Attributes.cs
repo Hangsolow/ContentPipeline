@@ -46,7 +46,12 @@ internal sealed partial class Emitter
                         {
                             throw new ArgumentException($"'{nameof(group)}' cannot be null or empty.", nameof(group));
                         }
-
+                        
+                        if (char.IsLower(group[0]))
+                        {
+                            group = string.Concat(group[0].ToString().ToUpper(), group[1..]);    
+                        }
+                        
                         Group = group;
                         Order = order;
                     }
