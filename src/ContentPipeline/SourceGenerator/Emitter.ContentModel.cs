@@ -21,7 +21,7 @@ internal sealed partial class Emitter
             .Tab()
             //.Line($"[{SharedNamespace}.Attributes.GenerateTypescriptDefinition()]")
             .Tab(-1)
-            .Class($"public partial class {contentClass.Name}PipelineModel : {SharedNamespace}.Models.ContentPipelineModel")
+            .Class($"public partial class {contentClass.Name}PipelineModel : {SharedNamespace}.Models.ContentPipelineModel, {SharedNamespace}.Interfaces.IContentPipelineModel, {SharedNamespace}.Interfaces.I{contentClass.Group}ContentPipelineModel")
             .Tab()
             .Foreach(contentClass.ContentProperties, (pBuilder, prop) => pBuilder.Property(prop.Name, prop.TypeName, true))
             .Build();

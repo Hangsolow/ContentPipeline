@@ -245,4 +245,25 @@ internal sealed partial class Emitter
 
             """;
     }
+
+    internal IEnumerable<CodeSource> GetGroupInterfaceSources(IEnumerable<string> groups)
+    {
+        foreach (var group in groups)
+        {
+            yield return new CodeSource($"I{group}ContentPipelineModel.g.cs", CreateGroupContentPipelineModelInterface(group));
+        }
+        
+        string CreateGroupContentPipelineModelInterface(string group) =>
+            $$"""
+              #nullable enable
+              namespace {{SharedNamespace}}.Interfaces;
+
+              /// <summary>
+              /// Marker interface for content pipeline models in the {{group}} group
+              /// </summary>
+              public interface I{{group}}ContentPipelineModel : IContentPipelineModel
+              {
+              }
+              """;
+    }
 }

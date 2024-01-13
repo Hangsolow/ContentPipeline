@@ -18,10 +18,10 @@ public class ImageBase : ImageData
     public virtual string? Title { get; set; }
 
     [CultureSpecific]
-    [Display(Name = "Copyright tekst", GroupName = "Content", Order = 20)]
+    [Display(Name = "Copyright text", GroupName = "Content", Order = 20)]
     public virtual string? Copyright { get; set; }
 
     [CultureSpecific]
-    [Display(Name = "Alt tekst", GroupName = "Content", Order = 30)]
+    [Display(Name = "Alt text", GroupName = "Content", Order = 30)]
     public virtual string? AltText { get; set; }
 }
