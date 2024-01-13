@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/build-nuget-package
   workflow_dispatch:
     inputs:
       version:
@@ -11,6 +12,7 @@ on:
 
 env:
   VERSION: ${{ inputs.version }}
+  CURRENT_VERSION:
 
 jobs:
   release:
@@ -40,13 +42,20 @@ jobs:
         with:
           script: |
             const release = await github.rest.repos.getLatestRelease({ owner: context.repo.owner, repo: context.repo.repo});
-            console.log(release);
-      # - name: Find Version
-      #   if: ${{ env.VERSION == null }}
-      #   shell: pwsh
-      #   run: |
-      #     $version = "${{ github.ref_name }}".Substring(1)
-      #     echo "VERSION=$version" >> $env:GITHUB_ENV
+            const tagName = release.data.tag_name
+            if (tagName.startsWith('v')) {
+              core.exportVariable('CURRENT_VERSION', tagName.substring(1))
+            } else {
+              core.exportVariable('CURRENT_VERSION', tagName)
+            }
+      - name: Find Version
+        if: ${{ env.VERSION == null }}
+        shell: pwsh
+        run: |
+          $currentVersion = "${{ env.CURRENT_VERSION }}"
+          $versionObj = [System.Version]::Parse($currentVersion)
+          $nextVersion = "$($versionObj.Major).$($versionObj.Minor + 1).$($versionObj.Build)"
+          echo "VERSION=$nextVersion" >> $env:GITHUB_ENV
       - name: create nuget package
         run: dotnet pack -p:Version=${{ env.VERSION }} -c Release --output nupkgs --no-build
       # - name: Create Release
