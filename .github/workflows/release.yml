@@ -23,6 +23,7 @@ jobs:
         with:
           script: |
             const release = await github.rest.repos.getLatestRelease({ owner: context.repo.owner, repo: context.repo.repo});
+            console.log(release)
             const tagName = release.data.tag_name
             if (tagName.startsWith('v')) {
               core.exportVariable('CURRENT_VERSION', tagName.substring(1))
@@ -64,6 +65,7 @@ jobs:
           script: |
             const fs = require('fs');
             const release = await github.rest.repos.createRelease({ owner: context.repo.owner, repo: context.repo.repo, tag_name: "v${{ env.VERSION }}", generate_release_notes: true });
+            console.log(release);
             await github.rest.repos.uploadReleaseAsset({ owner: context.repo.owner, repo: context.repo.repo, release_id: release.data.id, name: 'Hangsolow.ContentPipeline.${{ env.VERSION }}.nupkg' data: await fs.readFile('nupkgs/Hangsolow.ContentPipeline.${{ env.VERSION }}.nupkg') });
       - name: upload to nuget
         run: dotnet nuget push nupkgs/Hangsolow.ContentPipeline.${{ env.VERSION }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
