@@ -16,18 +16,19 @@
 	<!-- NuGet properties -->
 	<PropertyGroup>
 		<Authors>Alex Boesen</Authors>
+        <PackageId>Hangsolow.ContentPipeline</PackageId>
         <Title>Content Pipeline</Title>
+        <Product>Content Pipeline</Product>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Version>0.0.2</Version>
 		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-		<PackageId>Hangsolow.ContentPipeline</PackageId>
 		<PackRelease>true</PackRelease>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/Hangsolow/ContentPipeline</RepositoryUrl>
         <PackageProjectUrl>https://github.com/Hangsolow/ContentPipeline</PackageProjectUrl>
         <DevelopmentDependency>true</DevelopmentDependency>
-	</PropertyGroup>
-	
+        <Description>Convert optimizely cms models to json friendly models</Description>
+        <PackageTags></PackageTags>content, optimizely,cms,convert,pipeline	</PropertyGroup>
+        <Copyright>Copyright (c) Alex Boesen 2024.</Copyright>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
 			<PrivateAssets>all</PrivateAssets>
@@ -38,6 +39,6 @@
 	<!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
 	<ItemGroup>
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        <None Include="readme.md" Pack="true" PackagePath="\"/>
+        <None Include="readme.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
