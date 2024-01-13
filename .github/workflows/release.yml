@@ -1,0 +1,56 @@
+name: Nuget Release
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: Version
+
+env:
+  VERSION: ${{ inputs.version }}
+
+jobs:
+  release:
+    name: Create Nuget Package Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore
+      - name: Test
+        run: dotnet test -c Release --no-build --verbosity normal
+      - name: Get current version
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const release = await github.rest.repos.getLatestRelease({ owner: context.repo.owner, repo: context.repo.repo});
+            console.log(release);
+      # - name: Find Version
+      #   if: ${{ env.VERSION == null }}
+      #   shell: pwsh
+      #   run: |
+      #     $version = "${{ github.ref_name }}".Substring(1)
+      #     echo "VERSION=$version" >> $env:GITHUB_ENV
+      - name: create nuget package
+        run: dotnet pack -p:Version=${{ env.VERSION }} -c Release --output nupkgs --no-build
+      # - name: Create Release
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       await github.rest.repos.createRelease({ owner: context.repo.owner, repo: context.repo.repo, tag_name: "v${{ env.VERSION }}", generate_release_notes: true });
