@@ -1,4 +1,5 @@
 ﻿using ContentPipeline.SourceGenerator;
+using ContentPipeline.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -12,22 +13,17 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-
-        IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
-            .CreateSyntaxProvider(static (s, _) => Parser.IsSyntaxTargetForGeneration(s), static (ctx, _) => Parser.GetSemanticTargetForGeneration(ctx))
-            .Where(static c => c is not null)!;
-
-        IncrementalValueProvider<(Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider config, (Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes) Right)> compilationAndClasses = context
-            .AnalyzerConfigOptionsProvider
-                .Combine(context
-                    .CompilationProvider
-                    .Combine(classDeclarations.Collect()));
-
         context.RegisterPostInitializationOutput(static callback => PostInitializationExecute(callback));
-        context.RegisterSourceOutput(compilationAndClasses, static (spc, settings) => Execute(settings.Right.compilation, settings.Right.classes, spc, settings.config));
+
+        IncrementalValuesProvider<ContentClass> contentToGenerate = context.SyntaxProvider
+            .ForAttributeWithMetadataName(
+                "EPiServer.DataAnnotations.ContentTypeAttribute",
+                predicate: static (_, _) => true,
+                transform: static (ctx, _) => GetContentToGenerate(ctx.SemanticModel, ctx.TargetNode))
+            .Where(static m => m is not null)!;
+
+        context.RegisterSourceOutput(contentToGenerate.Collect(), Execute);
     }
-
-
 
     /// <summary>
     /// This is where the heavy work should be
@@ -35,21 +31,9 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
     /// <param name="compilation"></param>
     /// <param name="classes"></param>
     /// <param name="sourceProductionContext"></param>
-    private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext sourceProductionContext, Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider config)
+    private static void Execute(SourceProductionContext sourceProductionContext, ImmutableArray<ContentClass> contentClasses)
     {
         const string sharedNamespace = "ContentPipeline";
-        //var options = config.GetOptions(classes.First().SyntaxTree);
-        //options.TryGetValue("contentpipeline_namespace", out var sharedNamespace);
-
-        Parser parser = new()
-        {
-            Compilation = compilation,
-            CancellationToken = sourceProductionContext.CancellationToken,
-            ReportDiagnostic = sourceProductionContext.ReportDiagnostic,
-            InterfaceNamespace = $"{sharedNamespace}.Interfaces"
-        };
-
-        var contentClasses = parser.GetContentClasses(classes);
 
         Emitter emitter = new()
         {
@@ -88,4 +72,25 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             sourceProductionContext.AddSource($"{contentClass.Group}_{contentClass.Name}_Pipeline_{uniqueId}.g.cs", SourceText.From(pipelineSource, Encoding.UTF8));
         }
     }
+
+    private static ContentClass? GetContentToGenerate(SemanticModel semanticModel, SyntaxNode targetNode)
+    {
+
+        if (targetNode is ClassDeclarationSyntax classDeclaration && Parser.IsContentClassSyntexForGeneration(semanticModel, classDeclaration))
+        {
+            var contentClassSymbol = semanticModel.GetDeclaredSymbol(classDeclaration);
+            if (contentClassSymbol is INamedTypeSymbol namedTypeSymbol)
+            {
+                return Parser.GetContentClass(namedTypeSymbol, semanticModel, classDeclaration, "ContentPipeline.Interfaces");
+            }
+                
+        }
+
+        return null;
+    }
+}
+
+public readonly record struct ContentToGenerate
+{
+
 }

@@ -1,11 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using ContentPipeline.Utils;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ContentPipeline.SourceGenerator;
 
 internal sealed partial class Parser
 {
-    private ContentClass GetContentClass(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration)
+    internal static ContentClass GetContentClass(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, string interfaceNamespace)
     {
         var (_, _, _, contentType, contentPipelineModel) = ParseAttributes(contentClassSymbol);
         string guid = contentType?.NamedArguments.FirstOrDefault(a => a.Key == "GUID").Value.Value as string ?? Guid.NewGuid().ToString();
@@ -14,9 +15,9 @@ internal sealed partial class Parser
         {
             order = 0;
         }
-        var contentProperties = GetContentProperties(contentClassSymbol, semanticModel, classDeclaration).ToArray();
+        var contentProperties = GetContentProperties(contentClassSymbol, semanticModel, classDeclaration, interfaceNamespace).ToArray();
 
-        return new(Name: contentClassSymbol.Name, Guid: guid, Group: group, FullyQualifiedName: contentClassSymbol.ToString(), order, ContentProperties: contentProperties);
+        return new(Name: contentClassSymbol.Name, Guid: guid, Group: group, FullyQualifiedName: contentClassSymbol.ToString(), order, ContentProperties: new EquatableArray<ContentProperty>(contentProperties));
     }
 
     private static ContentPipelineAttributes ParseAttributes(ITypeSymbol contentClassSymbol)

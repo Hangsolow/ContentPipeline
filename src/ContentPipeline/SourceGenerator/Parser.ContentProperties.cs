@@ -9,7 +9,7 @@ internal sealed partial class Parser
 {
     internal required string InterfaceNamespace { get; init; }
 
-    private IEnumerable<ContentProperty> GetContentProperties(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration)
+    private static IEnumerable<ContentProperty> GetContentProperties(INamedTypeSymbol contentClassSymbol, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, string interfaceNamespace)
     {
         var propertySymbols = semanticModel.LookupSymbols(classDeclaration.SpanStart, contentClassSymbol)
             .Where(s => s.Kind == SymbolKind.Property && !s.ContainingNamespace.ToString().StartsWith("episerver", StringComparison.OrdinalIgnoreCase))
@@ -17,14 +17,14 @@ internal sealed partial class Parser
 
         foreach (var propertySymbol in propertySymbols)
         {
-            var contentProperty = GetContentProperty(propertySymbol, ReportDiagnostic, InterfaceNamespace);
+            var contentProperty = GetContentProperty(propertySymbol, interfaceNamespace);
             if (contentProperty is not null)
             {
                 yield return contentProperty;
             }
         }
 
-        static ContentProperty? GetContentProperty(IPropertySymbol propertySymbol, Action<Diagnostic> reportDiagnostic, string interfaceNamespace)
+        static ContentProperty? GetContentProperty(IPropertySymbol propertySymbol, string interfaceNamespace)
         {
             if (propertySymbol.Type is not INamedTypeSymbol namedPropertySymbol)
             {
@@ -42,7 +42,7 @@ internal sealed partial class Parser
 
             var converterType = GetConverter(namedPropertySymbol, attributes.ContentPipelinePropertyConverter, uiHint);
 
-            if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, reportDiagnostic, out var typeInfo))
+            if (TryGetTypeFromAttribute(attributes.ContentPipelinePropertyConverter, out var typeInfo))
             {
                 return new(Name: propertySymbol.Name, TypeName: typeInfo.propertyType, ConverterType: converterType, ConverterConfig: typeInfo.converterConfig);
             }
@@ -72,8 +72,7 @@ internal sealed partial class Parser
             };
         }
 
-        static bool TryGetTypeFromAttribute(AttributeData? contentPipelinePropertyConverter,
-            Action<Diagnostic> reportDiagnostic, out (string propertyType, Dictionary<string, string>? converterConfig) typeInfo)
+        static bool TryGetTypeFromAttribute(AttributeData? contentPipelinePropertyConverter, out (string propertyType, Dictionary<string, string>? converterConfig) typeInfo)
         {
             typeInfo = (string.Empty, null);
             if (contentPipelinePropertyConverter?.AttributeClass?.Interfaces[0] is { TypeArguments.Length: 1 })
