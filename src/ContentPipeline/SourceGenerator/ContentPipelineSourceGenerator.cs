@@ -89,8 +89,3 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
         return null;
     }
 }
-
-public readonly record struct ContentToGenerate
-{
-
-}
