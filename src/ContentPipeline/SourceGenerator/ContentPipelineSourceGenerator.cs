@@ -75,15 +75,13 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
 
     private static ContentClass? GetContentToGenerate(SemanticModel semanticModel, SyntaxNode targetNode)
     {
-
         if (targetNode is ClassDeclarationSyntax classDeclaration && Parser.IsContentClassSyntexForGeneration(semanticModel, classDeclaration))
         {
             var contentClassSymbol = semanticModel.GetDeclaredSymbol(classDeclaration);
             if (contentClassSymbol is INamedTypeSymbol namedTypeSymbol)
             {
                 return Parser.GetContentClass(namedTypeSymbol, semanticModel, classDeclaration, "ContentPipeline.Interfaces");
-            }
-                
+            }  
         }
 
         return null;
