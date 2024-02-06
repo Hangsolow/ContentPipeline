@@ -246,13 +246,18 @@ internal sealed partial class Emitter
             """;
     }
 
-    internal IEnumerable<CodeSource> GetGroupInterfaceSources(IEnumerable<string> groups)
+    internal IEnumerable<CodeSource> GetGroupInterfaceSources(IEnumerable<string> groups, bool enableForms = false)
     {
         foreach (var group in groups)
         {
             yield return new CodeSource($"I{group}ContentPipelineModel.g.cs", CreateGroupContentPipelineModelInterface(group));
         }
-        
+
+        if (enableForms)
+        {
+            yield return new CodeSource($"IFormContentPipelineModel.g.cs", CreateGroupContentPipelineModelInterface("Form"));
+        }
+
         string CreateGroupContentPipelineModelInterface(string group) =>
             $$"""
               #nullable enable
