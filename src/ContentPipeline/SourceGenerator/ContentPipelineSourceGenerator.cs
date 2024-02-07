@@ -27,8 +27,6 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
         context.RegisterSourceOutput(contentToGenerate.Collect().Combine(options), Execute);
     }
 
-
-
     /// <summary>
     /// This is where the heavy work should be
     /// </summary>
