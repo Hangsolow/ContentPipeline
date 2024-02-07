@@ -37,6 +37,15 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
     {
         var (contentClasses, options) = args;
 
+        if (options.FormsEnabled)
+        {
+            var builder = ImmutableArray.CreateBuilder<ContentClass>();
+            builder.AddRange(contentClasses);
+            ContentClass FormClass = new(Name: "FormContainerBlock", Guid: "02EC61FF-819F-4978-ADD6-A097F5BD944E", Group: "Form", FullyQualifiedName: "EPiServer.Forms.Implementation.Elements.FormContainerBlock", 4000, ContentProperties: new EquatableArray<ContentProperty>());
+            builder.Add(FormClass);
+            contentClasses = builder.ToImmutable();
+        }
+
         const string sharedNamespace = "ContentPipeline";
 
         Emitter emitter = new()
@@ -62,7 +71,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
 
         var distantGroups = contentClasses.Select(c => c.Group).Distinct();
 
-        foreach (var codeSource in emitter.GetGroupInterfaceSources(distantGroups, options.FormsEnabled))
+        foreach (var codeSource in emitter.GetGroupInterfaceSources(distantGroups))
         {
             sourceProductionContext.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
         }
@@ -75,17 +84,6 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
 
             sourceProductionContext.AddSource($"{contentClass.Group}_{contentClass.Name}_ContentModel_{uniqueId}.g.cs", SourceText.From(contentModelSource, Encoding.UTF8));
             sourceProductionContext.AddSource($"{contentClass.Group}_{contentClass.Name}_Pipeline_{uniqueId}.g.cs", SourceText.From(pipelineSource, Encoding.UTF8));
-        }
-
-        if (options.FormsEnabled)
-        {
-            ContentClass FormClass = new(Name: "FormContainerBlock", Guid: "02EC61FF-819F-4978-ADD6-A097F5BD944E", Group: "Form", FullyQualifiedName: "EPiServer.Forms.Implementation.Elements.FormContainerBlock", 4000, ContentProperties: new EquatableArray<ContentProperty>());
-            var formContentModelSource = emitter.GetContentModel(FormClass);
-            var formPipelineSource = emitter.GetPipeline(FormClass);
-            var formUniqueId = FormClass.Guid.Substring(0, 8);
-
-            sourceProductionContext.AddSource($"{FormClass.Group}_{FormClass.Name}_ContentModel_{formUniqueId}.g.cs", SourceText.From(formContentModelSource, Encoding.UTF8));
-            sourceProductionContext.AddSource($"{FormClass.Group}_{FormClass.Name}_Pipeline_{formUniqueId}.g.cs", SourceText.From(formPipelineSource, Encoding.UTF8));
         }
     }
 
