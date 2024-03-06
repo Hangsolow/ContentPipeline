@@ -1,6 +1,6 @@
 ﻿namespace ContentPipeline.Utils;
 
-public sealed class GeneratorOptions
+public sealed record class GeneratorOptions
 {
     public bool FormsEnabled { get; }
 
