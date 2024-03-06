@@ -34,7 +34,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
     private static void Execute(SourceProductionContext sourceProductionContext, ImmutableArray<ContentClass> contentClasses)
     {
         const string sharedNamespace = "ContentPipeline";
-
+        contentClasses = contentClasses.OrderByDescending(cc => cc.Order).ToImmutableArray();
         Emitter emitter = new()
         {
             SharedNamespace = sharedNamespace,
