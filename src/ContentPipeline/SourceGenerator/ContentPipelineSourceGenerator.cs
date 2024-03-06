@@ -22,7 +22,9 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
                 transform: static (ctx, _) => GetContentToGenerate(ctx.SemanticModel, ctx.TargetNode))
             .Where(static m => m is not null)!;
 
-        context.RegisterSourceOutput(contentToGenerate.Collect(), Execute);
+        var options = GetGeneratorOptions(context);
+
+        context.RegisterSourceOutput(contentToGenerate.Collect().Combine(options), Execute);
     }
 
     /// <summary>
@@ -31,8 +33,19 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
     /// <param name="compilation"></param>
     /// <param name="classes"></param>
     /// <param name="sourceProductionContext"></param>
-    private static void Execute(SourceProductionContext sourceProductionContext, ImmutableArray<ContentClass> contentClasses)
+    private static void Execute(SourceProductionContext sourceProductionContext, (ImmutableArray<ContentClass>, GeneratorOptions) args)
     {
+        var (contentClasses, options) = args;
+
+        if (options.FormsEnabled)
+        {
+            var builder = ImmutableArray.CreateBuilder<ContentClass>();
+            builder.AddRange(contentClasses);
+            ContentClass FormClass = new(Name: "FormContainerBlock", Guid: "02EC61FF-819F-4978-ADD6-A097F5BD944E", Group: "Form", FullyQualifiedName: "EPiServer.Forms.Implementation.Elements.FormContainerBlock", 4000, ContentProperties: new EquatableArray<ContentProperty>());
+            builder.Add(FormClass);
+            contentClasses = builder.ToImmutable();
+        }
+
         const string sharedNamespace = "ContentPipeline";
 
         Emitter emitter = new()
@@ -57,6 +70,7 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
         }
 
         var distantGroups = contentClasses.Select(c => c.Group).Distinct();
+
         foreach (var codeSource in emitter.GetGroupInterfaceSources(distantGroups))
         {
             sourceProductionContext.AddSource(codeSource.Name, SourceText.From(codeSource.Source, Encoding.UTF8));
@@ -81,9 +95,19 @@ internal sealed partial class ContentPipelineSourceGenerator : IIncrementalGener
             if (contentClassSymbol is INamedTypeSymbol namedTypeSymbol)
             {
                 return Parser.GetContentClass(namedTypeSymbol, semanticModel, classDeclaration, "ContentPipeline.Interfaces");
-            }  
+            }
         }
 
         return null;
+    }
+
+    private IncrementalValueProvider<GeneratorOptions> GetGeneratorOptions(IncrementalGeneratorInitializationContext context)
+    {
+        return context.AnalyzerConfigOptionsProvider
+                      .Select((options, _) =>
+                      {
+                          options.GlobalOptions.TryGetValue("build_property.ContentPipeline_EnableForms", out var counterEnabledValue);
+                          return new GeneratorOptions(counterEnabledValue);
+                      });
     }
 }

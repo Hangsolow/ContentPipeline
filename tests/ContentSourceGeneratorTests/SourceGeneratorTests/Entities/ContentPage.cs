@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ContentPipeline.Attributes;
+﻿using ContentPipeline.Attributes;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyConverters;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Datasources;
@@ -7,6 +6,7 @@ using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 

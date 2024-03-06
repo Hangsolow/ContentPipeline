@@ -252,7 +252,7 @@ internal sealed partial class Emitter
         {
             yield return new CodeSource($"I{group}ContentPipelineModel.g.cs", CreateGroupContentPipelineModelInterface(group));
         }
-        
+
         string CreateGroupContentPipelineModelInterface(string group) =>
             $$"""
               #nullable enable
