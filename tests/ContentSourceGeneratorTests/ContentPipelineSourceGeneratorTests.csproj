@@ -1,55 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<IsPackable>false</IsPackable>
-		<RootNamespace>ContentPipelineSourceGeneratorTests</RootNamespace>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-        <ContentPipeline_EnableForms>enable</ContentPipeline_EnableForms>
-        <UserSecretsId>d3373cc9-608b-41cd-b6c4-a8622013efda</UserSecretsId>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ContentPipelineSourceGeneratorTests</RootNamespace>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <ContentPipeline_EnableForms>enable</ContentPipeline_EnableForms>
+    <UserSecretsId>d3373cc9-608b-41cd-b6c4-a8622013efda</UserSecretsId>
+  </PropertyGroup>
 
-	<ItemGroup>
-        <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1" />
-        <PackageReference Include="AutoFixture.Xunit2" Version="4.18.1" />
-        <PackageReference Include="EPiServer.CMS" Version="12.26.1" />
-        <PackageReference Include="EPiServer.Forms" Version="5.8.0" />
-		<PackageReference Include="FluentAssertions" Version="6.12.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-		<PackageReference Include="NSubstitute" Version="4.3.0" />
-		<PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit" Version="2.6.5" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.Xunit2" Version="4.18.1" />
+    <PackageReference Include="EPiServer.CMS" Version="12.26.1" />
+    <PackageReference Include="EPiServer.Forms" Version="5.8.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="NSubstitute" Version="4.3.0" />
+    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit" Version="2.6.5" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\ContentPipeline\ContentPipeline.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ContentPipeline\ContentPipeline.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <EditorConfigFiles Remove="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
-	</ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <None Include="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="C:\projects\ContentPipeline\tests\ContentSourceGeneratorTests\.editorconfig" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <CompilerVisibleProperty Include="ContentPipeline_EnableForms" />
-    </ItemGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="ContentPipeline_EnableForms" />
+  </ItemGroup>
 
 </Project>

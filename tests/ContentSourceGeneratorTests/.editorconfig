@@ -4,10 +4,10 @@
 indent_style = space
 
 # Xml files
-[*.xml]
+[*.{xml,csproj}]
 indent_size = 2
 
 # ContentPipeline Source Generator
 [*.cs]
-contentpipeline_namespace = ContentPipeline1
+contentpipeline_namespace = ContentPipeline
 
