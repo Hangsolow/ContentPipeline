@@ -44,6 +44,17 @@
           "EPiServer.ImageLibrary.ImageSharp": "[1.0.0, 3.0.0)"
         }
       },
+      "EPiServer.Forms": {
+        "type": "Direct",
+        "requested": "[5.8.0, )",
+        "resolved": "5.8.0",
+        "contentHash": "j5ZSozep2iolzjK6FDOEWhZmMS2ZD3/FQPu0FR1cB9SdJ+DLVzsT2HbkAHwAuAZoq44ubMQdGhI0BT4TGUstFQ==",
+        "dependencies": {
+          "EPiServer.Forms.UI": "[5.8.0, 6.0.0)",
+          "Microsoft.Extensions.FileProviders.Embedded": "6.0.2",
+          "SkiaSharp.NativeAssets.Linux.NoDependencies": "2.80.3"
+        }
+      },
       "FluentAssertions": {
         "type": "Direct",
         "requested": "[6.12.0, )",
@@ -202,6 +213,14 @@
           "System.Threading.Thread": "4.3.0"
         }
       },
+      "EPiServer.AddOns.Helpers": {
+        "type": "Transitive",
+        "resolved": "1.1.0",
+        "contentHash": "/I7rPf2+WGNclx+770hxdCIxLiJmNokgapGWiYCVoxk+EJG/Q/yBBUPnMA0nSB/ZfFd95egwrT1A9jF3YJSoeg==",
+        "dependencies": {
+          "EPiServer.CMS.AspNetCore": "[12.4.2, 13.0.0)"
+        }
+      },
       "EPiServer.CMS.AspNetCore": {
         "type": "Transitive",
         "resolved": "12.19.0",
@@ -326,6 +345,26 @@
         "contentHash": "rEuLsUQGSgeREQqtRQBARaI4FkXroNF73jtnSYzBLUiqWaGQkuqy0OG06gmJEsOc7/6uKhYC5rEh2hx6UO5Aaw==",
         "dependencies": {
           "EPiServer.CMS.UI.Core": "[12.26.1]"
+        }
+      },
+      "EPiServer.Forms.Core": {
+        "type": "Transitive",
+        "resolved": "5.8.0",
+        "contentHash": "JAG34iBBe2yYW+yB6MJXWtxoew4yzCahQ3eymKVeAYMZzQyr2fD6ovFSJvsnZOAI9PoBX+GHO8M+wh8/ywj/RA==",
+        "dependencies": {
+          "EPiServer.AddOns.Helpers": "[1.1.0, 2.0.0)",
+          "EPiServer.CMS.AspNetCore.HtmlHelpers": "[12.16.0, 13.0.0)",
+          "EPiServer.CMS.UI.Core": "[12.22.5, 13.0.0)",
+          "System.Configuration.ConfigurationManager": "6.0.0"
+        }
+      },
+      "EPiServer.Forms.UI": {
+        "type": "Transitive",
+        "resolved": "5.8.0",
+        "contentHash": "kZCeIczxf4796TCHgrQp549fOUoZWzMCboxtIYWdNDGdEnr56GvvO7+yI7DjdLIWBah5nm2XFrGrqvKWDMO0JQ==",
+        "dependencies": {
+          "EPiServer.CMS.TinyMce": "4.0.0",
+          "EPiServer.Forms.Core": "[5.8.0, 6.0.0)"
         }
       },
       "EPiServer.Framework": {
@@ -730,6 +769,14 @@
         "contentHash": "ZbaMlhJlpisjuWbvXr4LdAst/1XxH3vZ6A0BsgTphZ2L4PGuxRLz7Jr/S7mkAAnOn78Vu0fKhEgNF5JO3zfjqQ==",
         "dependencies": {
           "Microsoft.Extensions.Primitives": "8.0.0"
+        }
+      },
+      "Microsoft.Extensions.FileProviders.Embedded": {
+        "type": "Transitive",
+        "resolved": "6.0.2",
+        "contentHash": "1E5ZCjtakGushyp6GmWGscFu0HLY96Uf8ku0kiueYbctwhjXeEhXWjA7EmRRGYwFvl/DS6Os14n6XGqJPjh4UQ==",
+        "dependencies": {
+          "Microsoft.Extensions.FileProviders.Abstractions": "6.0.0"
         }
       },
       "Microsoft.Extensions.FileProviders.Physical": {
@@ -1246,6 +1293,22 @@
           "System.Text.Encoding.CodePages": "5.0.0"
         }
       },
+      "SkiaSharp": {
+        "type": "Transitive",
+        "resolved": "2.80.3",
+        "contentHash": "qX6tGNP3+MXNYe2pKm0PCRiJ/cx+LTeLaggwZifB7sUMXhECfKKKHJq45VqZKt37xQegnCCdf1jHXwmHeJQs5Q==",
+        "dependencies": {
+          "System.Memory": "4.5.3"
+        }
+      },
+      "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+        "type": "Transitive",
+        "resolved": "2.80.3",
+        "contentHash": "fMfXO2YRwceJjAN+gsUopmwsPQqW3iiBmnF+ZRMDOAgZRQM47Eih7acExqYkSVv8qoqR9/24Q6RjZW2ScF7k4Q==",
+        "dependencies": {
+          "SkiaSharp": "2.80.3"
+        }
+      },
       "System.AppContext": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1381,11 +1444,11 @@
       },
       "System.Configuration.ConfigurationManager": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "aM7cbfEfVNlEEOj3DsZP+2g9NRwbkyiAv2isQEzw7pnkDg9ekCU2m1cdJLM02Uq691OaCS91tooaxcEn8d0q5w==",
+        "resolved": "6.0.0",
+        "contentHash": "7T+m0kDSlIPTHIkPMIu6m6tV6qsMqJpvQWW2jIc2qi7sn40qxFo0q+7mEQAhMPXZHMKnWrnv47ntGlM/ejvw3g==",
         "dependencies": {
-          "System.Security.Cryptography.ProtectedData": "5.0.0",
-          "System.Security.Permissions": "5.0.0"
+          "System.Security.Cryptography.ProtectedData": "6.0.0",
+          "System.Security.Permissions": "6.0.0"
         }
       },
       "System.Console": {
@@ -2068,8 +2131,8 @@
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "HGxMSAFAPLNoxBvSfW08vHde0F9uh7BjASwu6JF9JnXuEPhCY3YUqURn0+bQV/4UWeaqymmrHWV+Aw9riQCtCA=="
+        "resolved": "6.0.0",
+        "contentHash": "rp1gMNEZpvx9vP0JW0oHLxlf8oSiQgtno77Y4PLUBjSiDYoD77Y8uXHr1Ea5XG4/pIKhqAdxZ8v8OTUtqo9PeQ=="
       },
       "System.Security.Cryptography.X509Certificates": {
         "type": "Transitive",
