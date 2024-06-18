@@ -144,6 +144,39 @@ internal partial class Emitter
 
                     return pipelineModel;
                 }
+
+                public async Task<TPipelineModel> RunAsync(TContent content, IContentPipelineContext pipelineContext)
+                {
+                    TPipelineModel pipelineModel = new();
+                    if (pipelineModel is ContentPipelineModel sharedPipelineModel)
+                    {
+                        foreach (var sharedPipelineStep in SharedPipelineSteps)
+                        {
+                            if (sharedPipelineStep.IsAsync)
+                            {
+                                await sharedPipelineStep.ExecuteAsync(content, sharedPipelineModel, pipelineContext);
+                            }
+                            else
+                            {
+                                sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext); 
+                            }
+                        }
+                    }
+
+                    foreach (var step in ContentPipelineSteps)
+                    {
+                        if (step.IsAsync)
+                        {
+                            await step.ExecuteAsync(content, pipelineModel, pipelineContext);
+                        }
+                        else
+                        {
+                            step.Execute(content, pipelineModel, pipelineContext);
+                        }
+                    }
+
+                    return pipelineModel;
+                }
             }
             """;
 

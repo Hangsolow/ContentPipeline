@@ -116,6 +116,11 @@ internal sealed partial class Emitter
                     /// The order for the pipeline step, the sort order goes from low to high
                     /// </summary>
                     int Order { get; }
+
+                    /// <summary>
+                    /// A marker for whether the pipeline step is asynchronous
+                    /// </summary>
+                    bool IsAsync => false;
                     
                     /// <summary>
                     /// Runs the pipeline step
