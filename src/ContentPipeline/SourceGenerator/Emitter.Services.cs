@@ -48,6 +48,12 @@ internal partial class Emitter
                 public virtual IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext pipelineContext) => RunPipelineForContent(content, pipelineContext);
                 
                 public virtual IContentPipelineModel ExecutePipeline(PipelineArgs pipelineArgs) => RunPipelineForContent(pipelineArgs.Content, new ContentPipelineContext(pipelineArgs.HttpContext, pipelineArgs.Language, this));
+
+                protected virtual Task<IContentPipelineModel> RunPipelineForContentAsync(IContentData contentData, IContentPipelineContext pipelineContext) => Task.FromResult(RunPipelineForContent(contentData, pipelineContext));
+
+                public virtual Task<IContentPipelineModel> ExecutePipelineAsync(IContentData content, IContentPipelineContext pipelineContext) => RunPipelineForContentAsync(content, pipelineContext);
+
+                public virtual Task<IContentPipelineModel> ExecutePipelineAsync(PipelineArgs pipelineArgs) => RunPipelineForContentAsync(pipelineArgs.Content, new ContentPipelineContext(pipelineArgs.HttpContext, pipelineArgs.Language, this));
             }
             """;
 
@@ -81,6 +87,18 @@ internal partial class Emitter
                             (b, contentClass) =>
                                 b.Line(
                                     $"{contentClass.FullyQualifiedName} castContent => {GetContentPipelineName(contentClass)}.Run(castContent, context),"))
+                        .Line($"_ => new {SharedNamespace}.Models.ContentPipelineModel()"))
+                .NewLine()
+                .Method(
+                    $"protected override async Task<IContentPipelineModel> RunPipelineForContentAsync(IContentData content, IContentPipelineContext context)",
+                    methodBuilder => methodBuilder
+                        .Line("return content switch", 1)
+                        .CodeBlock(end: "};")
+                        .Tab()
+                        .Foreach(contentClasses,
+                            (b, contentClass) =>
+                                b.Line(
+                                    $"{contentClass.FullyQualifiedName} castContent => await {GetContentPipelineName(contentClass)}.RunAsync(castContent, context),"))
                         .Line($"_ => new {SharedNamespace}.Models.ContentPipelineModel()"))
                 .NewLine()
                 .Build();
