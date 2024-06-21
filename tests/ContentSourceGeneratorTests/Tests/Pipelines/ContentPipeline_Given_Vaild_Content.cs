@@ -19,6 +19,7 @@ using NSubstitute;
 using System.Globalization;
 using System.Reflection;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Attributes;
+using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.PipelineSteps;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Pipelines;
 
@@ -50,6 +51,7 @@ public class ContentPipeline_Given_Vaild_Content
             .AddContentPipelineServices()
             .AddTransient<CustomConverter>()
             .AddTransient<DatasourceConverter>()
+            .AddTransient<IContentPipelineStep<ContentPage, ContentPipeline.Models.Awesome.ContentPagePipelineModel>, DefaultAsyncPipelineStep>()
             .AddTransient(sl => contentLoader)
             .AddTransient(sl => urlResolver)
             .AddTransient(sl => tempDataProvider)
