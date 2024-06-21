@@ -26,7 +26,7 @@ namespace ContentPipelineSourceGeneratorTests.Tests.Pipelines;
 public class ContentPipeline_Given_Vaild_Content
 {
     [AutoMock, Theory]
-    protected void Should_Map_Properties_For_ContentPage(TestData testData, ContentPageTestData contentPageTestData)
+    protected async Task Should_Map_Properties_For_ContentPage(TestData testData, ContentPageTestData contentPageTestData)
     {
         var contentPage = new ContentPage
         {
@@ -98,7 +98,8 @@ public class ContentPipeline_Given_Vaild_Content
             Content = contentPage
         };
 
-        var contentModel = (ContentPipeline.Models.Awesome.ContentPagePipelineModel)contentPipelineService.ExecutePipeline(pipelineArgs);
+        var contentPipelineModel = await contentPipelineService.ExecutePipelineAsync(pipelineArgs);
+        var contentModel = (ContentPipeline.Models.Awesome.ContentPagePipelineModel)contentPipelineModel;
 
         contentModel.Should().NotBeNull();
         contentModel.Title.Should().Be(contentPageTestData.Title);

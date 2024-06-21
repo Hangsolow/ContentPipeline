@@ -116,6 +116,11 @@ internal sealed partial class Emitter
                     /// The order for the pipeline step, the sort order goes from low to high
                     /// </summary>
                     int Order { get; }
+
+                    /// <summary>
+                    /// A marker for whether the pipeline step is asynchronous
+                    /// </summary>
+                    bool IsAsync => false;
                     
                     /// <summary>
                     /// Runs the pipeline step
@@ -124,6 +129,19 @@ internal sealed partial class Emitter
                     /// <param name="contentPipelineModel"></param>
                     /// <param name="pipelineContext"></param>
                     void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentPipelineContext pipelineContext);
+
+                    /// <summary>
+                    /// Runs the pipeline step asynchronously
+                    /// </summary>
+                    /// <param name="content"></param>
+                    /// <param name="contentPipelineModel"></param>
+                    /// <param name="pipelineContext"></param>
+                    /// <returns>A task</returns>
+                    Task ExecuteAsync(TContent content, TContentPipelineModel contentPipelineModel, ContentPipeline.Interfaces.IContentPipelineContext pipelineContext)
+                    {
+                        Execute(content, contentPipelineModel, pipelineContext);
+                        return Task.CompletedTask;
+                    }
                 }
                 """;
         }
@@ -157,6 +175,21 @@ internal sealed partial class Emitter
                     /// <param name="pipelineArgs"></param>
                     /// <returns></returns>
                     IContentPipelineModel ExecutePipeline(PipelineArgs pipelineArgs);
+
+                    /// <summary>
+                    /// runs the pipeline for the given content asynchronously
+                    /// </summary>
+                    /// <param name="content"></param>
+                    /// <param name="pipelineContext"></param>
+                    /// <returns></returns>
+                    Task<IContentPipelineModel> ExecutePipelineAsync(IContentData content, IContentPipelineContext pipelineContext) => Task.FromResult(ExecutePipeline(content, pipelineContext));
+
+                    /// <summary>
+                    /// runs the pipeline for the given pipeline args asynchronously
+                    /// </summary>
+                    /// <param name="pipelineArgs"></param>
+                    /// <returns></returns>
+                    Task<IContentPipelineModel> ExecutePipelineAsync(PipelineArgs pipelineArgs) => Task.FromResult(ExecutePipeline(pipelineArgs));
                 }
                 """;
         }
@@ -179,6 +212,14 @@ internal sealed partial class Emitter
                 /// <param name="pipelineContext"></param>
                 /// <returns>The Content Pipeline Model</returns>
                 TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext);
+
+                /// <summary>
+                /// Runs the pipeline for the content asynchronously
+                /// </summary>
+                /// <param name="content"></param>
+                /// <param name="pipelineContext"></param>
+                /// <returns>A task with the Content Pipeline Model</returns>
+                Task<TPipelineModel> RunAsync(TContent content, ContentPipeline.Interfaces.IContentPipelineContext pipelineContext) => Task.FromResult(Run(content, pipelineContext));
             }
             """;
 
