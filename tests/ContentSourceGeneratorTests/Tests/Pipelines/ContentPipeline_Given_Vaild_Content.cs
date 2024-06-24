@@ -27,7 +27,94 @@ namespace ContentPipelineSourceGeneratorTests.Tests.Pipelines;
 public class ContentPipeline_Given_Vaild_Content
 {
     [AutoMock, Theory]
-    protected async Task Should_Map_Properties_For_ContentPage(TestData testData, ContentPageTestData contentPageTestData)
+    protected void Should_Map_Properties_For_ContentPage(TestData testData, ContentPageTestData contentPageTestData)
+    {
+        var (serviceProvider, contentPage, blockContent, imageContent) = GetTestServices(testData, contentPageTestData);
+        var contentPipelineService = serviceProvider.GetRequiredService<IContentPipelineService>();
+        var datasourceAttribute = contentPage.GetType()
+            .GetProperty(nameof(ContentPage.CustomMappingWithCustomAttribute))
+            ?.GetCustomAttribute<DatasourceAttribute>()!;
+
+        var httpContext = new DefaultHttpContext();
+
+        var pipelineArgs = new PipelineArgs
+        {
+            HttpContext = httpContext,
+            Content = contentPage
+        };
+
+        var contentPipelineModel = contentPipelineService.ExecutePipeline(pipelineArgs);
+        var contentModel = (ContentPipeline.Models.Awesome.ContentPagePipelineModel)contentPipelineModel;
+
+        contentModel.Should().NotBeNull();
+        contentModel.Title.Should().Be(contentPageTestData.Title);
+        contentModel.ListOfStrings.Should().BeEquivalentTo(contentModel.ListOfStrings);
+        contentModel.Url?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/{contentPageTestData.Url}");
+        contentModel.Link?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.LinkId}");
+        contentModel.LinkToPage?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.PageLinkId}");
+        contentModel.CustomMapping.Should().BeTrue();
+        contentModel.MediaLink?.Type.Should().Be(nameof(Jpg));
+        contentModel.MediaLink?.Url.Should().Be($"/link/{contentPageTestData.MediaLinkId}");
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>();
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Title.Should().Be(imageContent.Title);
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.AltText.Should().Be(imageContent.AltText);
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Copyright.Should().Be(imageContent.Copyright);
+        contentModel.BlockLink?.Should().BeOfType<ContentBlockPipelineModel>();
+        contentModel.CustomMappingWithCustomAttribute?.Url.Should().Be(datasourceAttribute.DatasourceConfig, "it should come from the datasource attribute");
+        contentModel.CustomMappingWithCustomAttribute?.Id.Should().Be(datasourceAttribute.DatasourceName, "it should come from the datasource attribute");
+
+        var contentBlock = contentModel.BlockLink as ContentBlockPipelineModel;
+        contentBlock?.Color.Should().Be(blockContent.Color.ToString());
+        contentBlock?.Header.Should().Be(blockContent.Header);
+        contentBlock?.Text.Should().BeEmpty();
+    }
+
+    [AutoMock, Theory]
+    protected async Task Should_Map_Properties_For_ContentPageAsync(TestData testData, ContentPageTestData contentPageTestData)
+    {
+        var (serviceProvider, contentPage, blockContent, imageContent) = GetTestServices(testData, contentPageTestData);
+        var datasourceAttribute = contentPage.GetType()
+            .GetProperty(nameof(ContentPage.CustomMappingWithCustomAttribute))
+            ?.GetCustomAttribute<DatasourceAttribute>()!;
+
+        var contentPipelineService = serviceProvider.GetRequiredService<IContentPipelineService>();
+
+        var httpContext = new DefaultHttpContext();
+
+        var pipelineArgs = new PipelineArgs
+        {
+            HttpContext = httpContext,
+            Content = contentPage
+        };
+
+        var contentPipelineModel = await contentPipelineService.ExecutePipelineAsync(pipelineArgs);
+        var contentModel = (ContentPipeline.Models.Awesome.ContentPagePipelineModel)contentPipelineModel;
+
+        contentModel.Should().NotBeNull();
+        contentModel.Title.Should().Be(contentPageTestData.Title);
+        contentModel.ListOfStrings.Should().BeEquivalentTo(contentModel.ListOfStrings);
+        contentModel.Url?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/{contentPageTestData.Url}");
+        contentModel.Link?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.LinkId}");
+        contentModel.LinkToPage?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.PageLinkId}");
+        contentModel.CustomMapping.Should().BeTrue();
+        contentModel.MediaLink?.Type.Should().Be(nameof(Jpg));
+        contentModel.MediaLink?.Url.Should().Be($"/link/{contentPageTestData.MediaLinkId}");
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>();
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Title.Should().Be(imageContent.Title);
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.AltText.Should().Be(imageContent.AltText);
+        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Copyright.Should().Be(imageContent.Copyright);
+        contentModel.BlockLink?.Should().BeOfType<ContentBlockPipelineModel>();
+        contentModel.CustomMappingWithCustomAttribute?.Url.Should().Be(datasourceAttribute.DatasourceConfig, "it should come from the datasource attribute");
+        contentModel.CustomMappingWithCustomAttribute?.Id.Should().Be(datasourceAttribute.DatasourceName, "it should come from the datasource attribute");
+
+        var contentBlock = contentModel.BlockLink as ContentBlockPipelineModel;
+        contentBlock?.Color.Should().Be(blockContent.Color.ToString());
+        contentBlock?.Header.Should().Be(blockContent.Header);
+        contentBlock?.Text.Should().BeEmpty();
+
+    }
+
+    private (ServiceProvider serviceProvider, ContentPage contentPage, ContentBlock contentBlock, Jpg imageContent) GetTestServices(TestData testData, ContentPageTestData contentPageTestData)
     {
         var contentPage = new ContentPage
         {
@@ -41,10 +128,7 @@ public class ContentPipeline_Given_Vaild_Content
             ListOfStrings = contentPageTestData.List,
             CustomMapping = new EPiServer.Core.XhtmlString("Text String")
         };
-        var datasourceAttribute = contentPage.GetType()
-            .GetProperty(nameof(ContentPage.CustomMappingWithCustomAttribute))
-            ?.GetCustomAttribute<DatasourceAttribute>()!;
-        
+
         IServiceCollection services = new ServiceCollection();
         (var contentLoader, var urlResolver, var tempDataProvider, var htmlHelper) = testData;
         services
@@ -89,43 +173,10 @@ public class ContentPipeline_Given_Vaild_Content
             return true;
         });
 
-        ServiceProvider serviceProvider = services.BuildServiceProvider();
-        var contentPipelineService = serviceProvider.GetRequiredService<IContentPipelineService>();
-
-        var httpContext = new DefaultHttpContext();
-
-        var pipelineArgs = new PipelineArgs
-        {
-            HttpContext = httpContext,
-            Content = contentPage
-        };
-
-        var contentPipelineModel = await contentPipelineService.ExecutePipelineAsync(pipelineArgs);
-        var contentModel = (ContentPipeline.Models.Awesome.ContentPagePipelineModel)contentPipelineModel;
-
-        contentModel.Should().NotBeNull();
-        contentModel.Title.Should().Be(contentPageTestData.Title);
-        contentModel.ListOfStrings.Should().BeEquivalentTo(contentModel.ListOfStrings);
-        contentModel.Url?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/{contentPageTestData.Url}");
-        contentModel.Link?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.LinkId}");
-        contentModel.LinkToPage?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.PageLinkId}");
-        contentModel.CustomMapping.Should().BeTrue();
-        contentModel.MediaLink?.Type.Should().Be(nameof(Jpg));
-        contentModel.MediaLink?.Url.Should().Be($"/link/{contentPageTestData.MediaLinkId}");
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>();
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Title.Should().Be(imageContent.Title);
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.AltText.Should().Be(imageContent.AltText);
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Copyright.Should().Be(imageContent.Copyright);
-        contentModel.BlockLink?.Should().BeOfType<ContentBlockPipelineModel>();
-        contentModel.CustomMappingWithCustomAttribute?.Url.Should().Be(datasourceAttribute.DatasourceConfig, "it should come from the datasource attribute");
-        contentModel.CustomMappingWithCustomAttribute?.Id.Should().Be(datasourceAttribute.DatasourceName, "it should come from the datasource attribute");
-        var contentBlock = contentModel.BlockLink as ContentBlockPipelineModel;
-        contentBlock?.Color.Should().Be(blockContent.Color.ToString());
-        contentBlock?.Header.Should().Be(blockContent.Header);
-        contentBlock?.Text.Should().BeEmpty();
-
+        return (services.BuildServiceProvider(), contentPage, blockContent, imageContent);
     }
 
     protected record TestData(IContentLoader ContentLoader, IUrlResolver UrlResolver, ITempDataProvider TempDataProvider, IHtmlHelper HtmlHelper);
+
     protected record ContentPageTestData(string Title, string Url, int IgnoreLinkId, int LinkId, int PageLinkId, int MediaLinkId, int BlockLinkId, List<string> List);
 }

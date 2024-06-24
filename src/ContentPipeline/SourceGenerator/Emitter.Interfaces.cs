@@ -178,7 +178,7 @@ internal sealed partial class Emitter
                     /// <param name="content"></param>
                     /// <param name="contentPipelineModel"></param>
                     /// <param name="pipelineContext"></param>
-                    public void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentPipelineContext pipelineContext) => throw new NotImplementedException();
+                    public virtual void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentPipelineContext pipelineContext) => throw new NotImplementedException();
 
                     /// <summary>
                     /// Runs the pipeline step asynchronously

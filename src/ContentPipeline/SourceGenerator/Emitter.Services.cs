@@ -133,13 +133,19 @@ internal partial class Emitter
                     {
                         foreach (var sharedPipelineStep in SharedPipelineSteps)
                         {
-                            sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext);
+                            if (sharedPipelineStep.IsAsync is false)
+                            {
+                                sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext);
+                            }
                         }
                     }
 
                     foreach (var step in ContentPipelineSteps)
                     {
-                        step.Execute(content, pipelineModel, pipelineContext);
+                        if (step.IsAsync is false)
+                        {
+                            step.Execute(content, pipelineModel, pipelineContext);
+                        }
                     }
 
                     return pipelineModel;
