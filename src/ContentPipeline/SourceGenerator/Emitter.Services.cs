@@ -116,15 +116,18 @@ internal partial class Emitter
 
             internal class DefaultContentPipeline<TContent, TPipelineModel> : IContentPipeline<TContent, TPipelineModel> where TContent : IContentData where TPipelineModel : IContentPipelineModel, new()
             {
-                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> sharedPipelineSteps)
+                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> sharedPipelineSteps, IEnumerable<IPostContentPipelineStep<IContentData, ContentPipelineModel>> postContentPipelineSteps)
                 {
                     ContentPipelineSteps = contentPipelineSteps.OrderBy(ps => ps.Order);
                     SharedPipelineSteps = sharedPipelineSteps.OrderBy(ps => ps.Order);
+                    PostContentPipelineSteps = postContentPipelineSteps.OrderBy(ps => ps.Order);
                 }
 
                 private IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> ContentPipelineSteps { get; }
 
                 private IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> SharedPipelineSteps { get; }
+                
+                private IEnumerable<IPostContentPipelineStep<IContentData, ContentPipelineModel>> PostContentPipelineSteps { get; }
 
                 public TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext)
                 {
@@ -140,6 +143,14 @@ internal partial class Emitter
                     foreach (var step in ContentPipelineSteps)
                     {
                         step.Execute(content, pipelineModel, pipelineContext);
+                    }
+                    
+                    if (pipelineModel is ContentPipelineModel postPipelineModel)
+                    {
+                        foreach (var step in PostContentPipelineSteps)
+                        {
+                            step.Execute(content, postPipelineModel, pipelineContext);
+                        }
                     }
 
                     return pipelineModel;
