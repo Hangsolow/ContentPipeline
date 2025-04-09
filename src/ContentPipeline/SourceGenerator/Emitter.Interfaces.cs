@@ -20,6 +20,7 @@ internal sealed partial class Emitter
         yield return new("IContentPipelinePropertyConverterAttribute.g.cs", CreateContentPipelinePropertyConverterAttributeInterface());
         yield return new("IContentPipelineContext.g.cs", CreatePipelineContextSource());
         yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
+        yield return new("IPostContentPipelineStep.g.cs", CreatePostPipelineStep());
         yield return new("AsyncContentPipelineStep.g.cs", CreateAsyncPipelineStep());
         yield return new("IContentPipelineService.g.cs", CreatePipelineService());
         yield return new("IContentPipeline.g.cs", CreateContentPipeline());
@@ -145,6 +146,53 @@ internal sealed partial class Emitter
                     }
                 }
                 """;
+        }
+
+        string CreatePostPipelineStep()
+        {
+            return
+                $$"""
+                  #nullable enable
+                  namespace {{SharedNamespace}}.Interfaces;
+
+                  using EPiServer.Core;
+
+                  public partial interface IPostContentPipelineStep<in TContent, in TContentPipelineModel>
+                      where TContent : IContentData
+                      where TContentPipelineModel : {{SharedNamespace}}.Interfaces.IContentPipelineModel
+                  {
+                      /// <summary>
+                      /// The order for the pipeline step, the sort order goes from low to high
+                      /// </summary>
+                      int Order { get; }
+                  
+                      /// <summary>
+                      /// A marker for whether the pipeline step is asynchronous
+                      /// </summary>
+                      bool IsAsync => false;
+                      
+                      /// <summary>
+                      /// Runs the pipeline step
+                      /// </summary>
+                      /// <param name="content"></param>
+                      /// <param name="contentPipelineModel"></param>
+                      /// <param name="pipelineContext"></param>
+                      void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentPipelineContext pipelineContext);
+                  
+                      /// <summary>
+                      /// Runs the pipeline step asynchronously
+                      /// </summary>
+                      /// <param name="content"></param>
+                      /// <param name="contentPipelineModel"></param>
+                      /// <param name="pipelineContext"></param>
+                      /// <returns>A task</returns>
+                      Task ExecuteAsync(TContent content, TContentPipelineModel contentPipelineModel, ContentPipeline.Interfaces.IContentPipelineContext pipelineContext)
+                      {
+                          Execute(content, contentPipelineModel, pipelineContext);
+                          return Task.CompletedTask;
+                      }
+                  }
+                  """;
         }
 
         string CreateAsyncPipelineStep()
