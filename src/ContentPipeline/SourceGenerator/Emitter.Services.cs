@@ -185,6 +185,21 @@ internal partial class Emitter
                             step.Execute(content, pipelineModel, pipelineContext);
                         }
                     }
+                    
+                    if (pipelineModel is ContentPipelineModel postPipelineModel)
+                    {
+                        foreach (var step in PostContentPipelineSteps)
+                        {
+                            if (step.IsAsync)
+                            {
+                                await step.ExecuteAsync(content, postPipelineModel, pipelineContext);
+                            }
+                            else
+                            {
+                                step.Execute(content, postPipelineModel, pipelineContext); 
+                            }
+                        }
+                    }
 
                     return pipelineModel;
                 }
