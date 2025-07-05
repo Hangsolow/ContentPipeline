@@ -457,15 +457,7 @@ public void ConfigureServices(IServiceCollection services)
 {
     if (_environment.IsDevelopment())
     {
-        // Enable detailed logging in development
-        services.Configure<ContentPipelineOptions>(options =>
-        {
-            options.EnableDebugLogging = true;
-            options.ValidateGeneratedCode = true;
-            options.IncludeSourceInformation = true;
-        });
-
-        // Add development-only steps
+        // Add development-only pipeline steps
         services.AddSingleton<IContentPipelineStep<IContentData, IContentPipelineModel>, 
                               DebugValidationStep>();
     }
@@ -479,14 +471,6 @@ public void ConfigureServices(IServiceCollection services)
 {
     if (_environment.IsProduction())
     {
-        // Production optimizations
-        services.Configure<ContentPipelineOptions>(options =>
-        {
-            options.EnableCaching = true;
-            options.EnableCompression = true;
-            options.OptimizeForMemory = true;
-        });
-
         // Add production monitoring
         services.AddSingleton<IContentPipelineStep<IContentData, IContentPipelineModel>, 
                               MetricsCollectionStep>();

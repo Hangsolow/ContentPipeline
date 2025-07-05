@@ -132,11 +132,12 @@ CS0234: The type or namespace name 'Models' does not exist
 
 **Debugging Steps**:
 
-1. **Enable Debug Logging**:
+1. **Enable Debug Logging**: Use standard .NET logging configuration:
    ```csharp
-   services.Configure<ContentPipelineOptions>(options =>
+   services.AddLogging(builder =>
    {
-       options.EnableDebugLogging = true;
+       builder.AddConsole();
+       builder.SetMinimumLevel(LogLevel.Debug);
    });
    ```
 
@@ -163,13 +164,20 @@ CS0234: The type or namespace name 'Models' does not exist
 
 **Performance Optimization**:
 
-1. **Enable Caching**:
+1. **Implement Caching**: Use memory caching for expensive operations:
    ```csharp
-   services.Configure<ContentPipelineOptions>(options =>
+   services.AddMemoryCache();
+   
+   // In your pipeline step or converter
+   public class CachedConverter : IContentPropertyConverter<XhtmlString?, string>
    {
-       options.EnableCaching = true;
-       options.MaxCacheSize = 1000;
-   });
+       private readonly IMemoryCache _cache;
+       
+       public CachedConverter(IMemoryCache cache)
+       {
+           _cache = cache;
+       }
+   }
    ```
 
 2. **Optimize Converters**: Avoid expensive operations in converters:
@@ -229,29 +237,28 @@ CS0234: The type or namespace name 'Models' does not exist
 
 ### Configuration Validation
 
-**Add Configuration Validation**:
+**Add Configuration Validation** for custom services:
 
 ```csharp
-public class ContentPipelineConfigurationValidator : IValidateOptions<ContentPipelineOptions>
+public class CustomPipelineValidator
 {
-    public ValidateOptionsResult Validate(string name, ContentPipelineOptions options)
+    private readonly IServiceProvider _serviceProvider;
+    
+    public CustomPipelineValidator(IServiceProvider serviceProvider)
     {
-        var failures = new List<string>();
-        
-        if (options.MaxCacheSize <= 0)
-            failures.Add("MaxCacheSize must be greater than 0");
-            
-        if (options.DefaultCacheExpiration <= TimeSpan.Zero)
-            failures.Add("DefaultCacheExpiration must be positive");
-        
-        return failures.Any() 
-            ? ValidateOptionsResult.Fail(failures)
-            : ValidateOptionsResult.Success;
+        _serviceProvider = serviceProvider;
+    }
+    
+    public bool ValidateConfiguration()
+    {
+        // Check if required services are registered
+        var pipeline = _serviceProvider.GetService<IContentPipeline<IContentData, IContentPipelineModel>>();
+        return pipeline != null;
     }
 }
 
 // Register validator
-services.AddSingleton<IValidateOptions<ContentPipelineOptions>, ContentPipelineConfigurationValidator>();
+services.AddSingleton<CustomPipelineValidator>();
 ```
 
 ## Content Model Issues
@@ -414,11 +421,6 @@ services.AddLogging(builder =>
     builder.AddConsole();
     builder.AddDebug();
     builder.SetMinimumLevel(LogLevel.Debug);
-});
-
-services.Configure<ContentPipelineOptions>(options =>
-{
-    options.EnableDebugLogging = true;
 });
 ```
 
