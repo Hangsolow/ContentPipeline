@@ -192,9 +192,15 @@ public class ContentPage : PageData
 
 > **Note**: The `EPiServer.DataAnnotations.IgnoreAttribute` has no effect in ContentPipeline context. Always use `ContentPipelineIgnoreAttribute`.
 
-## Advanced Usage
+## Documentation
 
-For detailed documentation on advanced topics, see the [docs](./docs/) folder:
+For comprehensive guides and advanced topics, see our [complete documentation](./docs/):
+
+**Quick Links:**
+- **[📚 Getting Started Guide](./docs/getting-started.md)** - Complete setup walkthrough
+- **[📖 Documentation Index](./docs/README.md)** - All documentation topics
+
+**Advanced Topics:**
 
 - **[Architecture](./docs/architecture.md)** - Source generator architecture and core concepts
 - **[Configuration](./docs/configuration.md)** - Advanced configuration options
