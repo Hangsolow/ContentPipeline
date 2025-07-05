@@ -1,78 +1,67 @@
 # Content Pipeline
 
-The Content Pipeline is intended to be used with [Optimizely CMS](https://www.optimizely.com/products/orchestrate/content-management/) to convert content to more json friendly models, when needing more customization options then [Optimizely content delivery api](https://docs.developers.optimizely.com/content-management-system/v1.5.0-content-delivery-api/docs/content-delivery-api) provides.
+A source generator for Optimizely CMS that converts content models to JSON-friendly pipeline models, providing more customization options than the standard [Optimizely Content Delivery API](https://docs.developers.optimizely.com/content-management-system/v1.5.0-content-delivery-api/docs/content-delivery-api).
 
-You should always check if the content delivery api can be used for your usecase before starting using this library.
+**Note:** You should always evaluate whether the Content Delivery API meets your needs before using this library, as it may provide sufficient functionality for many use cases.
 
-# Getting Started
+## Key Features
 
-Install #NUGET_PACKACGE
-add `services.AddContentPipelineServices()` in program.cs/startup.cs
-and then you can resolve IContentPipelineService from the DI container and are good to go with the default configuration
+- 🚀 **Source Generator**: Automatically generates pipeline models at compile time
+- 🎯 **Type-Safe**: Strongly typed models with full IntelliSense support
+- 🔧 **Customizable**: Create custom property converters for complex transformations
+- ⚡ **Performance**: Minimal runtime overhead with compile-time code generation
+- 🏗️ **Pipeline Architecture**: Extensible pipeline steps for content processing
 
-```csharp
-using ContentPipeline.Entities;
-using ContentPipeline.Interfaces;
+## Installation
 
-public class ContentService(IContentPipelineService contentPipelineService)
-{
-    public IContentPipelineModel ConvertToPipelineModel(IContent content, HttpContext httpContext)
-    {
-        var pipelineArgs = new PipelineArgs
-        {
-             HttpContext = httpContext,
-             Content = content
-        };
-        var pipelineModel = ContentPipelineService.ExecutePipeline(pipelineArgs);
-    }
-}
+Install the NuGet package:
+
+```bash
+dotnet add package Hangsolow.ContentPipeline
 ```
 
-# Enable Content Model in the Content Pipeline
+## Quick Start
 
-in order for a Content Model to enabled for convertion in the ContentPipeline it must be marked by the `ContentPipelineModelAttribute` and the `ContentTypeAttribute` in order for the source generator to pick it up
-`ContentPipelineModelAttribute` have two properties: Group and Order, both are optional but we recommend setting Group as this will default to `"Common"` if not set.
+1. **Register Services**: Add ContentPipeline services to your DI container in `Program.cs` or `Startup.cs`:
 
 ```csharp
-[ContentType(GUID = "308068d7-e9b1-4958-b13b-bc612707cb85")]
-[ContentPipelineModel("Awesome")]
-public class ContentPage : PageData
-{
-    public virtual string? Title { get; set; }
-}
+services.AddContentPipelineServices();
 ```
 
-# Create a custom field mapping
-
-One of the main reasons for using this library is the option for creating a custom field mapping using a custom property converter that enables deep and easy customization of the pipeline model
-A couple of steps a needed for creating and using a PropertyConverter
-
-## Create a custom PropertyConverter
-
-A PropertyConverter needs to implement the `IContentPropertyConverter<TProperty, out TValue>` interface where TProperty is the property type on the content (e.g string, XhtmlString, ContentReference and so on) and TValue is what the property is converted to (and what will be on the pipeline model)
+2. **Use the Service**: Resolve `IContentPipelineService` from the DI container:
 
 ```csharp
 using ContentPipeline.Interfaces;
 using EPiServer.Core;
+using Microsoft.AspNetCore.Http;
 
-public class CustomConverter : IContentPropertyConverter<XhtmlString?, bool>
+public class ContentService(IContentPipelineService contentPipelineService)
 {
-    public bool GetValue(XhtmlString? property, IContentData content, string propertyName,
-        IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
+    public IContentPipelineModel? ConvertToPipelineModel(IContent content, HttpContext httpContext)
     {
-        return property?.IsEmpty is false;
+        var pipelineContext = new ContentPipelineContext 
+        { 
+            HttpContext = httpContext 
+        };
+        
+        return contentPipelineService.ExecutePipeline(content, pipelineContext);
     }
 }
 ```
 
-it will need to be registed in the service container
-`services.AddSingleton<CustomConverter>()`
+## Basic Usage
 
-## using a custom PropertyConverter
+### 1. Enable Content Model in the Content Pipeline
 
-just use ContentPipelinePropertyConverterAttribute with your custom PropertyConverter and thats it.
+To enable a content model for conversion in the ContentPipeline, mark it with both `ContentPipelineModelAttribute` and `ContentTypeAttribute`. The source generator will automatically detect and process these models.
+
+The `ContentPipelineModelAttribute` has two optional properties:
+- **Group**: Organizes models into logical groups (defaults to `"Common"` if not set)
+- **Order**: Determines processing order within the group
 
 ```csharp
+using EPiServer.Core;
+using EPiServer.DataAnnotations;
 using ContentPipeline.Attributes;
 
 [ContentType(GUID = "308068d7-e9b1-4958-b13b-bc612707cb85")]
@@ -80,41 +69,150 @@ using ContentPipeline.Attributes;
 public class ContentPage : PageData
 {
     public virtual string? Title { get; set; }
-
-    [ContentPipelinePropertyConverter<CustomConverter>]
-    public virtual XhtmlString? CustomMapping { get; set; }
+    
+    public virtual string? Description { get; set; }
 }
 ```
 
-this will result in the `ContentPagePipelineModel` looking like this:
+This generates a corresponding pipeline model:
 
 ```csharp
 namespace ContentPipeline.Models.Awesome
 {
-    public partial class ContentPagePipelineModel : ContentPipeline.Models.ContentPipelineModel
+    public partial class ContentPagePipelineModel : IContentPipelineModel
     {
         public string? Title { get; set; }
-        public bool CustomMapping { get; set; }
+        public string? Description { get; set; }
     }
 }
 ```
 
-# Ignore a content property
+### 2. Create a Custom Field Mapping
 
-In order to remove a property from the pipeline model use the `ContentPipelineIgnoreAttribute`
+Custom property converters enable deep customization of how content properties are transformed in the pipeline model. This is one of the main advantages of using ContentPipeline over the standard Content Delivery API.
+
+#### Create a Custom PropertyConverter
+
+A PropertyConverter implements the `IContentPropertyConverter<TProperty, TValue>` interface:
+- **TProperty**: The source property type (e.g., `string`, `XhtmlString`, `ContentReference`)
+- **TValue**: The target value type in the pipeline model
+
+```csharp
+using ContentPipeline.Interfaces;
+using EPiServer.Core;
+using System.Collections.Generic;
+
+public class XhtmlToContentSummaryConverter : IContentPropertyConverter<XhtmlString?, ContentSummary>
+{
+    public ContentSummary GetValue(
+        XhtmlString? property, 
+        IContentData content, 
+        string propertyName,
+        IContentPipelineContext pipelineContext, 
+        Dictionary<string, string>? config = null)
+    {
+        return new ContentSummary
+        {
+            HasContent = property?.IsEmpty == false,
+            PlainText = property?.ToHtmlString()?.StripHtml() ?? string.Empty,
+            WordCount = property?.ToHtmlString()?.CountWords() ?? 0
+        };
+    }
+}
+
+public class ContentSummary
+{
+    public bool HasContent { get; set; }
+    public string PlainText { get; set; } = string.Empty;
+    public int WordCount { get; set; }
+}
+```
+
+**Register the converter** in your DI container:
+
+```csharp
+services.AddSingleton<XhtmlToContentSummaryConverter>();
+```
+
+#### Using a Custom PropertyConverter
+
+Apply the `ContentPipelinePropertyConverterAttribute` to use your custom converter:
 
 ```csharp
 using ContentPipeline.Attributes;
+using EPiServer.Core;
+using EPiServer.DataAnnotations;
 
 [ContentType(GUID = "308068d7-e9b1-4958-b13b-bc612707cb85")]
 [ContentPipelineModel("Awesome")]
 public class ContentPage : PageData
 {
-   public virtual string? Title { get; set; }
+    public virtual string? Title { get; set; }
 
-   [ContentPipelineIgnore]
-   public virtual ContentReference? IgnoreLink { get; set; }
+    [ContentPipelinePropertyConverter<XhtmlToContentSummaryConverter>]
+    public virtual XhtmlString? MainContent { get; set; }
 }
 ```
 
-this will remove the property from the pipeline model, note that using `EPiServer.DataAnnotations.IgnoreAttribute` does not do anything in the context of ContentPipeline
+This generates:
+
+```csharp
+namespace ContentPipeline.Models.Awesome
+{
+    public partial class ContentPagePipelineModel : IContentPipelineModel
+    {
+        public string? Title { get; set; }
+        public ContentSummary MainContent { get; set; }
+    }
+}
+```
+
+### 3. Ignore a Content Property
+
+Use the `ContentPipelineIgnoreAttribute` to exclude properties from the generated pipeline model:
+
+```csharp
+using ContentPipeline.Attributes;
+using EPiServer.Core;
+using EPiServer.DataAnnotations;
+
+[ContentType(GUID = "308068d7-e9b1-4958-b13b-bc612707cb85")]
+[ContentPipelineModel("Awesome")]
+public class ContentPage : PageData
+{
+    public virtual string? Title { get; set; }
+
+    [ContentPipelineIgnore]
+    public virtual ContentReference? InternalLink { get; set; }
+    
+    [ContentPipelineIgnore]
+    public virtual string? AdminNotes { get; set; }
+}
+```
+
+> **Note**: The `EPiServer.DataAnnotations.IgnoreAttribute` has no effect in ContentPipeline context. Always use `ContentPipelineIgnoreAttribute`.
+
+## Documentation
+
+For comprehensive guides and advanced topics, see our [complete documentation](./docs/):
+
+**Quick Links:**
+- **[📚 Getting Started Guide](./docs/getting-started.md)** - Complete setup walkthrough
+- **[📖 Documentation Index](./docs/README.md)** - All documentation topics
+
+**Advanced Topics:**
+
+- **[Architecture](./docs/architecture.md)** - Source generator architecture and core concepts
+- **[Configuration](./docs/configuration.md)** - Advanced configuration options
+- **[Testing](./docs/testing.md)** - Testing strategies and examples
+- **[Advanced Usage](./docs/advanced-usage.md)** - Complex scenarios and patterns
+- **[API Reference](./docs/api-reference.md)** - Complete API documentation
+- **[Troubleshooting](./docs/troubleshooting.md)** - Common issues and solutions
+
+## Contributing
+
+Contributions are welcome! Please read our contributing guidelines and submit pull requests to the main repository.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
