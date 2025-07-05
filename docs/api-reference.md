@@ -400,49 +400,6 @@ public static class ContentPipelineServiceCollectionExtensions
 
 
 
-## Extension Points
 
-### Custom Interfaces
-
-Implement these interfaces to extend ContentPipeline functionality:
-
-#### IContentPipelineModelFactory
-
-Factory for creating pipeline models.
-
-```csharp
-public interface IContentPipelineModelFactory<in TContent, out TModel>
-    where TContent : IContentData
-    where TModel : IContentPipelineModel
-{
-    TModel CreateModel(TContent content, IContentPipelineContext context);
-}
-```
-
-#### IContentPipelineValidator
-
-Validator for pipeline models.
-
-```csharp
-public interface IContentPipelineValidator<in TModel>
-    where TModel : IContentPipelineModel
-{
-    ValidationResult Validate(TModel model, IContentPipelineContext context);
-}
-```
-
-#### IContentPipelineCache
-
-Custom caching implementation.
-
-```csharp
-public interface IContentPipelineCache
-{
-    Task<T?> GetAsync<T>(string key) where T : class;
-    Task SetAsync<T>(string key, T value, TimeSpan? expiration = null) where T : class;
-    Task RemoveAsync(string key);
-    Task RemoveByPatternAsync(string pattern);
-}
-```
 
 This API reference provides the complete interface for working with ContentPipeline. For implementation examples and advanced usage patterns, see the other documentation files.
