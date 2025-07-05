@@ -24,9 +24,9 @@ internal struct HashCode
 
     private static uint GenerateGlobalSeed()
     {
-        var buffer = new byte[sizeof(uint)];
-        new Random().NextBytes(buffer);
-        return BitConverter.ToUInt32(buffer, 0);
+        // Use a deterministic seed for analyzers/source generators
+        // to ensure reproducible builds (RS1035)
+        return 0x01000193u; // FNV-1a 32-bit offset basis
     }
 
     public static int Combine<T1>(T1 value1)
