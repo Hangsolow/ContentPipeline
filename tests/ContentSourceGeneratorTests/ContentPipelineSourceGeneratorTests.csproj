@@ -8,29 +8,62 @@
     <ContentPipeline_EnableForms>enable</ContentPipeline_EnableForms>
     <UserSecretsId>d3373cc9-608b-41cd-b6c4-a8622013efda</UserSecretsId>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1608</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.18.1" />
-    <PackageReference Include="EPiServer.CMS" Version="12.26.1" />
-    <PackageReference Include="EPiServer.Forms" Version="5.8.0" />
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="NSubstitute" Version="4.3.0" />
-    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
+    <PackageReference Include="Castle.Core" Version="5.2.1" />
+    <PackageReference Include="EPiServer.CMS" Version="12.33.1" />
+    <PackageReference Include="EPiServer.CMS.AspNetCore.HtmlHelpers" Version="12.22.8" />
+    <PackageReference Include="EPiServer.CMS.AspNetCore.TagHelpers" Version="12.22.8" />
+    <PackageReference Include="EPiServer.CMS.TinyMce" Version="5.0.1" />
+    <PackageReference Include="EPiServer.CMS.UI" Version="12.33.1" />
+    <PackageReference Include="EPiServer.CMS.UI.VisitorGroups" Version="12.33.1" />
+    <PackageReference Include="EPiServer.Forms" Version="5.10.4" />
+    <PackageReference Include="EPiServer.Forms.UI" Version="5.10.4" />
+    <PackageReference Include="EPiServer.Hosting" Version="12.22.8" />
+    <PackageReference Include="EPiServer.ImageLibrary.ImageSharp" Version="2.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.18" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.14.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.18" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.14.1" />
+    <PackageReference Include="MimeKit" Version="4.3.0" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.17">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit" Version="2.6.5" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.7" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.3" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.7" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.analyzers" Version="1.22.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.0">
+    <PackageReference Include="xunit.assert" Version="2.9.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
