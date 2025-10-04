@@ -180,7 +180,7 @@ public class ContentServiceTests
             Introduction = content.Introduction
         };
         
-        pipelineService.ExecutePipeline(Arg.Any<IContent>(), Arg.Any<IContentPipelineContext>())
+        pipelineService.ExecutePipeline(Arg.Any<IContentData>(), Arg.Any<IContentPipelineContext>())
                       .Returns(expectedModel);
 
         // Act
@@ -602,9 +602,9 @@ public class PipelineLoadTests
 ```csharp
 public class MockContentLoader : IContentLoader
 {
-    private readonly Dictionary<ContentReference, IContent> _content = new();
+    private readonly Dictionary<ContentReference, IContentData> _content = new();
 
-    public void AddContent(ContentReference reference, IContent content)
+    public void AddContent(ContentReference reference, IContentData content)
     {
         _content[reference] = content;
     }
