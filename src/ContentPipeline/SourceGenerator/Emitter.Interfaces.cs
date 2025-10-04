@@ -22,6 +22,7 @@ internal sealed partial class Emitter
         yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
         yield return new("IPostContentPipelineStep.g.cs", CreatePostPipelineStep());
         yield return new("AsyncContentPipelineStep.g.cs", CreateAsyncPipelineStep());
+        yield return new("ContentPipelineStep.g.cs", CreateSyncPipelineStep());
         yield return new("IContentPipelineService.g.cs", CreatePipelineService());
         yield return new("IContentPipeline.g.cs", CreateContentPipeline());
         yield return new("IContentPipelineModel.g.cs", CreateContentPipelineModel());
@@ -125,6 +126,11 @@ internal sealed partial class Emitter
                     bool IsAsync => false;
                     
                     /// <summary>
+                    /// A marker for whether the pipeline step is synchronous
+                    /// </summary>
+                    bool IsSync => !IsAsync;
+                    
+                    /// <summary>
                     /// Runs the pipeline step
                     /// </summary>
                     /// <param name="content"></param>
@@ -170,6 +176,11 @@ internal sealed partial class Emitter
                       /// A marker for whether the pipeline step is asynchronous
                       /// </summary>
                       bool IsAsync => false;
+                      
+                      /// <summary>
+                      /// A marker for whether the pipeline step is synchronous
+                      /// </summary>
+                      bool IsSync => !IsAsync;
                       
                       /// <summary>
                       /// Runs the pipeline step
@@ -218,7 +229,13 @@ internal sealed partial class Emitter
                     /// A marker for whether the pipeline step is asynchronous
                     /// True for AsyncContentPipelineSteps
                     /// </summary>
-                    public bool IsAsync => true;
+                    public virtual bool IsAsync => true;
+                    
+                    /// <summary>
+                    /// A marker for whether the pipeline step is synchronous
+                    /// False for AsyncContentPipelineSteps
+                    /// </summary>
+                    public virtual bool IsSync => !IsAsync;
                     
                     /// <summary>
                     /// Runs the pipeline step
@@ -236,6 +253,61 @@ internal sealed partial class Emitter
                     /// <param name="pipelineContext"></param>
                     /// <returns>A task</returns>
                     public abstract Task ExecuteAsync(TContent content, TContentPipelineModel contentPipelineModel, ContentPipeline.Interfaces.IContentPipelineContext pipelineContext);
+                }
+                """;
+        }
+
+        string CreateSyncPipelineStep()
+        {
+            return
+                $$"""
+                #nullable enable
+                namespace {{SharedNamespace}}.Pipelines;
+                
+                using EPiServer.Core;
+                using {{SharedNamespace}}.Interfaces;
+
+                public abstract class ContentPipelineStep<TContent, TContentPipelineModel>(int order) :  {{SharedNamespace}}.Interfaces.IContentPipelineStep<TContent, TContentPipelineModel>
+                    where TContent : IContentData
+                    where TContentPipelineModel : {{SharedNamespace}}.Interfaces.IContentPipelineModel
+                {
+                    /// <summary>
+                    /// The order for the pipeline step, the sort order goes from low to high
+                    /// </summary>
+                    public int Order { get; } = order;
+
+                    /// <summary>
+                    /// A marker for whether the pipeline step is asynchronous
+                    /// False for ContentPipelineSteps
+                    /// </summary>
+                    public virtual bool IsAsync => false;
+                    
+                    /// <summary>
+                    /// A marker for whether the pipeline step is synchronous
+                    /// True for ContentPipelineSteps
+                    /// </summary>
+                    public virtual bool IsSync => !IsAsync;
+                    
+                    /// <summary>
+                    /// Runs the pipeline step
+                    /// </summary>
+                    /// <param name="content"></param>
+                    /// <param name="contentPipelineModel"></param>
+                    /// <param name="pipelineContext"></param>
+                    public abstract void Execute(TContent content, TContentPipelineModel contentPipelineModel, {{SharedNamespace}}.Interfaces.IContentPipelineContext pipelineContext);
+
+                    /// <summary>
+                    /// Runs the pipeline step asynchronously
+                    /// </summary>
+                    /// <param name="content"></param>
+                    /// <param name="contentPipelineModel"></param>
+                    /// <param name="pipelineContext"></param>
+                    /// <returns>A task</returns>
+                    public virtual Task ExecuteAsync(TContent content, TContentPipelineModel contentPipelineModel, ContentPipeline.Interfaces.IContentPipelineContext pipelineContext)
+                    {
+                        Execute(content, contentPipelineModel, pipelineContext);
+                        return Task.CompletedTask;
+                    }
                 }
                 """;
         }

@@ -136,7 +136,7 @@ internal partial class Emitter
                     {
                         foreach (var sharedPipelineStep in SharedPipelineSteps)
                         {
-                            if (sharedPipelineStep.IsAsync is false)
+                            if (sharedPipelineStep.IsSync)
                             {
                                 sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext);
                             }
@@ -145,7 +145,7 @@ internal partial class Emitter
 
                     foreach (var step in ContentPipelineSteps)
                     {
-                        if (step.IsAsync is false)
+                        if (step.IsSync)
                         {
                             step.Execute(content, pipelineModel, pipelineContext);
                         }
@@ -155,7 +155,7 @@ internal partial class Emitter
                     {
                         foreach (var step in PostContentPipelineSteps)
                         {
-                            if (step.IsAsync is false)
+                            if (step.IsSync)
                             {
                                 step.Execute(content, postPipelineModel, pipelineContext);
                             }
