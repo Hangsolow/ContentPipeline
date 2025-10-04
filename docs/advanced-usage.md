@@ -221,13 +221,8 @@ public class AsyncExternalApiConverter : IContentPropertyConverter<string?, Exte
         if (string.IsNullOrEmpty(property))
             return new ExternalApiData();
 
-        // Use async context if available, otherwise fallback to sync
-        if (pipelineContext is IAsyncContentPipelineContext asyncContext)
-        {
-            return asyncContext.ExecuteAsync(async () => await GetValueAsync(property, config));
-        }
-
-        // Synchronous fallback (not recommended for I/O operations)
+        // Note: Converters must be synchronous per the IContentPropertyConverter interface
+        // For async operations, consider using pipeline steps instead
         return GetValueSync(property, config);
     }
 
