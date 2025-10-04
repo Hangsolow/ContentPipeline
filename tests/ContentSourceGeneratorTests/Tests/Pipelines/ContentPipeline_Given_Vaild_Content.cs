@@ -10,7 +10,7 @@ using ContentPipelineSourceGeneratorTests.Utils;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Web.Routing;
-using FluentAssertions;
+using Xunit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -103,26 +103,29 @@ public class ContentPipeline_Given_Vaild_Content
         var contentPipelineModel = await contentPipelineService.ExecutePipelineAsync(pipelineArgs);
         var contentModel = (ContentPipeline.Models.Awesome.ContentPagePipelineModel)contentPipelineModel;
 
-        contentModel.Should().NotBeNull();
-        contentModel.Title.Should().Be(contentPageTestData.Title);
-        contentModel.ListOfStrings.Should().BeEquivalentTo(contentModel.ListOfStrings);
-        contentModel.Url?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/{contentPageTestData.Url}");
-        contentModel.Link?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.LinkId}");
-        contentModel.LinkToPage?.Should().BeOfType<Link>().Subject.Url.Should().Be($"/link/{contentPageTestData.PageLinkId}");
-        contentModel.CustomMapping.Should().BeTrue();
-        contentModel.MediaLink?.Type.Should().Be(nameof(Jpg));
-        contentModel.MediaLink?.Url.Should().Be($"/link/{contentPageTestData.MediaLinkId}");
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>();
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Title.Should().Be(imageContent.Title);
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.AltText.Should().Be(imageContent.AltText);
-        contentModel.MediaLink?.Properties.Should().BeOfType<JpgPipelineModel>().Subject.Copyright.Should().Be(imageContent.Copyright);
-        contentModel.BlockLink?.Should().BeOfType<ContentBlockPipelineModel>();
-        contentModel.CustomMappingWithCustomAttribute?.Url.Should().Be(datasourceAttribute.DatasourceConfig, "it should come from the datasource attribute");
-        contentModel.CustomMappingWithCustomAttribute?.Id.Should().Be(datasourceAttribute.DatasourceName, "it should come from the datasource attribute");
+        Assert.NotNull(contentModel);
+        Assert.Equal(contentPageTestData.Title, contentModel.Title);
+        Assert.Equal(contentModel.ListOfStrings, contentModel.ListOfStrings);
+        Assert.IsType<Link>(contentModel.Url);
+        Assert.Equal($"/{contentPageTestData.Url}", ((Link)contentModel.Url!).Url);
+        Assert.IsType<Link>(contentModel.Link);
+        Assert.Equal($"/link/{contentPageTestData.LinkId}", ((Link)contentModel.Link!).Url);
+        Assert.IsType<Link>(contentModel.LinkToPage);
+        Assert.Equal($"/link/{contentPageTestData.PageLinkId}", ((Link)contentModel.LinkToPage!).Url);
+        Assert.True(contentModel.CustomMapping);
+        Assert.Equal(nameof(Jpg), contentModel.MediaLink?.Type);
+        Assert.Equal($"/link/{contentPageTestData.MediaLinkId}", contentModel.MediaLink?.Url);
+        Assert.IsType<JpgPipelineModel>(contentModel.MediaLink?.Properties);
+        Assert.Equal(imageContent.Title, ((JpgPipelineModel)contentModel.MediaLink?.Properties!).Title);
+        Assert.Equal(imageContent.AltText, ((JpgPipelineModel)contentModel.MediaLink?.Properties!).AltText);
+        Assert.Equal(imageContent.Copyright, ((JpgPipelineModel)contentModel.MediaLink?.Properties!).Copyright);
+        Assert.IsType<ContentBlockPipelineModel>(contentModel.BlockLink);
+        Assert.Equal(datasourceAttribute.DatasourceConfig, contentModel.CustomMappingWithCustomAttribute?.Url);
+        Assert.Equal(datasourceAttribute.DatasourceName, contentModel.CustomMappingWithCustomAttribute?.Id);
         var contentBlock = contentModel.BlockLink as ContentBlockPipelineModel;
-        contentBlock?.Color.Should().Be(blockContent.Color.ToString());
-        contentBlock?.Header.Should().Be(blockContent.Header);
-        contentBlock?.Text.Should().BeEmpty();
+        Assert.Equal(blockContent.Color.ToString(), contentBlock?.Color);
+        Assert.Equal(blockContent.Header, contentBlock?.Header);
+        Assert.True(string.IsNullOrEmpty(contentBlock?.Text));
 
     }
 
