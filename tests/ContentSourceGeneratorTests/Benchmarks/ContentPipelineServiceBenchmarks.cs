@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NSubstitute;
-using Org.BouncyCastle.Ocsp;
 using EPiServer.Web.Routing;
 using EPiServer;
 using Microsoft.AspNetCore.Mvc.Rendering;
