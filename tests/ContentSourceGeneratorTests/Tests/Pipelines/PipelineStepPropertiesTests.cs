@@ -66,6 +66,64 @@ public class PipelineStepPropertiesTests
         Assert.Equal(!syncStep.IsAsync, syncStep.IsSync);
     }
 
+    [Fact]
+    public void ContentPipelineStep_Should_Have_IsAsync_False()
+    {
+        var step = new DefaultSyncPipelineStep();
+        
+        Assert.False(step.IsAsync);
+    }
+
+    [Fact]
+    public void ContentPipelineStep_Should_Have_IsSync_True()
+    {
+        var step = new DefaultSyncPipelineStep();
+        
+        Assert.True(step.IsSync);
+    }
+
+    [Fact]
+    public void ContentPipelineStep_Execute_Should_Be_Called()
+    {
+        var step = new TestableContentPipelineStep();
+        var content = new ContentPage();
+        var model = new ContentPagePipelineModel();
+        var context = new TestPipelineContext();
+
+        step.Execute(content, model, context);
+
+        Assert.True(step.ExecuteCalled);
+    }
+
+    [Fact]
+    public async Task ContentPipelineStep_ExecuteAsync_Should_Call_Execute()
+    {
+        var step = new TestableContentPipelineStep();
+        var content = new ContentPage();
+        var model = new ContentPagePipelineModel();
+        var context = new TestPipelineContext();
+
+        await step.ExecuteAsync(content, model, context);
+
+        Assert.True(step.ExecuteCalled);
+    }
+
+    [Fact]
+    public void OverriddenContentPipelineStep_Should_Respect_Override_IsAsync()
+    {
+        var step = new OverriddenContentPipelineStep();
+        
+        Assert.True(step.IsAsync);
+    }
+
+    [Fact]
+    public void OverriddenContentPipelineStep_Should_Respect_Override_IsSync()
+    {
+        var step = new OverriddenContentPipelineStep();
+        
+        Assert.False(step.IsSync);
+    }
+
     private class TestSyncPipelineStep : IContentPipelineStep<ContentPage, ContentPagePipelineModel>
     {
         public int Order => 100;
@@ -88,5 +146,40 @@ public class PipelineStepPropertiesTests
         {
             return Task.CompletedTask;
         }
+    }
+
+    private class TestableContentPipelineStep : ContentPipeline.Pipelines.ContentPipelineStep<ContentPage, ContentPagePipelineModel>
+    {
+        public TestableContentPipelineStep() : base(order: 100)
+        {
+        }
+
+        public bool ExecuteCalled { get; private set; }
+
+        public override void Execute(ContentPage content, ContentPagePipelineModel contentPipelineModel, IContentPipelineContext pipelineContext)
+        {
+            ExecuteCalled = true;
+        }
+    }
+
+    private class OverriddenContentPipelineStep : ContentPipeline.Pipelines.ContentPipelineStep<ContentPage, ContentPagePipelineModel>
+    {
+        public OverriddenContentPipelineStep() : base(order: 100)
+        {
+        }
+
+        public override bool IsAsync => true;
+
+        public override void Execute(ContentPage content, ContentPagePipelineModel contentPipelineModel, IContentPipelineContext pipelineContext)
+        {
+            // Override execute
+        }
+    }
+
+    private class TestPipelineContext : IContentPipelineContext
+    {
+        public Microsoft.AspNetCore.Http.HttpContext HttpContext => null!;
+        public ContentPipeline.Interfaces.IContentPipelineService ContentPipelineService => null!;
+        public System.Globalization.CultureInfo? Language => null;
     }
 }
