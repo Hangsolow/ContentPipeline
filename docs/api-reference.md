@@ -216,10 +216,15 @@ public abstract class AsyncContentPipelineStep<TContent, TContentPipelineModel>
     public int Order { get; }
     public bool IsAsync => true;
     
-    public void Execute(TContent content, TContentPipelineModel contentPipelineModel, IContentPipelineContext pipelineContext);
+    public virtual void Execute(TContent content, TContentPipelineModel contentPipelineModel, IContentPipelineContext pipelineContext);
     public abstract Task ExecuteAsync(TContent content, TContentPipelineModel contentPipelineModel, IContentPipelineContext pipelineContext);
 }
 ```
+
+**Key Points:**
+- The `Execute` method is `virtual`, allowing derived classes to override it if they need custom synchronous behavior
+- By default, `Execute` throws `NotImplementedException` since async steps should use `ExecuteAsync`
+- The `IsAsync` property is always `true` for this base class, signaling the pipeline to call `ExecuteAsync`
 
 ### IPostContentPipelineStep<TContent, TContentPipelineModel>
 
