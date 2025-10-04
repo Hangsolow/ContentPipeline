@@ -161,6 +161,7 @@ public interface IContentPipelineStep<in TContent, in TContentPipelineModel>
 {
     int Order { get; }
     bool IsAsync { get; }
+    bool IsSync { get; }
     
     void Execute(
         TContent content,
@@ -183,6 +184,10 @@ public interface IContentPipelineStep<in TContent, in TContentPipelineModel>
 **IsAsync**
 - **Type**: `bool`
 - **Description**: Indicates if the step is asynchronous
+
+**IsSync**
+- **Type**: `bool`
+- **Description**: Indicates if the step is synchronous (defaults to `!IsAsync`)
 
 #### Methods
 
@@ -214,10 +219,13 @@ public abstract class AsyncContentPipelineStep<TContent, TContentPipelineModel>
     protected AsyncContentPipelineStep(int order);
     
     public int Order { get; }
-    public bool IsAsync => true;
+    public virtual bool IsAsync => true;
+    public virtual bool IsSync => false;
     
     public virtual void Execute(TContent content, TContentPipelineModel contentPipelineModel, IContentPipelineContext pipelineContext);
     public abstract Task ExecuteAsync(TContent content, TContentPipelineModel contentPipelineModel, IContentPipelineContext pipelineContext);
+}
+```
 }
 ```
 

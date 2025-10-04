@@ -125,6 +125,11 @@ internal sealed partial class Emitter
                     bool IsAsync => false;
                     
                     /// <summary>
+                    /// A marker for whether the pipeline step is synchronous
+                    /// </summary>
+                    bool IsSync => !IsAsync;
+                    
+                    /// <summary>
                     /// Runs the pipeline step
                     /// </summary>
                     /// <param name="content"></param>
@@ -170,6 +175,11 @@ internal sealed partial class Emitter
                       /// A marker for whether the pipeline step is asynchronous
                       /// </summary>
                       bool IsAsync => false;
+                      
+                      /// <summary>
+                      /// A marker for whether the pipeline step is synchronous
+                      /// </summary>
+                      bool IsSync => !IsAsync;
                       
                       /// <summary>
                       /// Runs the pipeline step
@@ -218,7 +228,13 @@ internal sealed partial class Emitter
                     /// A marker for whether the pipeline step is asynchronous
                     /// True for AsyncContentPipelineSteps
                     /// </summary>
-                    public bool IsAsync => true;
+                    public virtual bool IsAsync => true;
+                    
+                    /// <summary>
+                    /// A marker for whether the pipeline step is synchronous
+                    /// False for AsyncContentPipelineSteps
+                    /// </summary>
+                    public virtual bool IsSync => !IsAsync;
                     
                     /// <summary>
                     /// Runs the pipeline step
