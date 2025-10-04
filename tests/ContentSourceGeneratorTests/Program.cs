@@ -2,5 +2,4 @@
 using BenchmarkDotNet.Running;
 using ContentPipelineSourceGeneratorTests.Benchmarks;
 
-Console.WriteLine("Hello, World!");
 BenchmarkRunner.Run<ContentPipelineServiceBenchmarks>();

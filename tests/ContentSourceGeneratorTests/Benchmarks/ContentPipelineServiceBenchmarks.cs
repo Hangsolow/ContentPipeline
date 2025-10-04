@@ -104,12 +104,7 @@ public class ContentPipelineServiceBenchmarks
     {
         ContentPipelineContext context = new(httpContext, null, contentPipelineService);
 
-        var pipelineArgs = new PipelineArgs
-        {
-            HttpContext = httpContext,
-            Content = contentPage
-        };
-       return contentPipelineService.ExecutePipeline(contentPage, context);
+        return contentPipelineService.ExecutePipeline(contentPage, context);
     }
 
     [Benchmark]
@@ -117,12 +112,7 @@ public class ContentPipelineServiceBenchmarks
     {
         ContentPipelineContext context = new(httpContext, null, contentPipelineService);
 
-        var pipelineArgs = new PipelineArgs
-        {
-            HttpContext = httpContext,
-            Content = contentPage
-        };
-       return await contentPipelineService.ExecutePipelineAsync(contentPage, context);
+        return await contentPipelineService.ExecutePipelineAsync(contentPage, context);
     }
     protected record TestData(IContentLoader ContentLoader, IUrlResolver UrlResolver, ITempDataProvider TempDataProvider, IHtmlHelper HtmlHelper);
     protected record ContentPageTestData(string Title, string Url, int IgnoreLinkId, int LinkId, int PageLinkId, int MediaLinkId, int BlockLinkId, List<string> List);
