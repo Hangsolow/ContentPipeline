@@ -158,7 +158,7 @@ public class ContentAreaConverter : IContentPropertyConverter<ContentArea?, Cont
 Converts enum values to strings.
 
 ```csharp
-public class EnumConverter<T> : IContentPropertyConverter<T?, string>
+public class EnumConverter<T> : IContentPropertyConverter<T?, string?>
     where T : struct, Enum
 ```
 
