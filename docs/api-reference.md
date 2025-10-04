@@ -11,26 +11,40 @@ Main service interface for executing content pipelines.
 ```csharp
 public interface IContentPipelineService
 {
-    IContentPipelineModel? ExecutePipeline(IContent content, IContentPipelineContext context);
-    Task<IContentPipelineModel?> ExecutePipelineAsync(IContent content, IContentPipelineContext context);
+    IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext pipelineContext);
+    IContentPipelineModel ExecutePipeline(PipelineArgs pipelineArgs);
+    Task<IContentPipelineModel> ExecutePipelineAsync(IContentData content, IContentPipelineContext pipelineContext);
+    Task<IContentPipelineModel> ExecutePipelineAsync(PipelineArgs pipelineArgs);
 }
 ```
 
 #### Methods
 
-**ExecutePipeline**
+**ExecutePipeline(IContentData, IContentPipelineContext)**
 - **Parameters**:
-  - `content` (`IContent`): The content to process
-  - `context` (`IContentPipelineContext`): Processing context
-- **Returns**: `IContentPipelineModel?` - The generated pipeline model or null
+  - `content` (`IContentData`): The content to process
+  - `pipelineContext` (`IContentPipelineContext`): Processing context
+- **Returns**: `IContentPipelineModel` - The generated pipeline model
 - **Description**: Synchronously executes the pipeline for the given content
 
-**ExecutePipelineAsync**
+**ExecutePipeline(PipelineArgs)**
 - **Parameters**:
-  - `content` (`IContent`): The content to process
-  - `context` (`IContentPipelineContext`): Processing context
-- **Returns**: `Task<IContentPipelineModel?>` - The generated pipeline model or null
+  - `pipelineArgs` (`PipelineArgs`): Pipeline arguments containing content and context
+- **Returns**: `IContentPipelineModel` - The generated pipeline model
+- **Description**: Synchronously executes the pipeline for the given pipeline arguments
+
+**ExecutePipelineAsync(IContentData, IContentPipelineContext)**
+- **Parameters**:
+  - `content` (`IContentData`): The content to process
+  - `pipelineContext` (`IContentPipelineContext`): Processing context
+- **Returns**: `Task<IContentPipelineModel>` - The generated pipeline model
 - **Description**: Asynchronously executes the pipeline for the given content
+
+**ExecutePipelineAsync(PipelineArgs)**
+- **Parameters**:
+  - `pipelineArgs` (`PipelineArgs`): Pipeline arguments containing content and context
+- **Returns**: `Task<IContentPipelineModel>` - The generated pipeline model
+- **Description**: Asynchronously executes the pipeline for the given pipeline arguments
 
 ### IContentPipelineContext
 
@@ -39,9 +53,9 @@ Provides context information for pipeline execution.
 ```csharp
 public interface IContentPipelineContext
 {
-    HttpContext HttpContext { get; set; }
-    Dictionary<string, object> CustomData { get; set; }
-    IServiceProvider? ServiceProvider { get; set; }
+    HttpContext HttpContext { get; }
+    IContentPipelineService ContentPipelineService { get; }
+    CultureInfo? Language { get; }
 }
 ```
 
@@ -51,13 +65,13 @@ public interface IContentPipelineContext
 - **Type**: `HttpContext`
 - **Description**: The current HTTP context for the request
 
-**CustomData**
-- **Type**: `Dictionary<string, object>`
-- **Description**: Custom data that can be passed between pipeline steps
+**ContentPipelineService**
+- **Type**: `IContentPipelineService`
+- **Description**: The content pipeline service for executing nested pipelines
 
-**ServiceProvider**
-- **Type**: `IServiceProvider?`
-- **Description**: Service provider for dependency injection
+**Language**
+- **Type**: `CultureInfo?`
+- **Description**: The language/culture for the current request
 
 ### IContentPipelineModel
 
@@ -318,8 +332,6 @@ Generated for `ContentReference` properties.
 public sealed partial class Link : ILinkPipelineModel
 {
     public string? Url { get; set; }
-    public string? Title { get; set; }
-    public string? Target { get; set; }
 }
 ```
 
@@ -332,9 +344,7 @@ public sealed partial class Media
 {
     public string? Url { get; set; }
     public string? Type { get; set; }
-    public string? AltText { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
+    public IContentPipelineModel? Properties { get; set; }
 }
 ```
 

@@ -355,7 +355,11 @@ public class ResilientStep : AsyncContentPipelineStep<MyContent, MyModel>
 ```csharp
 public class ExtendedPipelineContext : IContentPipelineContext
 {
-    public HttpContext HttpContext { get; set; }
+    public required HttpContext HttpContext { get; init; }
+    public required IContentPipelineService ContentPipelineService { get; init; }
+    public CultureInfo? Language { get; init; }
+    
+    // Additional custom properties
     public string ApiVersion { get; set; } = "v1";
     public bool IncludeDebugInfo { get; set; }
     public string RequestId { get; set; } = Guid.NewGuid().ToString();

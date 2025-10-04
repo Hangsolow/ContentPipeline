@@ -280,15 +280,18 @@ public class ConditionalAnalyticsStep : AsyncContentPipelineStep<IContentData, I
     private readonly IAnalyticsService _analyticsService;
     private readonly IFeatureToggle _featureToggle;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<ConditionalAnalyticsStep> _logger;
 
     public ConditionalAnalyticsStep(
         IAnalyticsService analyticsService,
         IFeatureToggle featureToggle,
-        IConfiguration configuration) : base(order: 200)
+        IConfiguration configuration,
+        ILogger<ConditionalAnalyticsStep> logger) : base(order: 200)
     {
         _analyticsService = analyticsService;
         _featureToggle = featureToggle;
         _configuration = configuration;
+        _logger = logger;
     }
 
     public override async Task ExecuteAsync(
@@ -327,8 +330,7 @@ public class ConditionalAnalyticsStep : AsyncContentPipelineStep<IContentData, I
         catch (Exception ex)
         {
             // Log but don't fail the pipeline
-            var logger = pipelineContext.ServiceProvider?.GetService<ILogger<ConditionalAnalyticsStep>>();
-            logger?.LogWarning(ex, "Failed to enrich content {ContentId} with analytics data", content.ContentLink);
+            _logger.LogWarning(ex, "Failed to enrich content {ContentId} with analytics data", content.ContentLink);
         }
     }
 
@@ -456,9 +458,23 @@ public class ImageOptimizationRequest
 
 ### Hierarchical Content Processing
 
-Handle complex parent-child relationships:
+Handle complex parent-child relationships with depth tracking:
+
+> **Note**: This example uses a custom context that extends `IContentPipelineContext` to track hierarchy depth.
 
 ```csharp
+// Custom context for tracking hierarchy depth
+public class HierarchicalPipelineContext : IContentPipelineContext
+{
+    public required HttpContext HttpContext { get; init; }
+    public required IContentPipelineService ContentPipelineService { get; init; }
+    public CultureInfo? Language { get; init; }
+    
+    // Custom property for hierarchy tracking
+    public int HierarchyDepth { get; set; }
+    public string ContentPath { get; set; } = string.Empty;
+}
+
 public class HierarchicalContentConverter : IContentPropertyConverter<ContentArea?, HierarchicalContent>
 {
     private readonly IContentLoader _contentLoader;
@@ -521,24 +537,24 @@ public class HierarchicalContentConverter : IContentPropertyConverter<ContentAre
 
     private int GetCurrentDepth(IContentPipelineContext context)
     {
-        return context.CustomData.GetValueOrDefault("HierarchyDepth", 0) as int? ?? 0;
+        return context is HierarchicalPipelineContext hierarchical ? hierarchical.HierarchyDepth : 0;
     }
 
     private IContentPipelineContext CreateChildContext(IContentPipelineContext parent, int newDepth)
     {
-        var childContext = new ContentPipelineContext
+        return new HierarchicalPipelineContext
         {
             HttpContext = parent.HttpContext,
-            CustomData = new Dictionary<string, object>(parent.CustomData)
+            ContentPipelineService = parent.ContentPipelineService,
+            Language = parent.Language,
+            HierarchyDepth = newDepth,
+            ContentPath = parent is HierarchicalPipelineContext hierarchical ? hierarchical.ContentPath : string.Empty
         };
-        
-        childContext.CustomData["HierarchyDepth"] = newDepth;
-        return childContext;
     }
 
     private string BuildPath(IContentPipelineContext context, IContentData content)
     {
-        var parentPath = context.CustomData.GetValueOrDefault("ContentPath", "") as string ?? "";
+        var parentPath = context is HierarchicalPipelineContext hierarchical ? hierarchical.ContentPath : string.Empty;
         var contentName = content.Name ?? content.ContentLink.ID.ToString();
         
         return string.IsNullOrEmpty(parentPath) 
@@ -886,15 +902,18 @@ public class ResilientContentStep : AsyncContentPipelineStep<IContentData, ICont
     private readonly ILogger<ResilientContentStep> _logger;
     private readonly ICircuitBreaker _circuitBreaker;
     private readonly IRetryPolicy _retryPolicy;
+    private readonly bool _failOnError;
 
     public ResilientContentStep(
         ILogger<ResilientContentStep> logger,
         ICircuitBreaker circuitBreaker,
-        IRetryPolicy retryPolicy) : base(order: 100)
+        IRetryPolicy retryPolicy,
+        IConfiguration configuration) : base(order: 100)
     {
         _logger = logger;
         _circuitBreaker = circuitBreaker;
         _retryPolicy = retryPolicy;
+        _failOnError = configuration.GetValue<bool>("ContentPipeline:FailOnError", false);
     }
 
     public override async Task ExecuteAsync(
@@ -923,7 +942,7 @@ public class ResilientContentStep : AsyncContentPipelineStep<IContentData, ICont
             ApplyFallbackValues(contentPipelineModel);
             
             // Optionally re-throw based on configuration
-            if (ShouldFailOnError(pipelineContext))
+            if (_failOnError)
                 throw;
         }
     }
@@ -949,11 +968,6 @@ public class ResilientContentStep : AsyncContentPipelineStep<IContentData, ICont
                 LastUpdated = DateTime.UtcNow
             };
         }
-    }
-
-    private bool ShouldFailOnError(IContentPipelineContext context)
-    {
-        return context.CustomData.GetValueOrDefault("FailOnError", false) as bool? ?? false;
     }
 }
 ```
