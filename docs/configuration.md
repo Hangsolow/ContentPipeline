@@ -352,31 +352,43 @@ public class ResilientStep : AsyncContentPipelineStep<MyContent, MyModel>
 
 ### Custom Pipeline Context
 
+You can extend the pipeline context by implementing `IContentPipelineContext`:
+
 ```csharp
 public class ExtendedPipelineContext : IContentPipelineContext
 {
-    public HttpContext HttpContext { get; set; }
+    private readonly HttpContext _httpContext;
+    private readonly IContentPipelineService _contentPipelineService;
+    
+    public ExtendedPipelineContext(
+        HttpContext httpContext, 
+        IContentPipelineService contentPipelineService)
+    {
+        _httpContext = httpContext;
+        _contentPipelineService = contentPipelineService;
+    }
+    
+    public HttpContext HttpContext => _httpContext;
+    public IContentPipelineService ContentPipelineService => _contentPipelineService;
+    public CultureInfo? Language { get; set; }
+    
+    // Add custom properties
     public string ApiVersion { get; set; } = "v1";
     public bool IncludeDebugInfo { get; set; }
     public string RequestId { get; set; } = Guid.NewGuid().ToString();
-    public Dictionary<string, object> CustomData { get; set; } = new();
 }
 
 // Usage
 public class ContentService
 {
-    public IContentPipelineModel ConvertContent(IContent content, HttpContext httpContext)
+    private readonly IContentPipelineService _pipelineService;
+    
+    public IContentPipelineModel ConvertContent(IContentData content, HttpContext httpContext)
     {
-        var context = new ExtendedPipelineContext
+        var context = new ExtendedPipelineContext(httpContext, _pipelineService)
         {
-            HttpContext = httpContext,
             ApiVersion = httpContext.Request.Headers["X-API-Version"].FirstOrDefault() ?? "v1",
-            IncludeDebugInfo = httpContext.Request.Query.ContainsKey("debug"),
-            CustomData = 
-            {
-                ["UserAgent"] = httpContext.Request.Headers["User-Agent"].ToString(),
-                ["RequestTime"] = DateTime.UtcNow
-            }
+            IncludeDebugInfo = httpContext.Request.Query.ContainsKey("debug")
         };
 
         return _pipelineService.ExecutePipeline(content, context);

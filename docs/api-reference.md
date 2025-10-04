@@ -11,8 +11,8 @@ Main service interface for executing content pipelines.
 ```csharp
 public interface IContentPipelineService
 {
-    IContentPipelineModel? ExecutePipeline(IContent content, IContentPipelineContext context);
-    Task<IContentPipelineModel?> ExecutePipelineAsync(IContent content, IContentPipelineContext context);
+    IContentPipelineModel ExecutePipeline(IContentData content, IContentPipelineContext context);
+    Task<IContentPipelineModel> ExecutePipelineAsync(IContentData content, IContentPipelineContext context);
 }
 ```
 
@@ -20,16 +20,16 @@ public interface IContentPipelineService
 
 **ExecutePipeline**
 - **Parameters**:
-  - `content` (`IContent`): The content to process
+  - `content` (`IContentData`): The content to process
   - `context` (`IContentPipelineContext`): Processing context
-- **Returns**: `IContentPipelineModel?` - The generated pipeline model or null
+- **Returns**: `IContentPipelineModel` - The generated pipeline model
 - **Description**: Synchronously executes the pipeline for the given content
 
 **ExecutePipelineAsync**
 - **Parameters**:
-  - `content` (`IContent`): The content to process
+  - `content` (`IContentData`): The content to process
   - `context` (`IContentPipelineContext`): Processing context
-- **Returns**: `Task<IContentPipelineModel?>` - The generated pipeline model or null
+- **Returns**: `Task<IContentPipelineModel>` - The generated pipeline model
 - **Description**: Asynchronously executes the pipeline for the given content
 
 ### IContentPipelineContext
@@ -39,9 +39,9 @@ Provides context information for pipeline execution.
 ```csharp
 public interface IContentPipelineContext
 {
-    HttpContext HttpContext { get; set; }
-    Dictionary<string, object> CustomData { get; set; }
-    IServiceProvider? ServiceProvider { get; set; }
+    HttpContext HttpContext { get; }
+    IContentPipelineService ContentPipelineService { get; }
+    CultureInfo? Language { get; }
 }
 ```
 
@@ -51,13 +51,13 @@ public interface IContentPipelineContext
 - **Type**: `HttpContext`
 - **Description**: The current HTTP context for the request
 
-**CustomData**
-- **Type**: `Dictionary<string, object>`
-- **Description**: Custom data that can be passed between pipeline steps
+**ContentPipelineService**
+- **Type**: `IContentPipelineService`
+- **Description**: The content pipeline service instance
 
-**ServiceProvider**
-- **Type**: `IServiceProvider?`
-- **Description**: Service provider for dependency injection
+**Language**
+- **Type**: `CultureInfo?`
+- **Description**: The language/culture for the current content
 
 ### IContentPipelineModel
 
@@ -318,8 +318,6 @@ Generated for `ContentReference` properties.
 public sealed partial class Link : ILinkPipelineModel
 {
     public string? Url { get; set; }
-    public string? Title { get; set; }
-    public string? Target { get; set; }
 }
 ```
 
@@ -332,9 +330,7 @@ public sealed partial class Media
 {
     public string? Url { get; set; }
     public string? Type { get; set; }
-    public string? AltText { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
+    public IContentPipelineModel? Properties { get; set; }
 }
 ```
 
@@ -363,20 +359,19 @@ Marks a content type for pipeline model generation.
 
 ```csharp
 [AttributeUsage(AttributeTargets.Class)]
-public class ContentPipelineModelAttribute : Attribute
+public sealed class ContentPipelineModelAttribute : Attribute
 {
-    public ContentPipelineModelAttribute(string group);
-    public ContentPipelineModelAttribute(string group, int order);
+    public ContentPipelineModelAttribute(string group = "Common", int order = 0);
     
     public string Group { get; }
-    public int Order { get; set; }
+    public int Order { get; }
 }
 ```
 
 #### Constructor Parameters
 
-- **group** (`string`): The group name for organizing generated models
-- **order** (`int`, optional): Processing order within the group
+- **group** (`string`, optional): The group name for organizing generated models (default: "Common")
+- **order** (`int`, optional): Processing order within the group (default: 0)
 
 #### Properties
 
@@ -386,7 +381,7 @@ public class ContentPipelineModelAttribute : Attribute
 
 **Order**
 - **Type**: `int`
-- **Description**: Processing order (default: 0)
+- **Description**: Processing order
 
 ### ContentPipelineIgnoreAttribute
 
@@ -399,24 +394,24 @@ public class ContentPipelineIgnoreAttribute : Attribute
 }
 ```
 
-### ContentPipelinePropertyConverterAttribute<T>
+### ContentPipelinePropertyConverterAttribute<TConverter>
 
 Specifies a custom property converter for a property.
 
 ```csharp
 [AttributeUsage(AttributeTargets.Property)]
-public class ContentPipelinePropertyConverterAttribute<T> : Attribute
-    where T : class
+public sealed class ContentPipelinePropertyConverterAttribute<TConverter> : Attribute
+    where TConverter : IContentPropertyConverter
 {
-    public string? Config { get; set; }
+    public Type ConverterType { get; }
 }
 ```
 
 #### Properties
 
-**Config**
-- **Type**: `string?`
-- **Description**: Configuration string passed to the converter (format: "key1=value1;key2=value2")
+**ConverterType**
+- **Type**: `Type`
+- **Description**: The type of the converter to use for this property
 
 ## Service Collection Extensions
 
