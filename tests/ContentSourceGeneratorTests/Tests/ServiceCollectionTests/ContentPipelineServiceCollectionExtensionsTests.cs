@@ -6,7 +6,7 @@ using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.ContentPropertyCo
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 using EPiServer;
 using EPiServer.Web.Routing;
-using FluentAssertions;
+using Xunit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -39,7 +39,7 @@ public class ContentPipelineServiceCollectionExtensionsTests
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         var contentPipelineService = serviceProvider.GetRequiredService<IContentPipelineService>();
 
-        contentPipelineService.Should().NotBeNull();
+        Assert.NotNull(contentPipelineService);
     }
 
     protected record TestData(IContentLoader ContentLoader, IUrlResolver UrlResolver, ITempDataProvider TempDataProvider);

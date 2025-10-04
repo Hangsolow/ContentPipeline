@@ -4,7 +4,7 @@ using ContentPipeline.Models.Common;
 using ContentPipeline.Models.MediaContent;
 using ContentPipeline.Properties;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities.Datasources;
-using FluentAssertions;
+using Xunit;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Models;
 
@@ -30,7 +30,7 @@ public class ContentPipelineModel_Given_ContentModel
     [InlineData(typeof(JpgPipelineModel), typeof(string), "AltText")]
     public void Should_Have_Properties_From_ContentModel(Type contentPipelineModelType, Type returnType, string property)
     {
-        contentPipelineModelType.GetProperty(property).Should().Return(returnType);
+        Assert.Equal(returnType, contentPipelineModelType.GetProperty(property)?.PropertyType);
     }
 
     [Theory]
@@ -38,9 +38,9 @@ public class ContentPipelineModel_Given_ContentModel
     [InlineData(typeof(ContentBlockPipelineModel))]
     public void Should_Only_Have_Writeable_Properties(Type type)
     {
-        type
-            .Properties()
-            .Should()
-            .BeWritable("All the return types should be writeable to play nice with the json serializer");
+        foreach (var prop in type.GetProperties())
+        {
+            Assert.True(prop.CanWrite, $"Property {prop.Name} should be writable to play nice with the json serializer");
+        }
     }
 }
