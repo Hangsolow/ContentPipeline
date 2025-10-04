@@ -116,15 +116,18 @@ internal partial class Emitter
 
             internal class DefaultContentPipeline<TContent, TPipelineModel> : IContentPipeline<TContent, TPipelineModel> where TContent : IContentData where TPipelineModel : IContentPipelineModel, new()
             {
-                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> sharedPipelineSteps)
+                public DefaultContentPipeline(IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> contentPipelineSteps, IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> sharedPipelineSteps, IEnumerable<IPostContentPipelineStep<IContentData, ContentPipelineModel>> postContentPipelineSteps)
                 {
                     ContentPipelineSteps = contentPipelineSteps.OrderBy(ps => ps.Order);
                     SharedPipelineSteps = sharedPipelineSteps.OrderBy(ps => ps.Order);
+                    PostContentPipelineSteps = postContentPipelineSteps.OrderBy(ps => ps.Order);
                 }
 
                 private IEnumerable<IContentPipelineStep<TContent, TPipelineModel>> ContentPipelineSteps { get; }
 
                 private IEnumerable<IContentPipelineStep<IContentData, ContentPipelineModel>> SharedPipelineSteps { get; }
+                
+                private IEnumerable<IPostContentPipelineStep<IContentData, ContentPipelineModel>> PostContentPipelineSteps { get; }
 
                 public TPipelineModel Run(TContent content, IContentPipelineContext pipelineContext)
                 {
@@ -133,18 +136,20 @@ internal partial class Emitter
                     {
                         foreach (var sharedPipelineStep in SharedPipelineSteps)
                         {
-                            if (sharedPipelineStep.IsAsync is false)
-                            {
-                                sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext);
-                            }
+                            sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext);
                         }
                     }
 
                     foreach (var step in ContentPipelineSteps)
                     {
-                        if (step.IsAsync is false)
+                        step.Execute(content, pipelineModel, pipelineContext);
+                    }
+                    
+                    if (pipelineModel is ContentPipelineModel postPipelineModel)
+                    {
+                        foreach (var step in PostContentPipelineSteps)
                         {
-                            step.Execute(content, pipelineModel, pipelineContext);
+                            step.Execute(content, postPipelineModel, pipelineContext);
                         }
                     }
 
@@ -178,6 +183,21 @@ internal partial class Emitter
                         else
                         {
                             step.Execute(content, pipelineModel, pipelineContext);
+                        }
+                    }
+                    
+                    if (pipelineModel is ContentPipelineModel postPipelineModel)
+                    {
+                        foreach (var step in PostContentPipelineSteps)
+                        {
+                            if (step.IsAsync)
+                            {
+                                await step.ExecuteAsync(content, postPipelineModel, pipelineContext);
+                            }
+                            else
+                            {
+                                step.Execute(content, postPipelineModel, pipelineContext); 
+                            }
                         }
                     }
 

@@ -10,7 +10,8 @@ namespace ContentPipeline.Utils;
 /// </summary>
 internal struct HashCode
 {
-    private static readonly uint s_seed = GenerateGlobalSeed();
+    // Use a deterministic seed to satisfy analyzer RS1035 (Random is banned for analyzers)
+    private static readonly uint s_seed = 0x12345678U;
 
     private const uint Prime1 = 2654435761U;
     private const uint Prime2 = 2246822519U;
@@ -21,13 +22,6 @@ internal struct HashCode
     private uint _v1, _v2, _v3, _v4;
     private uint _queue1, _queue2, _queue3;
     private uint _length;
-
-    private static uint GenerateGlobalSeed()
-    {
-        var buffer = new byte[sizeof(uint)];
-        new Random().NextBytes(buffer);
-        return BitConverter.ToUInt32(buffer, 0);
-    }
 
     public static int Combine<T1>(T1 value1)
     {

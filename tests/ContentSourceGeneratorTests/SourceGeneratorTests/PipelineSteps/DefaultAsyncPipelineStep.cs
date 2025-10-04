@@ -12,6 +12,6 @@ internal class DefaultAsyncPipelineStep() : ContentPipeline.Pipelines.AsyncConte
 {
     public async override Task ExecuteAsync(ContentPage content, ContentPagePipelineModel contentPipelineModel, IContentPipelineContext pipelineContext)
     {
-        await Task.CompletedTask;
+        await Task.Delay(10);
     }
 }
