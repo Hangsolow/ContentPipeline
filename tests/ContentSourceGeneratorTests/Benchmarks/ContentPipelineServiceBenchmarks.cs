@@ -37,7 +37,7 @@ public class ContentPipelineServiceBenchmarks
         Link = new EPiServer.Core.ContentReference(contentPageTestData.LinkId),
         MediaLink = new EPiServer.Core.ContentReference(contentPageTestData.MediaLinkId),
         BlockLink = new EPiServer.Core.ContentReference(contentPageTestData.BlockLinkId),
-        LinkToPage = new PageReference(contentPageTestData.PageLinkId),
+        LinkToPage = new ContentReference(contentPageTestData.PageLinkId),
         ListOfStrings = contentPageTestData.List,
         CustomMapping = new EPiServer.Core.XhtmlString("Text String")
     };

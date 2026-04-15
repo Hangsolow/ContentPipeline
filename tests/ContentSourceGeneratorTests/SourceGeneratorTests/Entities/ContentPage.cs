@@ -29,7 +29,8 @@ public class ContentPage : PageData
 
     public virtual IList<string>? ListOfStrings { get; set; }
 
-    public virtual PageReference? LinkToPage { get; set; }
+    [AllowedTypes(AllowedTypes = [typeof(PageData)])]
+    public virtual ContentReference? LinkToPage { get; set; }
 
     public virtual ContentReference? Link { get; set; }
 

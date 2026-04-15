@@ -271,7 +271,7 @@ internal partial class Emitter
 
                         static IEnumerable<ContentAreaItemPipelineModel> GetContentAreaItems(ContentArea? contentArea, IContentPipelineContext pipelineContext, IContentLoader contentLoader)
                         {
-                            foreach (var item in contentArea?.FilteredItems ?? Enumerable.Empty<ContentAreaItem>())
+                            foreach (var item in contentArea?.Items ?? Enumerable.Empty<ContentAreaItem>())
                             {
                                 var model = new ContentAreaItemPipelineModel();
                                 
