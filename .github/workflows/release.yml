@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get current version
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const release = await github.rest.repos.getLatestRelease({ owner: context.repo.owner, repo: context.repo.repo});
@@ -38,12 +38,12 @@ jobs:
           $versionObj = [System.Version]::Parse($currentVersion)
           $nextVersion = "$($versionObj.Major).$($versionObj.Minor + 1).$($versionObj.Build)"
           echo "VERSION=$nextVersion" >> $env:GITHUB_ENV
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
-      - uses: actions/cache@v3
+          dotnet-version: 10.0.x
+      - uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           # Look to see if there is a cache hit for the corresponding requirements file
@@ -60,7 +60,7 @@ jobs:
       - name: create nuget package
         run: dotnet pack -p:Version=${{ env.VERSION }} -p:RepositoryCommit=${{ github.sha }} -c Release --output nupkgs --no-build
       - name: Create Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs/promises');
