@@ -50,6 +50,7 @@ public class ContentPipeline_Given_Vaild_Content
         services
             .AddContentPipelineServices()
             .AddTransient<CustomConverter>()
+            .AddTransient<AsyncOnlyBoolConverter>()
             .AddTransient<DatasourceConverter>()
             .AddTransient<IContentPipelineStep<ContentPage, ContentPipeline.Models.Awesome.ContentPagePipelineModel>, DefaultAsyncPipelineStep>()
             .AddTransient(sl => contentLoader)

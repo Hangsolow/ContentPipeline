@@ -249,29 +249,42 @@ internal partial class Emitter
                 using EPiServer;
                 using EPiServer.Core;
                 using EPiServer.Core.Html.StringParsing;
+                using EPiServer.Web;
                 using System;
                 using System.Collections.Generic;
                 using System.Linq;
+                using System.Threading.Tasks;
 
                 internal class ContentAreaConverter : IContentAreaConverter
                 {
-                    public ContentAreaConverter(IContentLoader contentLoader)
+                    public ContentAreaConverter(IContentLoader contentLoader, IEnumerable<IContentAreaItemsRenderingFilter> contentAreaItemsRenderingFilters)
                     {
                         ContentLoader = contentLoader ?? throw new ArgumentNullException(nameof(contentLoader));
+                        ContentAreaItemsRenderingFilters = contentAreaItemsRenderingFilters ?? throw new ArgumentNullException(nameof(contentAreaItemsRenderingFilters));
                     }
 
                     private IContentLoader ContentLoader { get; }
+                    private IEnumerable<IContentAreaItemsRenderingFilter> ContentAreaItemsRenderingFilters { get; }
 
                     public ContentAreaPipelineModel? GetValue(ContentArea? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
                     {
                         return new ContentAreaPipelineModel
                         {
-                            Items = GetContentAreaItems(property, pipelineContext, ContentLoader)
+                            Items = GetContentAreaItems(property, pipelineContext, ContentLoader, ContentAreaItemsRenderingFilters)
                         };
 
-                        static IEnumerable<ContentAreaItemPipelineModel> GetContentAreaItems(ContentArea? contentArea, IContentPipelineContext pipelineContext, IContentLoader contentLoader)
+                        static IEnumerable<ContentAreaItemPipelineModel> GetContentAreaItems(ContentArea? contentArea, IContentPipelineContext pipelineContext, IContentLoader contentLoader, IEnumerable<IContentAreaItemsRenderingFilter> contentAreaItemsRenderingFilters)
                         {
-                            foreach (var item in contentArea?.Items ?? Enumerable.Empty<ContentAreaItem>())
+                            var filteredItems = contentArea?.Items.ToList() ?? new List<ContentAreaItem>();
+                            var contextModeResolver = pipelineContext.HttpContext.RequestServices?.GetService(typeof(IContextModeResolver)) as IContextModeResolver;
+                            var mode = contextModeResolver?.CurrentMode ?? ContextMode.Default;
+
+                            foreach (var filter in contentAreaItemsRenderingFilters)
+                            {
+                                filter.FilterAsync(filteredItems, pipelineContext.HttpContext.User, mode).GetAwaiter().GetResult();
+                            }
+
+                            foreach (var item in filteredItems)
                             {
                                 var model = new ContentAreaItemPipelineModel();
                                 
@@ -287,6 +300,46 @@ internal partial class Emitter
 
                                 yield return model;
                             }
+                        }
+                    }
+
+                    public async Task<ContentAreaPipelineModel?> GetValueAsync(ContentArea? property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)
+                    {
+                        return new ContentAreaPipelineModel
+                        {
+                            Items = await GetContentAreaItemsAsync(property, pipelineContext, ContentLoader, ContentAreaItemsRenderingFilters)
+                        };
+
+                        static async Task<IEnumerable<ContentAreaItemPipelineModel>> GetContentAreaItemsAsync(ContentArea? contentArea, IContentPipelineContext pipelineContext, IContentLoader contentLoader, IEnumerable<IContentAreaItemsRenderingFilter> contentAreaItemsRenderingFilters)
+                        {
+                            var filteredItems = contentArea?.Items.ToList() ?? new List<ContentAreaItem>();
+                            var contextModeResolver = pipelineContext.HttpContext.RequestServices?.GetService(typeof(IContextModeResolver)) as IContextModeResolver;
+                            var mode = contextModeResolver?.CurrentMode ?? ContextMode.Default;
+
+                            foreach (var filter in contentAreaItemsRenderingFilters)
+                            {
+                                await filter.FilterAsync(filteredItems, pipelineContext.HttpContext.User, mode);
+                            }
+
+                            var models = new List<ContentAreaItemPipelineModel>(filteredItems.Count);
+                            foreach (var item in filteredItems)
+                            {
+                                var model = new ContentAreaItemPipelineModel();
+
+                                if (item.RenderSettings.TryGetValue(ContentFragment.ContentDisplayOptionAttributeName, out var displayOption))
+                                {
+                                    model.DisplayOption = displayOption.ToString();
+                                }
+
+                                if (contentLoader.TryGet(item.ContentLink, out IContent modelContent))
+                                {
+                                    model.Content = await pipelineContext.ContentPipelineService.ExecutePipelineAsync(modelContent, pipelineContext);
+                                }
+
+                                models.Add(model);
+                            }
+
+                            return models;
                         }
                     }
                 }

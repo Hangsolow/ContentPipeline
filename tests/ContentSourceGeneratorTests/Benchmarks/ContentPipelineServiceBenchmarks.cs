@@ -55,6 +55,7 @@ public class ContentPipelineServiceBenchmarks
         services
             .AddContentPipelineServices()
             .AddTransient<CustomConverter>()
+            .AddTransient<AsyncOnlyBoolConverter>()
             .AddTransient<DatasourceConverter>()
             .AddTransient<IContentPipelineStep<ContentPage, ContentPipeline.Models.Awesome.ContentPagePipelineModel>, DefaultAsyncPipelineStep>()
             .AddTransient(sl => contentLoader)
@@ -116,5 +117,4 @@ public class ContentPipelineServiceBenchmarks
     protected record TestData(IContentLoader ContentLoader, IUrlResolver UrlResolver, ITempDataProvider TempDataProvider, IHtmlHelper HtmlHelper);
     protected record ContentPageTestData(string Title, string Url, int IgnoreLinkId, int LinkId, int PageLinkId, int MediaLinkId, int BlockLinkId, List<string> List);
 }
-
 

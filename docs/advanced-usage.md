@@ -195,7 +195,9 @@ public class ContextualImageConverter : IContentPropertyConverter<ContentReferen
 For converters that need to perform async operations:
 
 ```csharp
-public class AsyncExternalApiConverter : IContentPropertyConverter<string?, ExternalApiData>
+public class AsyncExternalApiConverter :
+    IContentPropertyConverter<string?, ExternalApiData>,
+    IAsyncContentPropertyConverter<string?, ExternalApiData>
 {
     private readonly HttpClient _httpClient;
     private readonly IMemoryCache _cache;
@@ -221,14 +223,21 @@ public class AsyncExternalApiConverter : IContentPropertyConverter<string?, Exte
         if (string.IsNullOrEmpty(property))
             return new ExternalApiData();
 
-        // Note: Converters must be synchronous per the IContentPropertyConverter interface
-        // For async operations, consider using pipeline steps instead
-        return GetValueSync(property, config);
+        // Sync pipeline execution path
+        return new ExternalApiData();
     }
 
-    private async Task<ExternalApiData> GetValueAsync(string identifier, Dictionary<string, string>? config)
+    public async Task<ExternalApiData> GetValueAsync(
+        string? property,
+        IContentData content,
+        string propertyName,
+        IContentPipelineContext pipelineContext,
+        Dictionary<string, string>? config = null)
     {
-        var cacheKey = $"external_api_{identifier}";
+        if (string.IsNullOrEmpty(property))
+            return new ExternalApiData();
+
+        var cacheKey = $"external_api_{property}";
         
         if (_cache.TryGetValue(cacheKey, out ExternalApiData cachedData))
             return cachedData;
@@ -236,7 +245,7 @@ public class AsyncExternalApiConverter : IContentPropertyConverter<string?, Exte
         try
         {
             var apiUrl = config?.GetValueOrDefault("apiUrl", "https://api.example.com");
-            var response = await _httpClient.GetAsync($"{apiUrl}/data/{identifier}");
+            var response = await _httpClient.GetAsync($"{apiUrl}/data/{property}");
             
             if (response.IsSuccessStatusCode)
             {
@@ -249,19 +258,15 @@ public class AsyncExternalApiConverter : IContentPropertyConverter<string?, Exte
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to fetch external data for {Identifier}", identifier);
+            _logger.LogWarning(ex, "Failed to fetch external data for {Identifier}", property);
         }
 
         return new ExternalApiData { Error = "Failed to fetch data" };
     }
-
-    private ExternalApiData GetValueSync(string identifier, Dictionary<string, string>? config)
-    {
-        // Simplified synchronous version
-        return new ExternalApiData { Id = identifier, Source = "cache" };
-    }
 }
 ```
+
+`GetValueAsync` is used by async pipeline execution; `GetValue` is used by sync pipeline execution.
 
 ## Advanced Pipeline Steps
 
