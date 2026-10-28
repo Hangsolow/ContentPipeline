@@ -172,41 +172,20 @@ internal partial class Emitter
                     {
                         foreach (var sharedPipelineStep in SharedPipelineSteps)
                         {
-                            if (sharedPipelineStep.IsAsync)
-                            {
-                                await sharedPipelineStep.ExecuteAsync(content, sharedPipelineModel, pipelineContext);
-                            }
-                            else
-                            {
-                                sharedPipelineStep.Execute(content, sharedPipelineModel, pipelineContext); 
-                            }
+                            await sharedPipelineStep.ExecuteAsync(content, sharedPipelineModel, pipelineContext);
                         }
                     }
 
                     foreach (var step in ContentPipelineSteps)
                     {
-                        if (step.IsAsync)
-                        {
-                            await step.ExecuteAsync(content, pipelineModel, pipelineContext);
-                        }
-                        else
-                        {
-                            step.Execute(content, pipelineModel, pipelineContext);
-                        }
+                        await step.ExecuteAsync(content, pipelineModel, pipelineContext);
                     }
                     
                     if (pipelineModel is ContentPipelineModel postPipelineModel)
                     {
                         foreach (var step in PostContentPipelineSteps)
                         {
-                            if (step.IsAsync)
-                            {
-                                await step.ExecuteAsync(content, postPipelineModel, pipelineContext);
-                            }
-                            else
-                            {
-                                step.Execute(content, postPipelineModel, pipelineContext); 
-                            }
+                            await step.ExecuteAsync(content, postPipelineModel, pipelineContext);
                         }
                     }
 

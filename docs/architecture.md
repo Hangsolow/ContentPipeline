@@ -89,7 +89,7 @@ public interface IContentPropertyConverter<in TProperty, out TValue>
 - **`XhtmlStringConverter`**: Converts `XhtmlString` to HTML string
 - **`ContentReferenceConverter`**: Resolves `ContentReference` to `Link` objects
 - **`MediaConverter`**: Transforms media references to `Media` objects with URLs
-- **`ContentAreaConverter`**: Converts `ContentArea` to structured data
+- **`ContentAreaConverter`**: Converts `ContentArea` to structured data after applying `IContentAreaItemsRenderingFilter` filters
 - **`EnumConverter<T>`**: Handles enum transformations
 
 ### 5. Pipeline Architecture

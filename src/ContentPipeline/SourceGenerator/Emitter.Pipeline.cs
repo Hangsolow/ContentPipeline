@@ -15,6 +15,7 @@ internal sealed partial class Emitter
             .Line("#nullable enable")
             .Using("System")
             .Using("System.Collections.Generic")
+            .Using("System.Threading.Tasks")
             .Using($"{SharedNamespace}.Interfaces")
             .Using("EPiServer.Core")
             .Namespace($"{SharedNamespace}.Pipelines.{contentClass.Group}.Steps")
@@ -38,8 +39,21 @@ internal sealed partial class Emitter
                 methodBuilder => methodBuilder
                     .Tab()
                     .Foreach(contentClass.ContentProperties,
-                        (b, p) => b.Line($"contentPipelineModel.{p.Name} = {GetConverter(p)};"))
+                        (b, p) => b.Line($"contentPipelineModel.{p.Name} = {GetSyncConverterValue(p)};"))
                     .Line(""))
+            .Method(
+                $"public async Task ExecuteAsync({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentPipelineContext pipelineContext)",
+                methodBuilder => methodBuilder
+                    .Tab()
+                    .Foreach(contentClass.ContentProperties,
+                        (b, p) => b.Line($"contentPipelineModel.{p.Name} = {GetAsyncConverterValue(p)};"))
+                    .Line(""))
+            .Method(
+                "private static async Task<TValue> GetConverterValueAsync<TProperty, TValue>(IContentPropertyConverter<TProperty, TValue> converter, TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)",
+                methodBuilder => methodBuilder
+                    .Line("if (converter is IAsyncContentPropertyConverter<TProperty, TValue> asyncConverter)")
+                    .CodeBlock(block => block.Line("return await asyncConverter.GetValueAsync(property, content, propertyName, pipelineContext, config);"))
+                    .Line("return converter.GetValue(property, content, propertyName, pipelineContext, config);"))
             .Build();
 
         static IEnumerable<(string Type, string ShortName)> GetConverters(
@@ -74,7 +88,7 @@ internal sealed partial class Emitter
             return shortName;
         }
 
-        static string GetConverter(ContentProperty property)
+        static string GetSyncConverterValue(ContentProperty property)
         {
             if (property.ConverterType.Equals("none", StringComparison.OrdinalIgnoreCase))
             {
@@ -87,6 +101,21 @@ internal sealed partial class Emitter
             }
 
             return $"{GetShortName(property.ConverterType)}.GetValue(content.{property.Name}, content, nameof(content.{property.Name}), pipelineContext)";
+        }
+
+        static string GetAsyncConverterValue(ContentProperty property)
+        {
+            if (property.ConverterType.Equals("none", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"content.{property.Name}";
+            }
+
+            if (property.ConverterConfig is not null)
+            {
+                return $"await GetConverterValueAsync({GetShortName(property.ConverterType)}, content.{property.Name}, content, nameof(content.{property.Name}), pipelineContext, {property.Name + ConverterConfigPropertyPostFix})";
+            }
+
+            return $"await GetConverterValueAsync({GetShortName(property.ConverterType)}, content.{property.Name}, content, nameof(content.{property.Name}), pipelineContext)";
         }
 
         static string ConverterConfigToNewDict(Dictionary<string, string> converterConfig)

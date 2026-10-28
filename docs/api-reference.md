@@ -105,6 +105,24 @@ public interface IContentPropertyConverter<in TProperty, out TValue>
 - **Returns**: `TValue` - The converted value
 - **Description**: Converts a property value from the source type to the target type
 
+### IAsyncContentPropertyConverter<TProperty, TValue>
+
+Optional async extension for property converters.
+
+```csharp
+public interface IAsyncContentPropertyConverter<in TProperty, TValue> : IContentPropertyConverter<TProperty, TValue>
+{
+    Task<TValue> GetValueAsync(
+        TProperty property,
+        IContentData content,
+        string propertyName,
+        IContentPipelineContext pipelineContext,
+        Dictionary<string, string>? config = null);
+}
+```
+
+When implemented, async pipeline execution uses `GetValueAsync`; sync pipeline execution continues to use `GetValue`.
+
 ### Built-in Converters
 
 #### XhtmlStringConverter
@@ -133,7 +151,7 @@ public class MediaConverter : IContentPropertyConverter<ContentReference?, Media
 
 #### ContentAreaConverter
 
-Converts `ContentArea` to `ContentAreaPipelineModel`.
+Converts `ContentArea` to `ContentAreaPipelineModel`, applying registered `IContentAreaItemsRenderingFilter` filters before mapping items. In async pipeline execution it uses the async filter and nested pipeline path.
 
 ```csharp
 public class ContentAreaConverter : IContentPropertyConverter<ContentArea?, ContentAreaPipelineModel?>

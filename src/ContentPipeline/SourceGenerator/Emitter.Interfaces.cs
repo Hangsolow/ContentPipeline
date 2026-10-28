@@ -9,7 +9,11 @@ internal sealed partial class Emitter
         yield return new("IBlockConverter.g.cs", CreatePropertyConverterInterface("IBlockConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
         yield return new("IEmbeddedBlockConverter.g.cs", CreatePropertyConverterInterface("IEmbeddedBlockConverter", "EPiServer.Core.BlockData?", $"{SharedNamespace}.Interfaces.IContentPipelineModel?"));
         yield return new("IContentReferenceConverter.g.cs", CreatePropertyConverterInterface("IContentReferenceConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Link"));
-        yield return new("IContentAreaConverter.g.cs", CreatePropertyConverterInterface("IContentAreaConverter", "EPiServer.Core.ContentArea?", $"{SharedNamespace}.Properties.ContentAreaPipelineModel?"));
+        yield return new("IContentAreaConverter.g.cs", CreatePropertyConverterInterface(
+            "IContentAreaConverter",
+            "EPiServer.Core.ContentArea?",
+            $"{SharedNamespace}.Properties.ContentAreaPipelineModel?",
+            supportsAsync: true));
         yield return new("ILinkConverter.g.cs", CreatePropertyConverterInterface("ILinkConverter", "EPiServer.Url?", $"{SharedNamespace}.Interfaces.ILinkPipelineModel?"));
         yield return new("IMediaConverter.g.cs", CreatePropertyConverterInterface("IMediaConverter", "EPiServer.Core.ContentReference?", $"{SharedNamespace}.Properties.Media?"));
         yield return new("IEnumConverter.g.cs", CreateEnumConverter());
@@ -17,6 +21,7 @@ internal sealed partial class Emitter
         yield return new("IXhtmlRenderService.g.cs", CreateXhtmlRenderService());
 
         yield return new("IContentPropertyConverter.g.cs", CreateGenericPropertyConverterSource());
+        yield return new("IAsyncContentPropertyConverter.g.cs", CreateGenericAsyncPropertyConverterSource());
         yield return new("IContentPipelinePropertyConverterAttribute.g.cs", CreateContentPipelinePropertyConverterAttributeInterface());
         yield return new("IContentPipelineContext.g.cs", CreatePipelineContextSource());
         yield return new("IContentPipelineStep.g.cs", CreatePipelineStep());
@@ -28,8 +33,12 @@ internal sealed partial class Emitter
         yield return new("IContentPipelineModel.g.cs", CreateContentPipelineModel());
         yield return new("ILinkPipelineModel.g.cs", CreateLinkPipelineModel());
 
-        string CreatePropertyConverterInterface(string name, string typeProperty, string typeValue)
+        string CreatePropertyConverterInterface(string name, string typeProperty, string typeValue, bool supportsAsync = false)
         {
+            var inheritedInterfaces = supportsAsync
+                ? $"IContentPropertyConverter<{typeProperty}, {typeValue}>, IAsyncContentPropertyConverter<{typeProperty}, {typeValue}>"
+                : $"IContentPropertyConverter<{typeProperty}, {typeValue}>";
+
             return
                 $$"""
                 #nullable enable
@@ -37,7 +46,7 @@ internal sealed partial class Emitter
 
                 using EPiServer.Core;
                 
-                internal partial interface {{name}} : IContentPropertyConverter<{{typeProperty}}, {{typeValue}}>
+                internal partial interface {{name}} : {{inheritedInterfaces}}
                 {
                 
                 }
@@ -77,6 +86,23 @@ internal sealed partial class Emitter
                 public partial interface IContentPropertyConverter<TProperty, out TValue> : IContentPropertyConverter
                 {
                     TValue GetValue(TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null);
+                }
+                """;
+        }
+
+        string CreateGenericAsyncPropertyConverterSource()
+        {
+            return
+                $$"""
+                #nullable enable
+                namespace {{SharedNamespace}}.Interfaces;
+                
+                using EPiServer.Core;
+                using System.Threading.Tasks;
+
+                public partial interface IAsyncContentPropertyConverter<TProperty, TValue> : IContentPropertyConverter<TProperty, TValue>
+                {
+                    Task<TValue> GetValueAsync(TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null);
                 }
                 """;
         }
