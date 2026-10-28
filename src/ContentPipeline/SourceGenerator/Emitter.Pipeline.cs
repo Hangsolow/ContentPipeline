@@ -10,6 +10,7 @@ internal sealed partial class Emitter
         CancellationToken.ThrowIfCancellationRequested();
         var contentPipelineModelName = $"{SharedNamespace}.Models.{contentClass.Group}.{contentClass.Name}PipelineModel";
         var converters = GetConverters(contentClass.ContentProperties).Distinct().ToArray();
+        var hasAsyncConversion = contentClass.ContentProperties.Any(p => !p.ConverterType.Equals("none", StringComparison.OrdinalIgnoreCase));
         const string ConverterConfigPropertyPostFix = "ConverterConfig";
         return CSharpCodeBuilder.Create()
             .Line("#nullable enable")
@@ -42,12 +43,29 @@ internal sealed partial class Emitter
                         (b, p) => b.Line($"contentPipelineModel.{p.Name} = {GetSyncConverterValue(p)};"))
                     .Line(""))
             .Method(
-                $"public async Task ExecuteAsync({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentPipelineContext pipelineContext)",
-                methodBuilder => methodBuilder
-                    .Tab()
-                    .Foreach(contentClass.ContentProperties,
-                        (b, p) => b.Line($"contentPipelineModel.{p.Name} = {GetAsyncConverterValue(p)};"))
-                    .Line(""))
+                hasAsyncConversion
+                    ? $"public async Task ExecuteAsync({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentPipelineContext pipelineContext)"
+                    : $"public Task ExecuteAsync({contentClass.FullyQualifiedName} content, {contentPipelineModelName} contentPipelineModel, IContentPipelineContext pipelineContext)",
+                methodBuilder =>
+                {
+                    methodBuilder.Tab();
+
+                    if (hasAsyncConversion)
+                    {
+                        foreach (var property in contentClass.ContentProperties)
+                        {
+                            methodBuilder.Line($"contentPipelineModel.{property.Name} = {GetAsyncConverterValue(property)};");
+                        }
+
+                        methodBuilder.Line("");
+                    }
+                    else
+                    {
+                        methodBuilder.Line("return Task.CompletedTask;");
+                    }
+
+                    return methodBuilder;
+                })
             .Method(
                 "private static async Task<TValue> GetConverterValueAsync<TProperty, TValue>(IContentPropertyConverter<TProperty, TValue> converter, TProperty property, IContentData content, string propertyName, IContentPipelineContext pipelineContext, Dictionary<string, string>? config = null)",
                 methodBuilder => methodBuilder

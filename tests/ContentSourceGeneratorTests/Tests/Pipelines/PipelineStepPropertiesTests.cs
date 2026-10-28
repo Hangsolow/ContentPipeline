@@ -2,6 +2,7 @@ using ContentPipeline.Interfaces;
 using ContentPipeline.Models.Awesome;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.Entities;
 using ContentPipelineSourceGeneratorTests.SourceGeneratorTests.PipelineSteps;
+using NSubstitute;
 
 namespace ContentPipelineSourceGeneratorTests.Tests.Pipelines;
 
@@ -114,6 +115,27 @@ public class PipelineStepPropertiesTests
         var step = new OverriddenContentPipelineStep();
         
         Assert.True(step.IsAsync);
+    }
+
+    [Fact]
+    public async Task Generated_PassThrough_Only_ExecuteAsync_Should_Return_CompletedTask_Without_Async_Keyword()
+    {
+        var step = new ImageBasePipelineStep();
+        var content = new ImageBase
+        {
+            Title = "Title",
+            Copyright = "Copyright",
+            AltText = "Alt text"
+        };
+        var model = new ImageBasePipelineModel();
+        var context = Substitute.For<IContentPipelineContext>();
+
+        var result = step.ExecuteAsync(content, model, context);
+
+        await result;
+        Assert.Equal("Title", model.Title);
+        Assert.Equal("Copyright", model.Copyright);
+        Assert.Equal("Alt text", model.AltText);
     }
 
     [Fact]
