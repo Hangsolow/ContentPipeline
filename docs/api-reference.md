@@ -110,7 +110,7 @@ public interface IContentPropertyConverter<in TProperty, out TValue>
 Optional async extension for property converters.
 
 ```csharp
-public interface IAsyncContentPropertyConverter<in TProperty, TValue> : IContentPropertyConverter<TProperty, TValue>
+public interface IAsyncContentPropertyConverter<TProperty, TValue> : IContentPropertyConverter<TProperty, TValue>
 {
     Task<TValue> GetValueAsync(
         TProperty property,
